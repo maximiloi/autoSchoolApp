@@ -1,0 +1,143 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String
+  role      String    @default("user") // "admin" или "user"
+  companyId String?
+  company   Company?  @relation(fields: [companyId], references: [id])
+
+  createdAt      DateTime @default(now())
+}
+
+model Company {
+  id                   String    @id @default(uuid())
+  companyName          String
+  shortName            String
+  license              String
+  inn                  String    @unique @db.Char(10) // 10 символов
+  kpp                  String    @db.Char(9) // 9 символов
+  ogrn                 String?   @db.Char(13) // 13 символов, опционально
+  legalAddress         String
+  actualAddress        String?
+  region               String
+  bank                 String
+  account              String    @db.Char(20) // 20 символов
+  bik                  String    @db.Char(9) // 9 символов
+  correspondentAccount String    @db.Char(20) // 20 символов
+  directorSurname      String
+  directorName         String
+  directorPatronymic   String?
+  accountantSurname    String?
+  accountantName       String?
+  accountantPatronymic String?
+  phone                String
+  email                String    @unique
+  website              String?
+
+  users                User[]
+  teachers             Teacher[]
+  cars                 Car[]
+  groups               Group[]
+  students             Student[]
+}
+
+model Teacher {
+  id               String  @id @default(uuid())
+  lastName         String
+  firstName        String
+  middleName       String?
+  activityType     String  @default("theory") // "theory" или "practice"
+  birthDate        String?
+  birthPlace       String?
+  address          String?
+  licenseSeries    String?
+  licenseNumber    String?
+  licenseIssueDate String?
+  snils            String?
+  companyId        String
+  createdBy        String
+  company          Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  theoryGroups   Group[] @relation(name: "TheoryTeachers")
+  practiceGroups Group[] @relation(name: "PracticeTeachers")
+
+  cars            Car[]
+}
+
+model Car {
+  id             String  @id @default(uuid())
+  carModel       String
+  carNumber      String
+  literalMarking String
+  teacherId      String
+  companyId      String 
+  teacher        Teacher? @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  company        Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  createdAt      DateTime @default(now())
+}
+
+model Group {
+  id                String   @id @default(uuid())
+  groupNumber       String   @unique
+  category          String
+  startTrainingDate DateTime
+  endTrainingDate   DateTime
+  isActive          Boolean  @default(true)
+  companyId         String
+  company          Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  theoryTeachers   Teacher[] @relation(name: "TheoryTeachers")
+  practiceTeachers Teacher[] @relation(name: "PracticeTeachers")
+
+  createdAt        DateTime  @default(now())
+
+  students          Student[]
+}
+
+model Student {
+  id                  String  @id @default(uuid())
+  lastName            String
+  firstName           String
+  middleName          String?
+  gender              String?  // 'male' или 'female'
+  phone               String
+  birthDate           DateTime
+  birthPlace          String?
+  registrationAddress String?
+  actualAddress       String?
+  documentType        String?  // 'passport' или 'license'
+  documentIssuer      String?
+  documentCode        String?
+  documentSeries      String?
+  documentNumber      String?
+  documentIssueDate   DateTime?
+  medicalSeries       String?
+  medicalNumber       String?
+  medicalIssueDate    DateTime?
+  medicalIssuer       String?
+  license             String?
+  region              String?
+  medicalRestriction  String?
+  allowedCategories   String?
+  trainingCost        Decimal
+  snils               String?
+
+  filledInData       Int @default(0) 
+
+  groupId             String
+  group               Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  companyId           String
+  company             Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  createdAt           DateTime @default(now())
+}
