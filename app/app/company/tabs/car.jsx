@@ -111,9 +111,6 @@ export default function CarForm() {
           </div>
 
           <div className="flex gap-4">
-            <Button type="button" variant="destructive" disabled={isLoading}>
-              Удалить
-            </Button>
             <Button type="submit" disabled={isLoading}>
               {isLoading ? 'Создание...' : 'Создать'}
             </Button>
