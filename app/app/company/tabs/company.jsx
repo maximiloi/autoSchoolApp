@@ -62,8 +62,9 @@ export default function CompanyForm() {
   }, [session]);
 
   async function onSubmit(values) {
+    if (!session?.user?.companyId) return;
     try {
-      const response = await fetch('/api/company', {
+      const response = await fetch(`/api/company/${session.user.companyId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values),

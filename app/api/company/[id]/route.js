@@ -28,3 +28,19 @@ export async function GET(req, { params }) {
     return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 });
   }
 }
+
+export async function PUT(req) {
+  try {
+    const data = await req.json();
+
+    const updatedCompany = await prisma.company.upsert({
+      where: { inn: data.inn },
+      update: data,
+      create: data,
+    });
+
+    return NextResponse.json(updatedCompany, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: 'Ошибка при обновлении данных компании' }, { status: 500 });
+  }
+}
