@@ -23,18 +23,19 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import InputField from '@/components/ui/InputField';
+import DatePickerField from '@/components/ui/DatePickerField';
 
 const formSchema = z.object({
   lastName: z.string().min(2, 'Введите фамилию'),
   firstName: z.string().min(2, 'Введите имя'),
   middleName: z.string().optional(),
   activityType: z.enum(['theory', 'practice'], { required_error: 'Выберите вид деятельности' }),
-  birthDate: z.string().optional(),
+  birthDate: z.date().optional(),
   birthPlace: z.string().optional(),
   address: z.string().optional(),
   licenseSeries: z.string().optional(),
   licenseNumber: z.string().optional(),
-  licenseIssueDate: z.string().optional(),
+  licenseIssueDate: z.date().optional(),
   snils: z.string().optional(),
 });
 
@@ -48,12 +49,12 @@ export default function TeachersForm() {
       firstName: '',
       middleName: '',
       activityType: 'theory',
-      birthDate: '',
+      birthDate: undefined,
       birthPlace: '',
       address: '',
       licenseSeries: '',
       licenseNumber: '',
-      licenseIssueDate: '',
+      licenseIssueDate: undefined,
       snils: '',
     },
   });
@@ -106,9 +107,9 @@ export default function TeachersForm() {
             <InputField name="lastName" label="Фамилия" control={form.control} />
             <InputField name="firstName" label="Имя" control={form.control} />
             <InputField name="middleName" label="Отчество" control={form.control} />
-            <InputField
+            <DatePickerField
               name="birthDate"
-              label="Дата рождения (ДД.ММ.ГГГГ)"
+              label="Укажите дату рождения"
               control={form.control}
             />
           </div>
@@ -142,18 +143,15 @@ export default function TeachersForm() {
           <div className="grid grid-cols-4 gap-4">
             <InputField name="licenseSeries" label="Серия" control={form.control} />
             <InputField name="licenseNumber" label="Номер" control={form.control} />
-            <InputField
+            <DatePickerField
               name="licenseIssueDate"
-              label="Дата выдачи (ДД.ММ.ГГГГ)"
+              label="Укажите дату выдачи"
               control={form.control}
             />
             <InputField name="snils" label="СНИЛС" control={form.control} />
           </div>
 
           <div className="flex gap-4">
-            <Button type="button" variant="destructive" disabled={isLoading}>
-              Удалить
-            </Button>
             <Button type="submit" disabled={isLoading}>
               {isLoading ? 'Создание...' : 'Создать'}
             </Button>

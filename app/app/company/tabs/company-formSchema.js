@@ -43,10 +43,7 @@ export const CompanyFormSchema = z.object({
   accountantSurname: z.string().min(2, 'Введите фамилию бухгалтера').optional().default(''),
   accountantName: z.string().min(2, 'Введите имя бухгалтера').optional().default(''),
   accountantPatronymic: z.string().min(2, 'Введите отчество бухгалтера').optional().default(''),
-  phone: z
-    .string()
-    .min(10, 'Введите телефон')
-    .regex(/^\d+$/, 'Телефон должен содержать только цифры'),
+  phone: z.string().min(10, 'Введите телефон').optional().default(''),
   email: z.string().email('Введите корректный email'),
   website: z.string().url('Введите корректный URL').optional().default(''),
 });
