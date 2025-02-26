@@ -10,8 +10,8 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import CompanyForm from './tabs/company';
-import TeachersTable from './tabs/teachers-table';
-import TeachersForm from './tabs/teachers';
+import TeachersTable from './tabs/TeachersTable';
+import TeachersForm from './tabs/TeachersForm';
 import CarTable from './tabs/car-table';
 import CarForm from './tabs/car';
 
