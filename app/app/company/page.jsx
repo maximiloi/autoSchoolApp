@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -13,14 +16,16 @@ import CarTable from './tabs/car-table';
 import CarForm from './tabs/car';
 
 export default function companyInfo() {
+  const [teachers, setTeachers] = useState([]);
+
   return (
-    <Tabs defaultValue="company" className="w-full">
+    <Tabs defaultValue="companyTab" className="w-full">
       <TabsList className="grid w-full grid-cols-3">
-        <TabsTrigger value="company">Реквизиты</TabsTrigger>
-        <TabsTrigger value="teachers">Преподаватели</TabsTrigger>
-        <TabsTrigger value="auto">Автомобили</TabsTrigger>
+        <TabsTrigger value="companyTab">Реквизиты</TabsTrigger>
+        <TabsTrigger value="teachersTab">Преподаватели</TabsTrigger>
+        <TabsTrigger value="autoTab">Автомобили</TabsTrigger>
       </TabsList>
-      <TabsContent value="company">
+      <TabsContent value="companyTab">
         <Card>
           <CardHeader>
             <CardTitle>Реквизиты организации</CardTitle>
@@ -30,25 +35,25 @@ export default function companyInfo() {
           </CardContent>
         </Card>
       </TabsContent>
-      <TabsContent value="teachers">
+      <TabsContent value="teachersTab">
         <Card>
           <CardHeader>
             <CardTitle>Преподаватели организации</CardTitle>
           </CardHeader>
           <CardContent>
-            <TeachersTable />
+            <TeachersTable teachers={teachers} setTeachers={setTeachers} />
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="item-1">
                 <AccordionTrigger>Добавить или редактировать преподавателя</AccordionTrigger>
                 <AccordionContent>
-                  <TeachersForm />
+                  <TeachersForm setTeachers={setTeachers} />
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
           </CardContent>
         </Card>
       </TabsContent>
-      <TabsContent value="auto">
+      <TabsContent value="autoTab">
         <Card>
           <CardHeader>
             <CardTitle>Автомобили организации</CardTitle>

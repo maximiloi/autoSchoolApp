@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { OctagonX, UserRoundPen } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -10,9 +11,11 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import TeacherDeleteModalDialog from './TeacherDeleteModalDialog';
 
-export default function TeachersTable() {
-  const [teachers, setTeachers] = useState([]);
+export default function TeachersTable({ teachers, setTeachers }) {
+  const [selectedTeacher, setSelectedTeacher] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');
@@ -31,7 +34,30 @@ export default function TeachersTable() {
       }
     }
     fetchTeachers();
-  }, []);
+  }, [setTeachers]);
+
+  const handleDelete = async () => {
+    if (!selectedTeacher) return;
+
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/teacher/${selectedTeacher.id}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        setTeachers((prev) => prev.filter((t) => t.id !== selectedTeacher.id));
+      } else {
+        throw new Error('Ошибка при удалении');
+      }
+
+      setIsDialogOpen(false);
+    } catch (error) {
+      console.error('Ошибка удаления:', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSort = () => {
     const sorted = [...teachers].sort((a, b) =>
@@ -58,14 +84,21 @@ export default function TeachersTable() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Фамилия</TableHead>
+            <TableHead className="w-[40px]"></TableHead>
+            <TableHead className="w-[140px]">Фамилия</TableHead>
             <TableHead>Инициалы</TableHead>
             <TableHead>Вид деятельности</TableHead>
+            <TableHead className="text-right"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {teachers.map((teacher) => (
             <TableRow key={teacher.id}>
+              <TableCell>
+                <Button variant="ghost" size="icon">
+                  <UserRoundPen />
+                </Button>
+              </TableCell>
               <TableCell>{teacher.lastName}</TableCell>
               <TableCell>
                 {teacher.firstName[0]}. {teacher.middleName ? teacher.middleName[0] + '.' : ''}
@@ -75,10 +108,29 @@ export default function TeachersTable() {
                   ? 'Преподаватель теории'
                   : 'Преподаватель практики'}
               </TableCell>
+              <TableCell>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setSelectedTeacher(teacher);
+                    setIsDialogOpen(true);
+                  }}
+                >
+                  <OctagonX />
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <TeacherDeleteModalDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onDelete={handleDelete}
+        teacher={selectedTeacher}
+        loading={loading}
+      />
     </>
   );
 }

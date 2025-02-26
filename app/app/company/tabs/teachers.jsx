@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from '@/hooks/use-toast';
@@ -39,9 +38,8 @@ const formSchema = z.object({
   snils: z.string().optional(),
 });
 
-export default function TeachersForm() {
+export default function TeachersForm({ setTeachers }) {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
   const { reset, ...form } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -76,8 +74,10 @@ export default function TeachersForm() {
           duration: 2000,
           description: 'Преподаватель успешно добавлен в БД',
         });
+        const newTeacher = await response.json();
+        console.log('🚀 ~ onSubmit ~ newTeacher:', newTeacher);
+        setTeachers((prev) => [...prev, newTeacher]);
         reset();
-        router.refresh();
       } else {
         toast({
           duration: 2000,

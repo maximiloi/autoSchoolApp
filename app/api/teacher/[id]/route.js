@@ -25,3 +25,22 @@ export async function GET(req, { params }) {
     return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 });
   }
 }
+
+export async function DELETE(req, { params }) {
+  try {
+    const { id } = await params;
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID преподавателя не указан' }, { status: 400 });
+    }
+
+    await prisma.teacher.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({ message: 'Преподаватель успешно удален' });
+  } catch (error) {
+    console.error('Ошибка при удалении преподавателя:', error);
+    return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 });
+  }
+}
