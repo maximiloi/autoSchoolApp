@@ -34,7 +34,7 @@ export default function DatePickerField({ name, label, control }) {
             <PopoverContent className="w-auto p-0" align="start">
               <CalendarCustom
                 captionLayout="dropdown-buttons"
-                fromYear={1960}
+                fromYear={1930}
                 toYear={2030}
                 locale={ru}
                 mode="single"
