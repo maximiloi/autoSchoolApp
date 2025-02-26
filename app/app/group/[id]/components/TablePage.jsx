@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import StudentDeleteModalDialog from './StudentDeleteModalDialog';
+import ZayavlenieAnketaButton from '@/documents/zayavlenie-anketa';
 
 export default function TablePage({ group }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -44,7 +45,6 @@ export default function TablePage({ group }) {
         throw new Error('Ошибка при удалении');
       }
 
-      // Убираем удаленного студента из UI
       group.students = group.students.filter((s) => s.id !== selectedStudent.id);
       setIsDialogOpen(false);
     } catch (error) {
@@ -74,7 +74,7 @@ export default function TablePage({ group }) {
             <TableHead className="w-[20px]">#</TableHead>
             <TableHead className="w-[200px]">ФИО</TableHead>
             <TableHead className="w-[145px]">Дата рождения</TableHead>
-            <TableHead className="w-[80px]">Договор</TableHead>
+            <TableHead className="w-[80px]">Документы</TableHead>
             <TableHead className="w-[80px]">Вождение</TableHead>
             <TableHead className="text-right">Удалить</TableHead>
           </TableRow>
@@ -110,7 +110,7 @@ export default function TablePage({ group }) {
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
                       <DropdownMenuItem>
-                        <span>Заявка</span>
+                        <ZayavlenieAnketaButton student={student} />
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
