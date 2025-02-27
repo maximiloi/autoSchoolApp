@@ -30,14 +30,16 @@ export async function POST(req) {
   }
 
   const { companyId, id: userId } = session.user;
-  const body = await req.json();
+  const data = await req.json();
 
   try {
     const newTeacher = await prisma.teacher.create({
       data: {
-        ...body,
+        ...data,
         companyId,
         createdBy: userId,
+        birthDate: data.birthDate ? new Date(data.birthDate) : null,
+        licenseIssueDate: data.licenseIssueDate ? new Date(data.licenseIssueDate) : null,
       },
     });
 
