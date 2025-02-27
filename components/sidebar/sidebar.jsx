@@ -40,7 +40,7 @@ export default function AppSidebar() {
   );
 
   useEffect(() => {
-    if (session.status === 'authenticated' && session.data?.user?.email) {
+    if (session.status === 'authenticated' && session.data?.user?.companyId) {
       fetchCompanyData(session.data.user.companyId);
     }
   }, [session, fetchCompanyData]);

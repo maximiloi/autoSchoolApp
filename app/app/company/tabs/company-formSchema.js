@@ -24,6 +24,7 @@ export const CompanyFormSchema = z.object({
   legalAddress: z.string().min(5, 'Введите юридический адрес'),
   actualAddress: z.string().min(5, 'Введите фактический адрес').optional().default(''),
   region: z.string().min(2, 'Введите регион'),
+  city: z.string().min(2, 'Введите город'),
   bank: z.string().min(2, 'Введите название банка'),
   account: z
     .string()

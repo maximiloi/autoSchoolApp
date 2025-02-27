@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
@@ -11,6 +11,7 @@ import InputField from '@/components/ui/InputField';
 import { CompanyFormSchema } from './company-formSchema';
 
 export default function CompanyForm() {
+  const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
   const { reset, ...form } = useForm({
     resolver: zodResolver(CompanyFormSchema),
@@ -24,6 +25,7 @@ export default function CompanyForm() {
       legalAddress: '',
       actualAddress: '',
       region: '',
+      city: '',
       bank: '',
       account: '',
       bik: '',
@@ -41,8 +43,8 @@ export default function CompanyForm() {
   });
 
   useEffect(() => {
+    if (!session?.user?.companyId) return;
     async function fetchCompany() {
-      if (!session?.user?.companyId) return;
       try {
         const response = await fetch(`/api/company/${session.user.companyId}`);
         if (response.ok) {
@@ -62,27 +64,40 @@ export default function CompanyForm() {
   }, [session]);
 
   async function onSubmit(values) {
-    if (!session?.user?.companyId) return;
+    setIsLoading(true);
+
     try {
-      const response = await fetch(`/api/company/${session.user.companyId}`, {
-        method: 'PUT',
+      const method = session?.user?.companyId ? 'PUT' : 'POST';
+      const url = session?.user?.companyId
+        ? `/api/company/${session?.user?.companyId}`
+        : '/api/company';
+
+      const response = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values),
       });
+
       if (response.ok) {
         toast({
-          duration: 2000,
-          description: 'Данные успешно обновлены в БД',
+          description: session?.user?.companyId
+            ? 'Данные компании обновлены'
+            : 'Компания успешно добавлена',
         });
+        const companyData = await response.json();
+        reset(companyData);
       } else {
         toast({
-          duration: 2000,
           variant: 'destructive',
-          description: 'Ошибка при обновлении данных в БД',
+          description: session?.user?.companyId
+            ? 'Ошибка обновления данных компании'
+            : 'Ошибка добавления компании',
         });
       }
-    } catch (error) {
-      console.error('Ошибка запроса', error);
+    } catch (err) {
+      toast({ duration: 2000, variant: 'destructive', description: `Ошибка: ${err.message}` });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -101,13 +116,14 @@ export default function CompanyForm() {
           <InputField name="ogrn" label="ОГРН" control={form.control} />
         </Section>
 
-        <Section2 title="Адреса">
+        <Section1 title="Адреса">
           <InputField name="legalAddress" label="Юридический адрес" control={form.control} />
           <InputField name="actualAddress" label="Фактический адрес" control={form.control} />
-        </Section2>
+        </Section1>
 
         <Section title="Банковские реквизиты">
           <InputField name="region" label="Регион" control={form.control} />
+          <InputField name="city" label="Населенный пункт" control={form.control} />
           <InputField name="bank" label="Банк" control={form.control} />
           <InputField name="account" label="Расчетный счет" control={form.control} />
           <InputField name="bik" label="БИК" control={form.control} />
@@ -135,9 +151,8 @@ export default function CompanyForm() {
           <InputField name="email" label="Email" control={form.control} />
           <InputField name="website" label="Сайт" control={form.control} />
         </Section>
-
-        <Button className="w-full" type="submit">
-          Сохранить или обновить
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? 'Сохранение...' : 'Сохранить'}
         </Button>
       </form>
     </Form>
@@ -155,13 +170,13 @@ function Section({ title, children }) {
   );
 }
 
-function Section2({ title, children }) {
+function Section1({ title, children }) {
   return (
     <div>
       <h3 className="mb-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
         {title}
       </h3>
-      <div className="grid grid-cols-2 gap-4">{children}</div>
+      <div className="grid gap-4">{children}</div>
     </div>
   );
 }
