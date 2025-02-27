@@ -32,7 +32,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useSession } from 'next-auth/react';
 
 const formSchema = z.object({
-  groupNumber: z.string().min(1, 'Введите номер группы').regex(/^\d+$/, 'Только цифры'),
+  groupNumber: z.string().min(1, 'Введите номер группы'),
   category: z.enum(['A', 'B'], { required_error: 'Выберите категорию' }),
   startTrainingDate: z.date({ required_error: 'Укажите дату начала' }),
   endTrainingDate: z.date({ required_error: 'Укажите дату окончания' }),
