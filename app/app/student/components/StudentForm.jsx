@@ -161,7 +161,7 @@ export default function StudentForm({ student }) {
 
         <div className="grid grid-cols-2 gap-4">
           <DatePickerField name="birthDate" label="Дата рождения" control={form.control} />
-          <InputField name="snils" label="СНИЛС" control={form.control} />
+          <InputField name="snils" label="СНИЛС" control={form.control} mask="000-000-000 00" />
         </div>
 
         <InputField name="birthPlace" label="Место рождения" control={form.control} />
@@ -176,12 +176,12 @@ export default function StudentForm({ student }) {
             control={form.control}
             options={{ passport: 'Паспорт', license: 'Водительское удостоверение' }}
           />
-          <InputField name="documentSeries" label="Серия" control={form.control} />
-          <InputField name="documentNumber" label="Номер" control={form.control} />
+          <InputField name="documentSeries" label="Серия" control={form.control} mask="00 00" />
+          <InputField name="documentNumber" label="Номер" control={form.control} mask="000000" />
         </div>
         <div className="grid grid-cols-[2fr_1fr_1fr] gap-4">
           <InputField name="documentIssuer" label="Кем выдан" control={form.control} />
-          <InputField name="documentCode" label="Код" control={form.control} />
+          <InputField name="documentCode" label="Код" control={form.control} mask="000-000" />
           <DatePickerField
             name="documentIssueDate"
             label="Дата выдачи документа"
