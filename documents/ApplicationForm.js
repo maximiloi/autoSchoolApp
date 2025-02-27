@@ -1,38 +1,7 @@
-'use client';
-
-import { useEffect, useState, useCallback } from 'react';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-/**
- * Кастомный хук для загрузки pdfMake
- */
-const usePdfMake = () => {
-  const [pdfMake, setPdfMake] = useState(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      (async () => {
-        try {
-          const pdfMakeModule = await import('pdfmake/build/pdfmake');
-          const pdfFontsModule = await import('pdfmake/build/vfs_fonts');
-
-          pdfMakeModule.default.vfs = pdfFontsModule.default.vfs;
-          setPdfMake(pdfMakeModule.default);
-        } catch (error) {
-          console.error('Ошибка загрузки pdfMake:', error);
-        }
-      })();
-    }
-  }, []);
-
-  return pdfMake;
-};
-
-/**
- * Функция для генерации PDF-документа
- */
-const generateDocDefinition = (student) => {
+export default function ApplicationForm(student) {
   if (!student || !student.lastName || !student.firstName || !student.birthDate) {
     console.error('Ошибка: данные о студенте отсутствуют');
     return null;
@@ -120,29 +89,4 @@ const generateDocDefinition = (student) => {
       subheader: { fontSize: 16, margin: [0, 5, 0, 5] },
     },
   };
-};
-
-/**
- * Компонент кнопки для генерации заявления-анкеты
- */
-export default function ZayavlenieAnketaButton({ student }) {
-  const pdfMake = usePdfMake();
-
-  const generatePDF = useCallback(() => {
-    if (!pdfMake) {
-      console.error('pdfMake не загружен');
-      return;
-    }
-
-    const docDefinition = generateDocDefinition(student);
-    if (!docDefinition) return;
-
-    pdfMake.createPdf(docDefinition).open();
-  }, [pdfMake, student]);
-
-  return (
-    <button onClick={generatePDF} disabled={!pdfMake || !student}>
-      Заявление-анкета
-    </button>
-  );
 }

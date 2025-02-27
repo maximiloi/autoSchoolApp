@@ -25,7 +25,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import StudentDeleteModalDialog from './StudentDeleteModalDialog';
-import ZayavlenieAnketaButton from '@/documents/zayavlenie-anketa';
+import ApplicationFormButton from './ApplicationFormButton';
+import BasicContractButton from './BasicContractButton';
 
 export default function TablePage({ group }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -110,7 +111,10 @@ export default function TablePage({ group }) {
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
                       <DropdownMenuItem>
-                        <ZayavlenieAnketaButton student={student} />
+                        <ApplicationFormButton student={student} />
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <BasicContractButton student={student} />
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
