@@ -56,13 +56,14 @@ model Teacher {
   firstName        String
   middleName       String?
   activityType     String  @default("theory") // "theory" или "practice"
-  birthDate        String?
+  birthDate        DateTime?
   birthPlace       String?
   address          String?
   licenseSeries    String?
   licenseNumber    String?
-  licenseIssueDate String?
+  licenseIssueDate DateTime?
   snils            String?
+  phone            String?
   companyId        String
   createdBy        String
   company          Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
