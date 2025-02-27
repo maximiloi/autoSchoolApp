@@ -44,3 +44,23 @@ export async function DELETE(req, { params }) {
     return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 });
   }
 }
+
+export async function PUT(req, { params }) {
+  try {
+    const { id } = await params;
+    const data = await req.json();
+
+    const updatedTeacher = await prisma.teacher.update({
+      where: { id },
+      data,
+    });
+
+    return NextResponse.json(updatedTeacher);
+  } catch (error) {
+    console.error('Ошибка обновления преподавателя:', error.message);
+    return NextResponse.json(
+      { error: 'Ошибка при обновлении данных преподавателя' },
+      { status: 500 },
+    );
+  }
+}
