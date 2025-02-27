@@ -9,6 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+
 import CompanyForm from './tabs/company';
 import TeachersTable from './tabs/TeachersTable';
 import TeachersForm from './tabs/TeachersForm';

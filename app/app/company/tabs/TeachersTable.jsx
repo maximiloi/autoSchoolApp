@@ -11,11 +11,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import TeacherEditModalDialog from './TeacherEditModalDialog';
 import TeacherDeleteModalDialog from './TeacherDeleteModalDialog';
 
 export default function TeachersTable({ teachers, setTeachers }) {
   const [selectedTeacher, setSelectedTeacher] = useState(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');
@@ -51,7 +53,7 @@ export default function TeachersTable({ teachers, setTeachers }) {
         throw new Error('Ошибка при удалении');
       }
 
-      setIsDialogOpen(false);
+      setIsDeleteDialogOpen(false);
     } catch (error) {
       console.error('Ошибка удаления:', error.message);
     } finally {
@@ -95,13 +97,21 @@ export default function TeachersTable({ teachers, setTeachers }) {
           {teachers.map((teacher) => (
             <TableRow key={teacher.id}>
               <TableCell>
-                <Button variant="ghost" size="icon">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setSelectedTeacher(teacher);
+                    setIsEditDialogOpen(true);
+                  }}
+                >
                   <UserRoundPen />
                 </Button>
               </TableCell>
               <TableCell>{teacher.lastName}</TableCell>
               <TableCell>
-                {teacher.firstName[0]}. {teacher.middleName ? teacher.middleName[0] + '.' : ''}
+                {teacher.firstName ? teacher.firstName[0] + '.' : ''}{' '}
+                {teacher.middleName ? teacher.middleName[0] + '.' : ''}
               </TableCell>
               <TableCell>
                 {teacher.activityType === 'theory'
@@ -114,7 +124,7 @@ export default function TeachersTable({ teachers, setTeachers }) {
                   size="icon"
                   onClick={() => {
                     setSelectedTeacher(teacher);
-                    setIsDialogOpen(true);
+                    setIsDeleteDialogOpen(true);
                   }}
                 >
                   <OctagonX />
@@ -124,12 +134,19 @@ export default function TeachersTable({ teachers, setTeachers }) {
           ))}
         </TableBody>
       </Table>
-      <TeacherDeleteModalDialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        onDelete={handleDelete}
+      <TeacherEditModalDialog
+        isOpen={isEditDialogOpen}
+        onClose={() => setIsEditDialogOpen(false)}
         teacher={selectedTeacher}
         loading={loading}
+        setTeachers={setTeachers}
+      />
+      <TeacherDeleteModalDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        teacher={selectedTeacher}
+        loading={loading}
+        onDelete={handleDelete}
       />
     </>
   );

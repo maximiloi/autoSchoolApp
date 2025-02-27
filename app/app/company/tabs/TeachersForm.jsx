@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from '@/hooks/use-toast';
@@ -23,12 +23,14 @@ import {
 } from '@/components/ui/form';
 import InputField from '@/components/ui/InputField';
 import DatePickerField from '@/components/ui/DatePickerField';
+import transformedNullAndStringDate from '@/lib/transformedNullAndStringDate';
 
 const formSchema = z.object({
   lastName: z.string().min(2, 'Введите фамилию'),
   firstName: z.string().min(2, 'Введите имя'),
   middleName: z.string().optional(),
-  activityType: z.enum(['theory', 'practice'], { required_error: 'Выберите вид деятельности' }),
+  phone: z.string().optional(),
+  activityType: z.enum(['theory', 'practice']),
   birthDate: z.date().optional(),
   birthPlace: z.string().optional(),
   address: z.string().optional(),
@@ -38,14 +40,16 @@ const formSchema = z.object({
   snils: z.string().optional(),
 });
 
-export default function TeachersForm({ setTeachers }) {
+export default function TeachersForm({ setTeachers, initialData, onClose }) {
   const [isLoading, setIsLoading] = useState(false);
+
   const { reset, ...form } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       lastName: '',
       firstName: '',
       middleName: '',
+      phone: '',
       activityType: 'theory',
       birthDate: undefined,
       birthPlace: '',
@@ -57,40 +61,52 @@ export default function TeachersForm({ setTeachers }) {
     },
   });
 
+  useEffect(() => {
+    if (initialData) {
+      reset(transformedNullAndStringDate(initialData));
+    }
+  }, [initialData, reset]);
+
   async function onSubmit(values) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/teacher', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const method = initialData ? 'PUT' : 'POST';
+      const url = initialData ? `/api/teacher/${initialData.id}` : '/api/teacher';
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values),
       });
 
       if (response.ok) {
+        const updatedTeacher = await response.json();
+
+        setTeachers((prev) => {
+          if (initialData) {
+            return prev.map((t) => (t.id === initialData.id ? updatedTeacher : t));
+          } else {
+            return [...prev, updatedTeacher];
+          }
+        });
+
         toast({
           duration: 2000,
-          description: 'Преподаватель успешно добавлен в БД',
+          description: initialData ? 'Преподаватель обновлен' : 'Преподаватель успешно добавлен',
         });
-        const newTeacher = await response.json();
-        console.log('🚀 ~ onSubmit ~ newTeacher:', newTeacher);
-        setTeachers((prev) => [...prev, newTeacher]);
+
         reset();
+        onClose?.();
       } else {
         toast({
           duration: 2000,
           variant: 'destructive',
-          description: 'Ошибка при создании преподавателя',
+          description: initialData ? 'Ошибка обновления данных' : 'Ошибка добавления преподавателя',
         });
       }
     } catch (err) {
-      toast({
-        duration: 2000,
-        variant: 'destructive',
-        description: `Ошибка: ${err.message}`,
-      });
+      toast({ duration: 2000, variant: 'destructive', description: `Ошибка: ${err.message}` });
     } finally {
       setIsLoading(false);
     }
@@ -99,11 +115,11 @@ export default function TeachersForm({ setTeachers }) {
   return (
     <>
       <h2 className="mb-4 mt-6 text-lg font-semibold">
-        ✏️ Редактировать преподавателей и мастеров
+        {initialData ? '✏️ Редактировать преподавателя' : '➕ Добавить преподавателя'}
       </h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <InputField name="lastName" label="Фамилия" control={form.control} />
             <InputField name="firstName" label="Имя" control={form.control} />
             <InputField name="middleName" label="Отчество" control={form.control} />
@@ -111,6 +127,12 @@ export default function TeachersForm({ setTeachers }) {
               name="birthDate"
               label="Укажите дату рождения"
               control={form.control}
+            />
+            <InputField
+              name="phone"
+              label="Телефон"
+              control={form.control}
+              mask="+{7}(000)000-00-00"
             />
           </div>
 
@@ -153,7 +175,7 @@ export default function TeachersForm({ setTeachers }) {
 
           <div className="flex gap-4">
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Создание...' : 'Создать'}
+              {isLoading ? 'Сохранение...' : 'Сохранить'}
             </Button>
           </div>
         </form>
