@@ -20,6 +20,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.474.0",
+    "lvovich": "^2.0.2",
     "next": "15.1.6",
     "next-auth": "^4.24.11",
     "pdfmake": "^0.2.18",
