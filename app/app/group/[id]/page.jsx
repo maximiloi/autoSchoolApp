@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { Separator } from '@/components/ui/separator';
 
-import TablePage from './components/TablePage';
+import GroupTable from './components/GroupTable';
 import FooterPage from './components/FooterPage';
 
 export default function GroupPage() {
@@ -58,7 +58,7 @@ export default function GroupPage() {
         </p>
       </div>
       <Separator className="my-4" />
-      <TablePage group={group} />
+      <GroupTable group={group} />
       <Separator className="my-4" />
       <FooterPage />
     </>

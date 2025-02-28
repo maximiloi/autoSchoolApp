@@ -28,7 +28,7 @@ import StudentDeleteModalDialog from './StudentDeleteModalDialog';
 import ApplicationFormButton from './ApplicationFormButton';
 import BasicContractButton from './BasicContractButton';
 
-export default function TablePage({ group }) {
+export default function GroupTable({ group }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -114,7 +114,7 @@ export default function TablePage({ group }) {
                         <ApplicationFormButton student={student} />
                       </DropdownMenuItem>
                       <DropdownMenuItem>
-                        <BasicContractButton student={student} />
+                        <BasicContractButton student={student} group={group} />
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
