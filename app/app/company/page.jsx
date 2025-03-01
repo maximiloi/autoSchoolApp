@@ -13,8 +13,8 @@ import {
 import CompanyForm from './tabs/company';
 import TeachersTable from './tabs/TeachersTable';
 import TeachersForm from './tabs/TeachersForm';
-import CarTable from './tabs/car-table';
-import CarForm from './tabs/car';
+import CarTable from './tabs/CarTable';
+import CarForm from './tabs/CarForm';
 
 export default function companyInfo() {
   const [teachers, setTeachers] = useState([]);

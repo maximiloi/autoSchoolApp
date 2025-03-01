@@ -19,12 +19,10 @@ export default function CarTable() {
   useEffect(() => {
     async function fetchData() {
       try {
-        // Запрашиваем автомобили
         const carResponse = await fetch('/api/car');
         if (!carResponse.ok) throw new Error('Ошибка загрузки автомобилей');
         const carData = await carResponse.json();
 
-        // Запрашиваем преподавателей
         const teacherResponse = await fetch('/api/teacher');
         if (!teacherResponse.ok) throw new Error('Ошибка загрузки преподавателей');
         const teacherData = await teacherResponse.json();

@@ -18,6 +18,7 @@ import {
 
 const formSchema = z.object({
   carModel: z.string(),
+  carTransmission: z.enum(['mkp', 'akp']),
   carNumber: z.string(),
   literalMarking: z.string(),
   teacherId: z.string().optional(),
@@ -30,6 +31,7 @@ export default function CarForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       carModel: '',
+      carTransmission: '',
       carNumber: '',
       literalMarking: '',
       teacherId: '',
@@ -92,8 +94,17 @@ export default function CarForm() {
       </h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-[4fr_4fr_1fr_4fr] gap-4">
+          <div className="grid grid-cols-[4fr_4fr_4fr_1fr_4fr] gap-4">
             <InputField name="carModel" label="Модель автомобиля" control={form.control} />
+            <Select onValueChange={(value) => form.setValue('carTransmission', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Коробка передач" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="mkp">Механическая</SelectItem>
+                <SelectItem value="akp">Автоматическая</SelectItem>
+              </SelectContent>
+            </Select>
             <InputField name="carNumber" label="Номер автомобиля" control={form.control} />
             <InputField name="literalMarking" label="Буква" control={form.control} />
             <Select onValueChange={(value) => form.setValue('teacherId', value)}>
