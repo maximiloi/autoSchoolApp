@@ -1,6 +1,7 @@
 const { z } = require('zod');
 
 export const formSchema = z.object({
+  studentNumber: z.string().min(1, 'Введите порядковый номер ученика'),
   lastName: z.string().min(2, 'Введите фамилию'),
   firstName: z.string().min(2, 'Введите имя'),
   phone: z.string().min(10, 'Введите телефон'),

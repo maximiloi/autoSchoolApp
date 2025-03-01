@@ -23,6 +23,7 @@ export default function StudentForm({ student }) {
   const { watch, reset, ...form } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      studentNumber: '',
       lastName: '',
       firstName: '',
       phone: '',
@@ -79,6 +80,17 @@ export default function StudentForm({ student }) {
     fetchActiveGroups();
   }, [session]);
 
+  // добавление номера студента
+  useEffect(() => {
+    if (!activeGroups) return;
+
+    const selectedGroup = activeGroups.find((group) => group.id === valuesForm.group);
+    if (selectedGroup) {
+      console.log('🚀 ~ useEffect ~ selectedGroup:', selectedGroup);
+      //   form.setValue('number', selectedGroup.students.length.toString());
+    }
+  }, [valuesForm.group, activeGroups]);
+
   async function onSubmit(values) {
     if (status !== 'authenticated') return;
 
@@ -133,7 +145,7 @@ export default function StudentForm({ student }) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto w-full space-y-4">
-        <div className="flex justify-end gap-4">
+        <div className="mt-4 flex gap-4">
           <h2 className="text-lg font-semibold">Выбрать группу: </h2>
           {activeGroups ? (
             <DropdownField
@@ -147,7 +159,8 @@ export default function StudentForm({ student }) {
           )}
         </div>
 
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-[1fr_5fr_5fr_5fr_5fr] gap-4">
+          <InputField name="number" label="Номер" control={form.control} />
           <InputField name="lastName" label="Фамилия" control={form.control} />
           <InputField name="firstName" label="Имя" control={form.control} />
           <InputField name="middleName" label="Отчество" control={form.control} />
@@ -179,7 +192,7 @@ export default function StudentForm({ student }) {
           <InputField name="documentSeries" label="Серия" control={form.control} mask="00 00" />
           <InputField name="documentNumber" label="Номер" control={form.control} mask="000000" />
         </div>
-        <div className="grid grid-cols-[2fr_1fr_1fr] gap-4">
+        <div className="grid grid-cols-[4fr_1fr_1fr] gap-4">
           <InputField name="documentIssuer" label="Кем выдан" control={form.control} />
           <InputField name="documentCode" label="Код" control={form.control} mask="000-000" />
           <DatePickerField

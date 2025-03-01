@@ -96,7 +96,7 @@ model Group {
   endTrainingDate   DateTime
   isActive          Boolean  @default(true)
   companyId         String
-  company          Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company           Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   theoryTeachers   Teacher[] @relation(name: "TheoryTeachers")
   practiceTeachers Teacher[] @relation(name: "PracticeTeachers")
@@ -108,6 +108,7 @@ model Group {
 
 model Student {
   id                  String  @id @default(uuid())
+  studentNumber       String  @unique
   lastName            String
   firstName           String
   middleName          String?
