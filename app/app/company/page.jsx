@@ -18,6 +18,7 @@ import CarForm from './tabs/CarForm';
 
 export default function companyInfo() {
   const [teachers, setTeachers] = useState([]);
+  const [cars, setCars] = useState([]);
 
   return (
     <Tabs defaultValue="companyTab" className="w-full">
@@ -60,12 +61,12 @@ export default function companyInfo() {
             <CardTitle>Автомобили организации</CardTitle>
           </CardHeader>
           <CardContent>
-            <CarTable />
+            <CarTable cars={cars} setCars={setCars} />
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="item-1">
                 <AccordionTrigger>Добавить или редактировать автомобили</AccordionTrigger>
                 <AccordionContent>
-                  <CarForm />
+                  <CarForm setCars={setCars} />
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

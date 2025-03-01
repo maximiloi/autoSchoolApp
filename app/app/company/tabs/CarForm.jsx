@@ -24,7 +24,7 @@ const formSchema = z.object({
   teacherId: z.string().optional(),
 });
 
-export default function CarForm() {
+export default function CarForm({ setCars }) {
   const [isLoading, setIsLoading] = useState(false);
   const [teachers, setTeachers] = useState([]);
   const { reset, ...form } = useForm({
@@ -68,10 +68,12 @@ export default function CarForm() {
       });
 
       if (response.ok) {
+        const newCar = await response.json();
         toast({
           duration: 2000,
           description: 'Автомобиль успешно добавлен в БД',
         });
+        setCars((prev) => [...prev, newCar]);
         reset();
       } else {
         toast({

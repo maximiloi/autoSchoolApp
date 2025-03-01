@@ -9,10 +9,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { OctagonX } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import CarDeleteModalDialog from './CarDeleteModalDialog';
 
-export default function CarTable() {
-  const [cars, setCars] = useState([]);
+export default function CarTable({ cars, setCars }) {
   const [teachers, setTeachers] = useState([]);
+  const [selectedCar, setSelectedCar] = useState(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -38,6 +42,29 @@ export default function CarTable() {
     fetchData();
   }, []);
 
+  const handleDelete = async () => {
+    if (!selectedCar) return;
+
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/car/${selectedCar.id}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        setCars((prev) => prev.filter((t) => t.id !== selectedCar.id));
+      } else {
+        throw new Error('Ошибка при удалении');
+      }
+
+      setIsDeleteDialogOpen(false);
+    } catch (error) {
+      console.error('Ошибка удаления:', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   function getTeacherName(teacherId) {
     const teacher = teachers.find((t) => t.id === teacherId);
     return teacher
@@ -57,22 +84,44 @@ export default function CarTable() {
         <TableHeader>
           <TableRow>
             <TableHead>Модель автомобиля</TableHead>
+            <TableHead>Коробка передач</TableHead>
             <TableHead>Номер автомобиля</TableHead>
             <TableHead>Буквенное обозначение</TableHead>
             <TableHead>Ответственный</TableHead>
+            <TableHead></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {cars.map((car) => (
             <TableRow key={car.id}>
               <TableCell>{car.carModel}</TableCell>
+              <TableCell>{car.carTransmission === 'akp' ? 'АКПП' : 'МКПП'}</TableCell>
               <TableCell>{car.carNumber}</TableCell>
               <TableCell>{car.literalMarking}</TableCell>
               <TableCell>{getTeacherName(car.teacherId)}</TableCell>
+              <TableCell>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setSelectedCar(car);
+                    setIsDeleteDialogOpen(true);
+                  }}
+                >
+                  <OctagonX />
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <CarDeleteModalDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        car={selectedCar}
+        loading={loading}
+        onDelete={handleDelete}
+      />
     </>
   );
 }
