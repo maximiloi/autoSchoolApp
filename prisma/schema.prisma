@@ -29,7 +29,7 @@ model Company {
   legalAddress         String
   actualAddress        String?
   region               String
-  city                 String
+  city                 String    @default("") 
   bank                 String
   account              String    @db.Char(20) // 20 символов
   bik                  String    @db.Char(9) // 9 символов
