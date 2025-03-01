@@ -80,14 +80,12 @@ export default function StudentForm({ student }) {
     fetchActiveGroups();
   }, [session]);
 
-  // добавление номера студента
   useEffect(() => {
     if (!activeGroups) return;
 
     const selectedGroup = activeGroups.find((group) => group.id === valuesForm.group);
     if (selectedGroup) {
-      console.log('🚀 ~ useEffect ~ selectedGroup:', selectedGroup);
-      //   form.setValue('number', selectedGroup.students.length.toString());
+      form.setValue('studentNumber', (selectedGroup.students.length + 1).toString());
     }
   }, [valuesForm.group, activeGroups]);
 
@@ -160,7 +158,7 @@ export default function StudentForm({ student }) {
         </div>
 
         <div className="grid grid-cols-[1fr_5fr_5fr_5fr_5fr] gap-4">
-          <InputField name="number" label="Номер" control={form.control} />
+          <InputField name="studentNumber" label="Номер" control={form.control} />
           <InputField name="lastName" label="Фамилия" control={form.control} />
           <InputField name="firstName" label="Имя" control={form.control} />
           <InputField name="middleName" label="Отчество" control={form.control} />

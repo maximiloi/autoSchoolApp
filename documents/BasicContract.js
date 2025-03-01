@@ -11,7 +11,7 @@ export default function BasicContract(student, group, company) {
   return {
     content: [
       {
-        text: `ДОГОВОР № ${group?.groupNumber}${group?.category}-${student?.number}`,
+        text: `ДОГОВОР № ${group?.groupNumber}${group?.category}-${student?.studentNumber}`,
         style: 'header',
         alignment: 'center',
       },

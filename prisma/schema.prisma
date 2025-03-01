@@ -108,7 +108,7 @@ model Group {
 
 model Student {
   id                  String  @id @default(uuid())
-  studentNumber       String  @unique
+  studentNumber       String
   lastName            String
   firstName           String
   middleName          String?

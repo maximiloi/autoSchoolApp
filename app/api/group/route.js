@@ -5,7 +5,15 @@ const prisma = new PrismaClient();
 
 export async function GET(req) {
   try {
-    const groups = await prisma.group.findMany({});
+    const groups = await prisma.group.findMany({
+      include: {
+        students: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
 
     return NextResponse.json(groups, { status: 200 });
   } catch (error) {
