@@ -4,6 +4,8 @@ export const CompanyFormSchema = z.object({
   companyName: z.string().min(2, 'Введите название компании'),
   shortName: z.string().min(2, 'Введите краткое название'),
   license: z.string().min(2, 'Введите номер лицензии'),
+  whoIssuedLicense: z.string().min(2, 'Введите кем выдана лицензия').optional(),
+  whenIssuedLicense: z.date().optional(),
   inn: z
     .string()
     .length(10, 'ИНН должен содержать 10 цифр')
@@ -22,7 +24,7 @@ export const CompanyFormSchema = z.object({
     ])
     .optional(),
   legalAddress: z.string().min(5, 'Введите юридический адрес'),
-  actualAddress: z.string().min(5, 'Введите фактический адрес').optional().default(''),
+  actualAddress: z.string().min(5, 'Введите фактический адрес').optional(),
   region: z.string().min(2, 'Введите регион'),
   city: z.string().min(2, 'Введите город'),
   bank: z.string().min(2, 'Введите название банка'),
@@ -40,11 +42,11 @@ export const CompanyFormSchema = z.object({
     .regex(/^\d+$/, 'Корр. счет должен содержать только цифры'),
   directorSurname: z.string().min(2, 'Введите фамилию директора'),
   directorName: z.string().min(2, 'Введите имя директора'),
-  directorPatronymic: z.string().min(2, 'Введите отчество директора').optional().default(''),
-  accountantSurname: z.string().min(2, 'Введите фамилию бухгалтера').optional().default(''),
-  accountantName: z.string().min(2, 'Введите имя бухгалтера').optional().default(''),
-  accountantPatronymic: z.string().min(2, 'Введите отчество бухгалтера').optional().default(''),
-  phone: z.string().min(10, 'Введите телефон').optional().default(''),
+  directorPatronymic: z.string().min(2, 'Введите отчество директора').optional(),
+  accountantSurname: z.string().min(2, 'Введите фамилию бухгалтера').optional(),
+  accountantName: z.string().min(2, 'Введите имя бухгалтера').optional(),
+  accountantPatronymic: z.string().min(2, 'Введите отчество бухгалтера').optional(),
+  phone: z.string().min(10, 'Введите телефон').optional(),
   email: z.string().email('Введите корректный email'),
-  website: z.string().url('Введите корректный URL').optional().default(''),
+  website: z.string().url('Введите корректный URL').optional(),
 });

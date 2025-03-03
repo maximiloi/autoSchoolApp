@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { Button } from '@/components/ui/button';
-import { Form } from '@/components/ui/form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { toast } from '@/hooks/use-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
 import InputField from '@/components/ui/InputField';
+import DatePickerField from '@/components/ui/DatePickerField';
 import { CompanyFormSchema } from './company-formSchema';
 
 export default function CompanyForm() {
@@ -19,6 +20,8 @@ export default function CompanyForm() {
       companyName: '',
       shortName: '',
       license: '',
+      whoIssuedLicense: '',
+      whenIssuedLicense: undefined,
       inn: '',
       kpp: '',
       ogrn: '',
@@ -104,10 +107,15 @@ export default function CompanyForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <Section title="Основная информация">
+        <Section2 title="Основная информация">
           <InputField name="companyName" label="Название компании" control={form.control} />
           <InputField name="shortName" label="Краткое название" control={form.control} />
+        </Section2>
+
+        <Section title="Лицензия">
           <InputField name="license" label="Номер лицензии" control={form.control} />
+          <InputField name="whoIssuedLicense" label="Кем выдана" control={form.control} />
+          <DatePickerField name="whenIssuedLicense" label="Когда выдана" control={form.control} />
         </Section>
 
         <Section title="Юридические данные">
@@ -177,6 +185,17 @@ function Section1({ title, children }) {
         {title}
       </h3>
       <div className="grid gap-4">{children}</div>
+    </div>
+  );
+}
+
+function Section2({ title, children }) {
+  return (
+    <div>
+      <h3 className="mb-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+        {title}
+      </h3>
+      <div className="grid grid-cols-2 gap-4">{children}</div>
     </div>
   );
 }
