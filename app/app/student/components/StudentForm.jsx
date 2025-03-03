@@ -84,10 +84,10 @@ export default function StudentForm({ student }) {
     if (!activeGroups) return;
 
     const selectedGroup = activeGroups.find((group) => group.id === valuesForm.group);
-    if (selectedGroup) {
-      form.setValue('studentNumber', (selectedGroup.students.length + 1).toString());
+    if (selectedGroup && !student) {
+      form.setValue('studentNumber', String(selectedGroup.students.length + 1));
     }
-  }, [valuesForm.group, activeGroups]);
+  }, [valuesForm.group]);
 
   async function onSubmit(values) {
     if (status !== 'authenticated') return;
