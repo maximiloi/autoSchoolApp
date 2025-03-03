@@ -31,7 +31,7 @@ import BasicContractButton from './BasicContractButton';
 import PersonalizedBookAButton from './PersonalizedBookAButton';
 import PersonalizedBookBButton from './PersonalizedBookBButton';
 
-export default function StudentList({ group }) {
+export default function StudentList({ group, company }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -117,13 +117,17 @@ export default function StudentList({ group }) {
                         <ApplicationFormButton student={student} />
                       </DropdownMenuItem>
                       <DropdownMenuItem>
-                        <BasicContractButton student={student} group={group} />
+                        <BasicContractButton student={student} group={group} company={company} />
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
                       <DropdownMenuItem>
-                        <PersonalizedBookAButton student={student} group={group} />
+                        <PersonalizedBookAButton
+                          student={student}
+                          group={group}
+                          company={company}
+                        />
                       </DropdownMenuItem>
                       <DropdownMenuItem>
                         <PersonalizedBookBButton student={student} group={group} />

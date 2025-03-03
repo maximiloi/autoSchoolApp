@@ -21,6 +21,8 @@ export default function AppSidebar() {
   const session = useSession();
   const { toast } = useToast();
 
+  const user = useMemo(() => session.data?.user || null, [session]);
+
   const fetchCompanyData = useCallback(
     async (companyId) => {
       try {
@@ -36,16 +38,14 @@ export default function AppSidebar() {
         });
       }
     },
-    [session, toast],
+    [toast],
   );
 
   useEffect(() => {
-    if (session.status === 'authenticated' && session.data?.user?.companyId) {
+    if (session.status === 'authenticated' && session.data?.user?.companyId && !company) {
       fetchCompanyData(session.data.user.companyId);
     }
-  }, [session, fetchCompanyData]);
-
-  const user = useMemo(() => session.data?.user || null, [session]);
+  }, [session, fetchCompanyData, company]);
 
   return (
     <Sidebar collapsible="icon">
