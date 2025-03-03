@@ -25,8 +25,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import StudentDeleteModalDialog from './StudentDeleteModalDialog';
+
 import ApplicationFormButton from './ApplicationFormButton';
 import BasicContractButton from './BasicContractButton';
+import PersonalizedBookAButton from './PersonalizedBookAButton';
+import PersonalizedBookBButton from './PersonalizedBookBButton';
 
 export default function GroupTable({ group }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -118,6 +121,14 @@ export default function GroupTable({ group }) {
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem>
+                        <PersonalizedBookAButton student={student} group={group} />
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <PersonalizedBookBButton student={student} group={group} />
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
