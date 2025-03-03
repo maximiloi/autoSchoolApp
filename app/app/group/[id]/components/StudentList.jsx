@@ -31,7 +31,7 @@ import BasicContractButton from './BasicContractButton';
 import PersonalizedBookAButton from './PersonalizedBookAButton';
 import PersonalizedBookBButton from './PersonalizedBookBButton';
 
-export default function GroupTable({ group }) {
+export default function StudentList({ group }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -79,7 +79,7 @@ export default function GroupTable({ group }) {
             <TableHead className="w-[200px]">ФИО</TableHead>
             <TableHead className="w-[145px]">Дата рождения</TableHead>
             <TableHead className="w-[80px]">Документы</TableHead>
-            <TableHead className="w-[80px]">Вождение</TableHead>
+            {/* <TableHead className="w-[80px]">Вождение</TableHead> */}
             <TableHead className="text-right">Удалить</TableHead>
           </TableRow>
         </TableHeader>
@@ -132,11 +132,11 @@ export default function GroupTable({ group }) {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
-              <TableCell>
+              {/* <TableCell>
                 <Button variant="outline" size="icon">
                   <CarFront />
                 </Button>
-              </TableCell>
+              </TableCell> */}
               <TableCell className="text-right">
                 <Button
                   variant="outline"
