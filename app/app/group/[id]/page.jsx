@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import useCompanyStore from '@/store/useCompanyStore';
 import { Separator } from '@/components/ui/separator';
 
 import StudentList from './components/StudentList';
@@ -12,30 +12,22 @@ import FooterPage from './components/FooterPage';
 
 export default function GroupPage() {
   const { id } = useParams();
-  const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [company, setCompany] = useState(null);
   const [group, setGroupData] = useState(null);
-
-  const sessionUserCompanyId = useMemo(() => session?.user?.companyId, [session]);
+  const { company } = useCompanyStore();
 
   useEffect(() => {
-    if (!id || !sessionUserCompanyId || group) return;
+    if (!id || group) return;
 
     async function fetchDataGroup() {
       try {
         setLoading(true);
-        const [groupResponse, companyResponse] = await Promise.all([
-          fetch(`/api/group/${id}`),
-          fetch(`/api/company/${sessionUserCompanyId}`),
-        ]);
+        const groupResponse = await fetch(`/api/group/${id}`);
 
         if (!groupResponse.ok) throw new Error('Ошибка загрузки данных о группе');
-        if (!companyResponse.ok) throw new Error('Ошибка загрузки данных о компании');
 
         setGroupData(await groupResponse.json());
-        setCompany(await companyResponse.json());
       } catch (err) {
         setError(err.message);
       } finally {
@@ -44,7 +36,7 @@ export default function GroupPage() {
     }
 
     fetchDataGroup();
-  }, [id, sessionUserCompanyId]);
+  }, [id]);
 
   if (loading) return <p>Загрузка...</p>;
   if (error) return <p>Ошибка: {error}</p>;
