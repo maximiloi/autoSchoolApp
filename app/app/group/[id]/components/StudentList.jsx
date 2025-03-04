@@ -85,76 +85,79 @@ export default function StudentList({ group, company }) {
         </TableHeader>
 
         <TableBody>
-          {group.students.map((student, index) => (
-            <TableRow key={student.id}>
-              <TableCell>
-                <Button variant="ghost" size="icon">
-                  <Link href={`/app/student/${student.id}`}>
-                    <FileUser />
-                  </Link>
-                </Button>
-              </TableCell>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell className="font-medium">
-                {student.lastName} {student.firstName}{' '}
-                {student.middleName ? `${student.middleName.charAt(0)}.` : ''}
-              </TableCell>
-              <TableCell>
-                {format(new Date(student.birthDate), 'dd/MM/yyyy', { locale: ru })}
-              </TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon">
-                      <NotepadText />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56">
-                    <DropdownMenuLabel>Документы</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuGroup>
-                      <DropdownMenuItem>
-                        <ApplicationFormButton student={student} />
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <BasicContractButton student={student} group={group} company={company} />
-                      </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuGroup>
-                      <DropdownMenuItem>
-                        <PersonalizedBookAButton
-                          student={student}
-                          group={group}
-                          company={company}
-                        />
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <PersonalizedBookBButton student={student} group={group} />
-                      </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-              {/* <TableCell>
+          {group.students
+            .slice()
+            .sort((a, b) => a.studentNumber - b.studentNumber)
+            .map((student) => (
+              <TableRow key={student.id}>
+                <TableCell>
+                  <Button variant="ghost" size="icon">
+                    <Link href={`/app/student/${student.id}`}>
+                      <FileUser />
+                    </Link>
+                  </Button>
+                </TableCell>
+                <TableCell>{student.studentNumber}</TableCell>
+                <TableCell className="font-medium">
+                  {student.lastName} {student.firstName}{' '}
+                  {student.middleName ? `${student.middleName.charAt(0)}.` : ''}
+                </TableCell>
+                <TableCell>
+                  {format(new Date(student.birthDate), 'dd/MM/yyyy', { locale: ru })}
+                </TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <NotepadText />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56">
+                      <DropdownMenuLabel>Документы</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem>
+                          <ApplicationFormButton student={student} />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <BasicContractButton student={student} group={group} company={company} />
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem>
+                          <PersonalizedBookAButton
+                            student={student}
+                            group={group}
+                            company={company}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <PersonalizedBookBButton student={student} group={group} />
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+                {/* <TableCell>
                 <Button variant="outline" size="icon">
                   <CarFront />
                 </Button>
               </TableCell> */}
-              <TableCell className="text-right">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => {
-                    setSelectedStudent(student);
-                    setIsDialogOpen(true);
-                  }}
-                >
-                  <UserRoundMinus />
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
+                <TableCell className="text-right">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => {
+                      setSelectedStudent(student);
+                      setIsDialogOpen(true);
+                    }}
+                  >
+                    <UserRoundMinus />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
 
