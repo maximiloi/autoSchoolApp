@@ -27,7 +27,7 @@ model Company {
   whenIssuedLicense    DateTime?
   inn                  String    @unique @db.Char(10) // 10 символов
   kpp                  String    @db.Char(9) // 9 символов
-  ogrn                 String?   @db.Char(13) // 13 символов, опционально
+  ogrn                 String?
   legalAddress         String
   actualAddress        String?
   region               String
