@@ -107,7 +107,12 @@ export default function CarForm({ setCars }) {
                 <SelectItem value="akp">Автоматическая</SelectItem>
               </SelectContent>
             </Select>
-            <InputField name="carNumber" label="Номер автомобиля" control={form.control} />
+            <InputField
+              name="carNumber"
+              label="Номер автомобиля"
+              control={form.control}
+              mask="a 000 aa 00"
+            />
             <InputField name="literalMarking" label="Буква" control={form.control} />
             <Select onValueChange={(value) => form.setValue('teacherId', value)}>
               <SelectTrigger>
