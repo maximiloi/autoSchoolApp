@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
+import useGroupStore from '@/store/useGroupStore';
 import {
   Sidebar,
   SidebarContent,
@@ -19,16 +20,17 @@ import NavUser from './sidebar-nav-user';
 export default function AppSidebar() {
   const [company, setCompany] = useState(null);
   const session = useSession();
+  const { groups, setGroups } = useGroupStore();
   const { toast } = useToast();
 
   const user = useMemo(() => session.data?.user || null, [session]);
 
-  const fetchCompanyData = useCallback(
-    async (companyId) => {
+  useEffect(() => {
+    async function fetchCompanyData(companyId) {
       try {
-        const companyRes = await fetch(`/api/company/${companyId}`).then((res) => res.json());
-
-        setCompany(companyRes);
+        const res = await fetch(`/api/company/${companyId}`);
+        const data = await res.json();
+        setGroups(data.groups || []);
       } catch (error) {
         console.error('Ошибка загрузки данных:', error);
         toast({
@@ -37,15 +39,12 @@ export default function AppSidebar() {
           status: 'error',
         });
       }
-    },
-    [toast],
-  );
+    }
 
-  useEffect(() => {
-    if (session.status === 'authenticated' && session.data?.user?.companyId && !company) {
+    if (session.status === 'authenticated' && session.data?.user?.companyId) {
       fetchCompanyData(session.data.user.companyId);
     }
-  }, [session, fetchCompanyData, company]);
+  }, [session, setGroups]);
 
   return (
     <Sidebar collapsible="icon">
@@ -54,7 +53,7 @@ export default function AppSidebar() {
       </SidebarHeader>
       <SidebarSeparator className="my-4" />
       <SidebarContent>
-        <NavGroups groups={company?.groups || []} />
+        <NavGroups groups={groups} />
         <SidebarSeparator className="my-4 mt-auto" />
         <NavAction />
       </SidebarContent>

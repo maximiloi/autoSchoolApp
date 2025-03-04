@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { CalendarIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import useGroupStore from '@/store/useGroupStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { format } from 'date-fns';
@@ -55,6 +56,7 @@ const formSchema = z.object({
 export default function FormCreationTrainingGroup() {
   const [isLoading, setIsLoading] = useState(false);
   const [teachers, setTeachers] = useState([]);
+  const { addGroup } = useGroupStore();
   const { data: session, status } = useSession();
   const { toast } = useToast();
   const { reset, ...form } = useForm({
@@ -114,6 +116,8 @@ export default function FormCreationTrainingGroup() {
         });
 
         if (response.ok) {
+          const newGroup = await response.json();
+          addGroup(newGroup);
           toast({
             duration: 2000,
             description: 'Группа успешно добавлен в БД',
