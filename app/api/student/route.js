@@ -32,6 +32,7 @@ export async function POST(req) {
         medicalNumber: data.medicalNumber,
         medicalIssuer: data.medicalIssuer,
         medicalIssueDate: data.medicalIssueDate ? new Date(data.medicalIssueDate) : null,
+        licenseSeries: data.licenseSeries,
         license: data.license,
         region: data.region,
         medicalRestriction: data.medicalRestriction,
