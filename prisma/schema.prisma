@@ -131,6 +131,7 @@ model Student {
   medicalNumber       String?
   medicalIssueDate    DateTime?
   medicalIssuer       String?
+  licenseSeries       String?
   license             String?
   region              String?
   medicalRestriction  String?

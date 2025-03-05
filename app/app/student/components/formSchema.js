@@ -25,6 +25,7 @@ export const formSchema = z.object({
   medicalNumber: z.string().optional(),
   medicalIssueDate: z.date().optional(),
   medicalIssuer: z.string().optional(),
+  licenseSeries: z.string().optional(),
   license: z.string().optional(),
   region: z.string().optional(),
   medicalRestriction: z.string().optional(),

@@ -29,7 +29,7 @@ export default function StudentForm({ student }) {
       phone: '',
       group: '',
       trainingCost: '',
-      birthDate: learningStartDate(),
+      birthDate: undefined,
       middleName: '',
       gender: 'male',
       snils: '',
@@ -46,6 +46,7 @@ export default function StudentForm({ student }) {
       medicalNumber: '',
       medicalIssueDate: undefined,
       medicalIssuer: '',
+      licenseSeries: '',
       license: '',
       region: '',
       medicalRestriction: '',
@@ -214,7 +215,7 @@ export default function StudentForm({ student }) {
 
         <h3 className="text-sm font-semibold">Лицензия</h3>
         <div className="grid grid-cols-3 gap-4">
-          <InputField name="medicalSeries" label="Серия" control={form.control} />
+          <InputField name="licenseSeries" label="Серия" control={form.control} />
           <InputField name="license" label="Номер" control={form.control} />
           <InputField name="region" label="Регион" control={form.control} />
         </div>
