@@ -14,13 +14,15 @@ import DropdownField from '@/components/ui/DropdownField';
 import DatePickerField from '@/components/ui/DatePickerField';
 
 import { formSchema } from './formSchema';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export default function StudentForm({ student }) {
   const [isLoading, setIsLoading] = useState(false);
   const [activeGroups, setActiveGroups] = useState(null);
+  const [sameAddress, setSameAddress] = useState(false);
   const { data: session, status } = useSession();
   const { toast } = useToast();
-  const { watch, reset, ...form } = useForm({
+  const { watch, reset, setValue, getValues, ...form } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       studentNumber: '',
@@ -86,9 +88,15 @@ export default function StudentForm({ student }) {
 
     const selectedGroup = activeGroups.find((group) => group.id === valuesForm.group);
     if (selectedGroup && !student) {
-      form.setValue('studentNumber', String(selectedGroup.students.length + 1));
+      setValue('studentNumber', String(selectedGroup.students.length + 1));
     }
   }, [valuesForm.group]);
+
+  useEffect(() => {
+    if (sameAddress) {
+      setValue('actualAddress', getValues('registrationAddress'));
+    }
+  }, [valuesForm.registrationAddress, sameAddress, setValue, getValues]);
 
   async function onSubmit(values) {
     if (status !== 'authenticated') return;
@@ -178,6 +186,23 @@ export default function StudentForm({ student }) {
 
         <InputField name="birthPlace" label="Место рождения" control={form.control} />
         <InputField name="registrationAddress" label="Адрес регистрации" control={form.control} />
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="sameAddress"
+            checked={sameAddress}
+            onCheckedChange={(checked) => {
+              setSameAddress(checked);
+              if (checked) {
+                setValue('actualAddress', getValues('registrationAddress'));
+              } else {
+                setValue('actualAddress', '');
+              }
+            }}
+          />
+          <label htmlFor="sameAddress" className="text-sm">
+            Адрес фактического проживания совпадает с регистрацией
+          </label>
+        </div>
         <InputField name="actualAddress" label="Фактический адрес" control={form.control} />
 
         <h3 className="text-sm font-semibold">Документ удостоверяющий личность</h3>
