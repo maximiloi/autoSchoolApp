@@ -1,5 +1,5 @@
 export const DOCUMENT_MASKS = {
-  passport_RF: {
+  passport: {
     series: '00 00',
     number: '000000',
     code: '000-000',

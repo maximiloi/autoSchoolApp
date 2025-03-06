@@ -38,7 +38,7 @@ export default function StudentForm({ student }) {
       birthPlace: '',
       registrationAddress: '',
       actualAddress: '',
-      documentType: 'passport_RF',
+      documentType: 'passport',
       documentIssuer: '',
       documentCode: '',
       documentSeries: '',
@@ -220,7 +220,7 @@ export default function StudentForm({ student }) {
             name="documentType"
             label="Тип документа"
             control={form.control}
-            options={{ passport_RF: 'Паспорт РФ', passport_AZE: 'Паспорт Азербайджана' }}
+            options={{ passport: 'Паспорт РФ', passport_AZE: 'Паспорт Азербайджана' }}
           />
           <InputField
             name="documentSeries"

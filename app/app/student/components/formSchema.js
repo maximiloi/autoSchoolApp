@@ -15,7 +15,7 @@ export const formSchema = z.object({
   birthPlace: z.string().optional(),
   registrationAddress: z.string().optional(),
   actualAddress: z.string().optional(),
-  documentType: z.enum(['passport_RF', 'passport_AZE']).optional(),
+  documentType: z.enum(['passport', 'passport_AZE']).optional(),
   documentIssuer: z.string().optional(),
   documentCode: z.string().optional(),
   documentSeries: z.string().optional(),
