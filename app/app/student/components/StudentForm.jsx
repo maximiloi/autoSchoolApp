@@ -8,13 +8,13 @@ import { useToast } from '@/hooks/use-toast';
 import createObjectActiveGroup from '@/lib/createObjectActiveGroup';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
+import { Checkbox } from '@/components/ui/checkbox';
 import InputField from '@/components/ui/InputField';
 import DropdownField from '@/components/ui/DropdownField';
 import DatePickerField from '@/components/ui/DatePickerField';
 
 import { DOCUMENT_MASKS } from './documentMasks';
 import { formSchema } from './formSchema';
-import { Checkbox } from '@/components/ui/checkbox';
 
 export default function StudentForm({ student }) {
   const [isLoading, setIsLoading] = useState(false);
