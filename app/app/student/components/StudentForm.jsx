@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { useSession } from 'next-auth/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '@/hooks/use-toast';
-import learningStartDate from '@/lib/learningStartDate';
 import createObjectActiveGroup from '@/lib/createObjectActiveGroup';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
@@ -13,6 +12,7 @@ import InputField from '@/components/ui/InputField';
 import DropdownField from '@/components/ui/DropdownField';
 import DatePickerField from '@/components/ui/DatePickerField';
 
+import { DOCUMENT_MASKS } from './documentMasks';
 import { formSchema } from './formSchema';
 import { Checkbox } from '@/components/ui/checkbox';
 
@@ -33,12 +33,12 @@ export default function StudentForm({ student }) {
       trainingCost: '',
       birthDate: undefined,
       middleName: '',
-      gender: 'male',
+      gender: '',
       snils: '',
       birthPlace: '',
       registrationAddress: '',
       actualAddress: '',
-      documentType: 'passport',
+      documentType: 'passport_RF',
       documentIssuer: '',
       documentCode: '',
       documentSeries: '',
@@ -56,6 +56,7 @@ export default function StudentForm({ student }) {
     },
   });
   const valuesForm = watch();
+  const documentType = watch('documentType');
 
   useEffect(() => {
     if (status !== 'authenticated') return;
@@ -97,6 +98,14 @@ export default function StudentForm({ student }) {
       setValue('actualAddress', getValues('registrationAddress'));
     }
   }, [valuesForm.registrationAddress, sameAddress, setValue, getValues]);
+
+  useEffect(() => {
+    if (documentType && DOCUMENT_MASKS[documentType]) {
+      setValue('documentSeries', '');
+      setValue('documentNumber', '');
+      setValue('documentCode', '');
+    }
+  }, [documentType, setValue]);
 
   async function onSubmit(values) {
     if (status !== 'authenticated') return;
@@ -211,14 +220,29 @@ export default function StudentForm({ student }) {
             name="documentType"
             label="Тип документа"
             control={form.control}
-            options={{ passport: 'Паспорт', license: 'Водительское удостоверение' }}
+            options={{ passport_RF: 'Паспорт РФ', passport_AZE: 'Паспорт Азербайджана' }}
           />
-          <InputField name="documentSeries" label="Серия" control={form.control} mask="00 00" />
-          <InputField name="documentNumber" label="Номер" control={form.control} mask="000000" />
+          <InputField
+            name="documentSeries"
+            label={DOCUMENT_MASKS[documentType]?.labelSeries || ''}
+            control={form.control}
+            mask={DOCUMENT_MASKS[documentType]?.series || ''}
+          />
+          <InputField
+            name="documentNumber"
+            label={DOCUMENT_MASKS[documentType]?.labelNumber || ''}
+            control={form.control}
+            mask={DOCUMENT_MASKS[documentType]?.number || ''}
+          />
         </div>
         <div className="grid grid-cols-[4fr_1fr_1fr] gap-4">
           <InputField name="documentIssuer" label="Кем выдан" control={form.control} />
-          <InputField name="documentCode" label="Код" control={form.control} mask="000-000" />
+          <InputField
+            name="documentCode"
+            label={DOCUMENT_MASKS[documentType]?.labelCode || ''}
+            control={form.control}
+            mask={DOCUMENT_MASKS[documentType]?.code || ''}
+          />
           <DatePickerField
             name="documentIssueDate"
             label="Дата выдачи документа"
