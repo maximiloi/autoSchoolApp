@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { CalendarIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import useGroupStore from '@/store/useGroupStore';
+import { useGroupStore } from '@/store/useStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { format } from 'date-fns';

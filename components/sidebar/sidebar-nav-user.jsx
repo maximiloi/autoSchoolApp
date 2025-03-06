@@ -15,6 +15,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { resetAllStores } from '@/store/useStore';
 
 export default function NavUser({ user, companyName }) {
   const { isMobile } = useSidebar();
@@ -22,6 +23,7 @@ export default function NavUser({ user, companyName }) {
 
   const handleLogout = async () => {
     await signOut({ redirect: false });
+    resetAllStores();
     router.push('/');
   };
 

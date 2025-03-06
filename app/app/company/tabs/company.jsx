@@ -10,10 +10,12 @@ import { Form } from '@/components/ui/form';
 import InputField from '@/components/ui/InputField';
 import DatePickerField from '@/components/ui/DatePickerField';
 import { CompanyFormSchema } from './company-formSchema';
+import { useCompanyStore } from '@/store/useStore';
 
 export default function CompanyForm() {
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
+  const { setCompany } = useCompanyStore();
   const { reset, ...form } = useForm({
     resolver: zodResolver(CompanyFormSchema),
     defaultValues: {
@@ -88,6 +90,7 @@ export default function CompanyForm() {
             : 'Компания успешно добавлена',
         });
         const companyData = await response.json();
+        setCompany(companyData);
         reset(companyData);
       } else {
         toast({

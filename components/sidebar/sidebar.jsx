@@ -2,8 +2,7 @@
 
 import { useEffect, useMemo } from 'react';
 import { useSession } from 'next-auth/react';
-import useGroupStore from '@/store/useGroupStore';
-import useCompanyStore from '@/store/useCompanyStore';
+import { useCompanyStore, useGroupStore } from '@/store/useStore';
 import {
   Sidebar,
   SidebarContent,

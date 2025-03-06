@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import useCompanyStore from '@/store/useCompanyStore';
+import { useCompanyStore } from '@/store/useStore';
 import { Separator } from '@/components/ui/separator';
 
 import StudentList from './components/StudentList';
