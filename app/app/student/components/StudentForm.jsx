@@ -105,7 +105,7 @@ export default function StudentForm({ student }) {
       setValue('documentNumber', '');
       setValue('documentCode', '');
     }
-  }, [documentType]);
+  }, [documentType, setValue]);
 
   useEffect(() => {
     if (student) {
@@ -113,7 +113,7 @@ export default function StudentForm({ student }) {
 
       reset({ ...student, documentType: currentDocumentType });
     }
-  }, [student]);
+  }, [student, reset, getValues]);
 
   async function onSubmit(values) {
     if (status !== 'authenticated') return;
