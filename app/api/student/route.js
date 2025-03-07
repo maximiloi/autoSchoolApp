@@ -38,7 +38,6 @@ export async function POST(req) {
         medicalRestriction: data.medicalRestriction,
         allowedCategories: data.allowedCategories,
         companyId: data.companyId,
-        filledInData: data.filledInData,
       },
     });
 

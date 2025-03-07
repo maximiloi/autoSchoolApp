@@ -105,20 +105,24 @@ export default function StudentForm({ student }) {
       setValue('documentNumber', '');
       setValue('documentCode', '');
     }
-  }, [documentType, setValue]);
+  }, [documentType]);
+
+  useEffect(() => {
+    if (student) {
+      const currentDocumentType = getValues('documentType') || student.documentType;
+
+      reset({ ...student, documentType: currentDocumentType });
+    }
+  }, [student]);
 
   async function onSubmit(values) {
     if (status !== 'authenticated') return;
 
     setIsLoading(true);
     try {
-      const filledFieldsCount = Object.values(valuesForm).filter(Boolean).length;
-      const percentageFilled = Math.round((filledFieldsCount / Object.keys(values).length) * 100);
-
       const requestData = {
         ...values,
         companyId: session.user.companyId,
-        filledInData: percentageFilled,
         id: student?.id,
       };
 
@@ -287,7 +291,7 @@ export default function StudentForm({ student }) {
         </div>
         <div className="flex gap-4">
           {student ? (
-            <Button type="submit" variant="secondary" disabled={isLoading}>
+            <Button type="submit" disabled={isLoading}>
               {isLoading ? 'Обновление...' : 'Обновить данные ученика'}
             </Button>
           ) : (

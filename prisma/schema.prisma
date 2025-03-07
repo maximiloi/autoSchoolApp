@@ -139,8 +139,6 @@ model Student {
   trainingCost        Decimal
   snils               String?
 
-  filledInData       Int @default(0) 
-
   groupId             String
   group               Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
   companyId           String
