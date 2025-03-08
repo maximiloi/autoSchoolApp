@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { CarFront, FileUser, NotepadText, UserRoundMinus } from 'lucide-react';
+import { FileUser, NotepadText, UserRoundMinus } from 'lucide-react';
 import {
   Table,
   TableBody,

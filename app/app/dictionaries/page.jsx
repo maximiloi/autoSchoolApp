@@ -1,5 +1,9 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+
+import ScheduleTemplateButton from './components/ScheduleTemplateButton';
 
 export default function Dictionaries() {
   return (
@@ -12,6 +16,10 @@ export default function Dictionaries() {
         <Button>
           <Link href={'/app/company/'}>Местные РОВД</Link>
         </Button>
+      </div>
+      <h2 className="mt-6">Шаблоны</h2>
+      <div className="mt-6 flex gap-4">
+        <ScheduleTemplateButton />
       </div>
     </>
   );

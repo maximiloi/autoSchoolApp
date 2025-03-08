@@ -66,7 +66,7 @@ export default function GroupPage() {
       <Separator className="my-4" />
       <StudentList group={group} company={company} />
       <Separator className="my-4" />
-      <FooterPage />
+      <FooterPage group={group} company={company} />
     </>
   );
 }

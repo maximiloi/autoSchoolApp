@@ -21,7 +21,7 @@ const data = {
       icon: BookPlus,
     },
     {
-      title: 'Справочники',
+      title: 'Справочники и шаблоны',
       url: '/app/dictionaries/',
       icon: BookCopy,
     },
