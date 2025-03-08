@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import usePdfMake from '@/hooks/use-pdfmake';
-import generateApplicationForm from '@/documents/ApplicationForm';
+import generateApplicationForm from '@/templates/ApplicationForm';
 
 export default function ApplicationFormButton({ student }) {
   const pdfMake = usePdfMake();

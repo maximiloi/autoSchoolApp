@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import usePdfMake from '@/hooks/use-pdfmake';
 
-import BasicContract from '@/documents/BasicContract';
+import BasicContract from '@/templates/BasicContract';
 
 export default function BasicContractButton({ student, group, company }) {
   const pdfMake = usePdfMake();
