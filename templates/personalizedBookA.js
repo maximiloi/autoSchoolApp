@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-export default function PersonalizedBookA(student, group, company, car) {
+export default function personalizedBookA(student, group, company, car) {
   if (!student || !group || !company) {
     console.error('Ошибка: данные отсутствуют');
     return null;

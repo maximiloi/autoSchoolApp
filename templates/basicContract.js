@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { inclineFirstname, inclineLastname, inclineMiddlename } from 'lvovich';
 
-export default function BasicContract(student, group, company) {
+export default function basicContract(student, group, company) {
   if (!student || !group || !company) {
     console.error('Ошибка: не все данные');
     return null;

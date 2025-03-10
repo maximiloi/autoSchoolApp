@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-export default function ScheduleTemplate(group = { theoryTeachers: [{}] }, company = {}) {
+export default function scheduleTemplate(group = { theoryTeachers: [{}] }, company = {}) {
   const { directorSurname = '-', directorName = '-', directorPatronymic = '-' } = company;
   const {
     groupNumber,

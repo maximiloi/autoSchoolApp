@@ -3,7 +3,7 @@ import usePdfMake from '@/hooks/use-pdfmake';
 import { Button } from '@/components/ui/button';
 import { CalendarCheck } from 'lucide-react';
 
-import generateScheduleTemplate from '@/templates/ScheduleTemplate';
+import scheduleTemplate from '@/templates/scheduleTemplate';
 
 export default function ScheduleTemplateButton({ group, company }) {
   const pdfMake = usePdfMake();
@@ -14,7 +14,7 @@ export default function ScheduleTemplateButton({ group, company }) {
       return;
     }
 
-    const docDefinition = generateScheduleTemplate(group, company);
+    const docDefinition = scheduleTemplate(group, company);
     if (!docDefinition) return;
 
     pdfMake.createPdf(docDefinition).open();

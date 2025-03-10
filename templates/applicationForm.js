@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-export default function ApplicationForm(student) {
+export default function applicationForm(student) {
   if (!student || !student.lastName || !student.firstName || !student.birthDate) {
     console.error('Ошибка: данные о студенте отсутствуют');
     return null;

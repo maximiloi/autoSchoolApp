@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import usePdfMake from '@/hooks/use-pdfmake';
-import PersonalizedBookB from '@/templates/PersonalizedBookB';
+import personalizedBookB from '@/templates/personalizedBookB';
 
 export default function PersonalizedBookBButton({ student }) {
   const pdfMake = usePdfMake();
@@ -11,7 +11,7 @@ export default function PersonalizedBookBButton({ student }) {
       return;
     }
 
-    const docDefinition = PersonalizedBookB(student);
+    const docDefinition = personalizedBookB(student);
     if (!docDefinition) return;
 
     pdfMake.createPdf(docDefinition).open();

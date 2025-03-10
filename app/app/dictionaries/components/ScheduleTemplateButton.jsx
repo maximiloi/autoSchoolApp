@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import usePdfMake from '@/hooks/use-pdfmake';
 import { Button } from '@/components/ui/button';
 
-import generateScheduleTemplate from '@/templates/ScheduleTemplate';
+import scheduleTemplate from '@/templates/scheduleTemplate';
 
 export default function ScheduleTemplateButton() {
   const pdfMake = usePdfMake();
@@ -13,7 +13,7 @@ export default function ScheduleTemplateButton() {
       return;
     }
 
-    const docDefinition = generateScheduleTemplate();
+    const docDefinition = scheduleTemplate();
     if (!docDefinition) return;
 
     pdfMake.createPdf(docDefinition).open();
