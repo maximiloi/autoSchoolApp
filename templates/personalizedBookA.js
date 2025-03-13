@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-export default function personalizedBookA(student, group, company, car) {
+export default function personalizedBookA(student, group, company) {
   if (!student || !group || !company) {
     console.error('Ошибка: данные отсутствуют');
     return null;
@@ -13,6 +13,42 @@ export default function personalizedBookA(student, group, company, car) {
       return 'Преподаватель не найден';
     }
     return `${teacher.lastName} ${teacher.firstName} ${teacher.middleName || ''}`.trim();
+  }
+
+  function getCarTransmission(teacherId) {
+    const teacher = group.practiceTeachers.find((t) => t.id === teacherId);
+    if (!teacher) {
+      return 'Преподаватель не найден';
+    }
+    const car = teacher.cars && teacher.cars[0];
+    if (!car) {
+      return 'Автомобиль не найден';
+    }
+    return car.carTransmission;
+  }
+
+  function getCarModel(teacherId) {
+    const teacher = group.practiceTeachers.find((t) => t.id === teacherId);
+    if (!teacher) {
+      return 'Преподаватель не найден';
+    }
+    const car = teacher.cars && teacher.cars[0];
+    if (!car) {
+      return 'Автомобиль не найден';
+    }
+    return car.carModel;
+  }
+
+  function getCarNumber(teacherId) {
+    const teacher = group.practiceTeachers.find((t) => t.id === teacherId);
+    if (!teacher) {
+      return 'Преподаватель не найден';
+    }
+    const car = teacher.cars && teacher.cars[0];
+    if (!car) {
+      return 'Автомобиль не найден';
+    }
+    return car.carNumber;
   }
 
   return {
@@ -161,7 +197,7 @@ export default function personalizedBookA(student, group, company, car) {
                     [
                       '',
                       {
-                        text: `Обучение вождению транспортного средства категории "В" c ${car?.carTransmission === 'mkp' ? 'механической' : 'автоматической'} трансмиссией проведено в количестве ______ часов`,
+                        text: `Обучение вождению транспортного средства категории "В" c ${getCarTransmission(group.practiceTeachers[0].id) === 'mkp' ? 'механической' : 'автоматической'} трансмиссией проведено в количестве ______ часов`,
                         alignment: 'justify',
                       },
                       '',
@@ -198,7 +234,7 @@ export default function personalizedBookA(student, group, company, car) {
               { text: 'учёта обучения вождению' },
               { text: 'транспортного средства категории "В"' },
               {
-                text: `с ${car?.carTransmission === 'mkp' ? 'механической' : 'автоматической'} трансмиссией`,
+                text: `с ${getCarTransmission(group.practiceTeachers[0].id) === 'mkp' ? 'механической' : 'автоматической'} трансмиссией`,
               },
               {
                 text: `${student.lastName} ${student.firstName} ${student.middleName}`,
@@ -221,7 +257,7 @@ export default function personalizedBookA(student, group, company, car) {
                 margin: [0, 5, 0, 5],
               },
               {
-                text: `Учебное ТС: марка RENO LOGAN, гос. рег. знак С 231 ВЕ 53`,
+                text: `Учебное ТС: марка ${getCarModel(group.practiceTeachers[0].id)}, гос. рег. знак ${getCarNumber(group.practiceTeachers[0].id)}`,
                 margin: [0, 0, 0, 20],
               },
 

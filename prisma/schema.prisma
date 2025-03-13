@@ -71,10 +71,12 @@ model Teacher {
   createdBy        String
   company          Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-  theoryGroups   Group[] @relation(name: "TheoryTeachers")
-  practiceGroups Group[] @relation(name: "PracticeTeachers")
+  theoryGroups     Group[] @relation(name: "TheoryTeachers")
+  practiceGroups   Group[] @relation(name: "PracticeTeachers")
 
-  cars            Car[]
+  cars             Car[]
+
+  createdAt        DateTime @default(now())
 }
 
 model Car {

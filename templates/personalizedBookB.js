@@ -1,14 +1,26 @@
-export default function personalizedBookB(student, car) {
-  if (!student || !student.lastName || !student.firstName || !student.birthDate) {
-    console.error('Ошибка: данные о студенте отсутствуют');
+export default function personalizedBookB(group) {
+  if (!group) {
+    console.error('Ошибка: данные о группе отсутствуют');
     return null;
+  }
+
+  function getCarTransmission(teacherId) {
+    const teacher = group.practiceTeachers.find((t) => t.id === teacherId);
+    if (!teacher) {
+      return 'Преподаватель не найден';
+    }
+    const car = teacher.cars && teacher.cars[0];
+    if (!car) {
+      return 'Автомобиль не найден';
+    }
+    return car.carTransmission;
   }
 
   return {
     content: [
       { text: 'Учет обучения вождению транспортного средства категории "В"', style: 'header' },
       {
-        text: `c ${car?.carTransmission === 'mkp' ? 'механической' : 'автоматической'} трансмиссией`,
+        text: `c ${getCarTransmission(group.practiceTeachers[0].id) === 'mkp' ? 'механической' : 'автоматической'} трансмиссией`,
         style: 'header',
         margin: [0, 0, 0, 3],
       },

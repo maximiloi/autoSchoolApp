@@ -16,10 +16,13 @@ export async function GET(req, { params }) {
         id,
       },
       include: {
-        // company: true,
         students: true,
         theoryTeachers: true,
-        practiceTeachers: true,
+        practiceTeachers: {
+          include: {
+            cars: true,
+          },
+        },
       },
     });
 

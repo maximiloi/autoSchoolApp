@@ -133,7 +133,7 @@ export default function StudentList({ group, company }) {
                           />
                         </DropdownMenuItem>
                         <DropdownMenuItem>
-                          <PersonalizedBookBButton student={student} group={group} />
+                          <PersonalizedBookBButton group={group} />
                         </DropdownMenuItem>
                       </DropdownMenuGroup>
                     </DropdownMenuContent>

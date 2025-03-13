@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import usePdfMake from '@/hooks/use-pdfmake';
 import personalizedBookB from '@/templates/personalizedBookB';
 
-export default function PersonalizedBookBButton({ student }) {
+export default function PersonalizedBookBButton({ group }) {
   const pdfMake = usePdfMake();
 
   const generatePDF = useCallback(() => {
@@ -11,14 +11,14 @@ export default function PersonalizedBookBButton({ student }) {
       return;
     }
 
-    const docDefinition = personalizedBookB(student);
+    const docDefinition = personalizedBookB(group);
     if (!docDefinition) return;
 
     pdfMake.createPdf(docDefinition).open();
-  }, [pdfMake, student]);
+  }, [pdfMake, group]);
 
   return (
-    <button onClick={generatePDF} disabled={!pdfMake || !student} className="text-left">
+    <button onClick={generatePDF} disabled={!pdfMake || !group} className="text-left">
       Индивидуальная книжка вторая страница
     </button>
   );
