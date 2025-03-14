@@ -21,7 +21,8 @@ export default function StudentForm({ student }) {
   const { toast } = useToast();
   const { data: session, status } = useSession();
 
-  const { reset, form, watch, setValue, sameAddress, setSameAddress } = useStudentForm(student);
+  const { reset, form, watch, setValue, getValues, sameAddress, setSameAddress } =
+    useStudentForm(student);
   const { activeGroups, loading, error } = useActiveGroups(student, reset, setValue, watch);
 
   async function onSubmit(values) {
@@ -76,7 +77,13 @@ export default function StudentForm({ student }) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto w-full space-y-4">
         <GroupSelection activeGroups={activeGroups} loading={loading} error={error} />
         <PersonalInfo form={form} />
-        <AddressInfo form={form} setSameAddress={setSameAddress} sameAddress={sameAddress} />
+        <AddressInfo
+          form={form}
+          setSameAddress={setSameAddress}
+          sameAddress={sameAddress}
+          setValue={setValue}
+          getValues={getValues}
+        />
         <DocumentInfo form={form} documentType={watch('documentType')} />
         <MedicalInfo form={form} />
         <AdditionalInfo form={form} />

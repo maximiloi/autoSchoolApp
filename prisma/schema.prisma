@@ -117,13 +117,20 @@ model Student {
   lastName            String
   firstName           String
   middleName          String?
-  gender              String?  // 'male' или 'female'
+  gender              String?
   phone               String
   birthDate           DateTime
   birthPlace          String?
+  country             String?
+  addressRegion       String?
+  city                String?
+  street              String?
+  house               String?
+  building            String?
+  apartment           String?
   registrationAddress String?
   actualAddress       String?
-  documentType        String?  // 'passport' или 'license'
+  documentType        String?
   documentIssuer      String?
   documentCode        String?
   documentSeries      String?
