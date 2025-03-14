@@ -175,7 +175,7 @@ export default function informationForTrafficPoliceTemplate(group, company) {
               { text: student.apartment },
               { text: `${student.medicalSeries} ${student.medicalNumber}` },
               {
-                text: student.documentIssueDate
+                text: student.medicalIssueDate
                   ? format(new Date(student.medicalIssueDate), 'dd/MM/yyyy', { locale: ru })
                   : '',
                 alignment: 'center',
