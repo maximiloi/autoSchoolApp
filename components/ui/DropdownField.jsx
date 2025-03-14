@@ -5,7 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { FormItem, FormControl, FormMessage, FormField } from '@/components/ui/form';
+import { FormItem, FormControl, FormMessage, FormField, FormLabel } from '@/components/ui/form';
 
 export default function DropdownField({ name, label, control, options = {} }) {
   return (
@@ -14,6 +14,7 @@ export default function DropdownField({ name, label, control, options = {} }) {
       control={control}
       render={({ field }) => (
         <FormItem>
+          <FormLabel>{label}</FormLabel>
           <Select onValueChange={field.onChange} value={field.value || ''}>
             <FormControl>
               <SelectTrigger>

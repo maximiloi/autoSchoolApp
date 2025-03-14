@@ -1,5 +1,5 @@
 import { IMaskInput } from 'react-imask';
-import { FormControl, FormField, FormItem, FormMessage } from './form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from './form';
 import { Input } from './input';
 
 export default function InputField({ name, label, control, mask }) {
@@ -9,6 +9,7 @@ export default function InputField({ name, label, control, mask }) {
       control={control}
       render={({ field }) => (
         <FormItem>
+          <FormLabel>{label}</FormLabel>
           <FormControl>
             {mask ? (
               <IMaskInput

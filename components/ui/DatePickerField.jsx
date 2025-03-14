@@ -1,7 +1,7 @@
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { FormField, FormItem, FormControl, FormMessage } from '@/components/ui/form';
+import { FormField, FormItem, FormControl, FormMessage, FormLabel } from '@/components/ui/form';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { CalendarCustom } from '@/components/ui/calendarCustom';
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,8 @@ export default function DatePickerField({ name, label, control }) {
       name={name}
       control={control}
       render={({ field }) => (
-        <FormItem className="flex flex-col">
+        <FormItem>
+          <FormLabel>{label}</FormLabel>
           <Popover>
             <PopoverTrigger asChild>
               <FormControl>
