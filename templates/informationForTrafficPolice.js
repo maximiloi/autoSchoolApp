@@ -106,6 +106,11 @@ export default function informationForTrafficPoliceTemplate(group, company) {
           ],
         },
       },
+      {
+        text: `"_____" _________________ ${new Date().getFullYear()} г.                 Генеральный директор: ________________________________________________ /${company.directorSurname} ${company.directorName[0]}. ${company.directorPatronymic ? company.directorPatronymic[0] + '.' : ''}/`,
+        margin: [0, 20, 0, 0],
+        alignment: 'center',
+      },
       { text: '', pageBreak: 'before' },
       {
         style: 'tableExample',
@@ -189,6 +194,11 @@ export default function informationForTrafficPoliceTemplate(group, company) {
             ]),
           ],
         },
+      },
+      {
+        text: `"_____" _________________ ${new Date().getFullYear()} г.                 Генеральный директор: ________________________________________________ /${company.directorSurname} ${company.directorName[0]}. ${company.directorPatronymic ? company.directorPatronymic[0] + '.' : ''}/`,
+        margin: [0, 20, 0, 0],
+        alignment: 'center',
       },
     ],
     styles: {
