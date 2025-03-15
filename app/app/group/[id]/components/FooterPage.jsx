@@ -2,6 +2,7 @@ import { Separator } from '@/components/ui/separator';
 
 import InformationForTrafficPoliceButton from './InformationForTrafficPoliceButton';
 import ScheduleTemplateButton from './ScheduleTemplateButton';
+import JourneyTemplateButton from './JourneyTemplateButton';
 
 export default function FooterPage({ group, company }) {
   return (
@@ -9,6 +10,8 @@ export default function FooterPage({ group, company }) {
       <InformationForTrafficPoliceButton group={group} company={company} />
       <Separator orientation="vertical" />
       <ScheduleTemplateButton group={group} company={company} />
+      <Separator orientation="vertical" />
+      <JourneyTemplateButton group={group} company={company} />
     </div>
   );
 }
