@@ -35,6 +35,8 @@ export const formSchema = z.object({
   licenseSeries: z.string().optional(),
   license: z.string().optional(),
   region: z.string().optional(),
+  education: z.string().optional(),
+  placeOfWork: z.string().optional(),
   medicalRestriction: z.string().optional(),
   allowedCategories: z.string().optional(),
 });

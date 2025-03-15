@@ -42,6 +42,8 @@ export async function POST(req) {
         licenseSeries: data.licenseSeries,
         license: data.license,
         region: data.region,
+        education: data.education,
+        placeOfWork: data.placeOfWork,
         medicalRestriction: data.medicalRestriction,
         allowedCategories: data.allowedCategories,
         companyId: data.companyId,

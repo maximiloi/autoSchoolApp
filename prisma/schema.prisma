@@ -143,6 +143,8 @@ model Student {
   licenseSeries       String?
   license             String?
   region              String?
+  education           String?
+  placeOfWork         String?
   medicalRestriction  String?
   allowedCategories   String?
   trainingCost        Decimal
