@@ -34,13 +34,13 @@ export default function driverCardTemplate(student, company) {
       {
         columns: [
           {
-            width: '49%',
+            width: '48%',
             stack: [
               {
                 text: 'В О Д И Т Е Л Ь С К А Я    К А Р Т О Ч К А',
                 style: 'pageHeader',
                 alignment: 'center',
-                margin: [0, 0, 0, 10],
+                margin: [0, 0, 0, 5],
               },
               {
                 columns: [
@@ -120,7 +120,7 @@ export default function driverCardTemplate(student, company) {
                 fontSize: 12,
                 bold: true,
                 alignment: 'center',
-                margin: [0, 25, 0, 5],
+                margin: [0, 15, 0, 5],
               },
               {
                 text: [
@@ -180,7 +180,7 @@ export default function driverCardTemplate(student, company) {
             ],
           },
           {
-            width: '51%',
+            width: '52%',
             text: '',
           },
         ],
