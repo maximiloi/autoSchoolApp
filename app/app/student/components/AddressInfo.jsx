@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
+import { Card, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import InputField from '@/components/ui/InputField';
 
@@ -43,10 +44,8 @@ export default function AddressInfo({ control, setSameAddress, sameAddress, setV
   );
 
   return (
-    <>
-      <h4 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-        Адрес регистрации
-      </h4>
+    <Card className="mb-4 grid gap-4 p-4">
+      <CardTitle>Адрес регистрации</CardTitle>
       <div className="grid grid-cols-3 gap-4">
         <InputField name="country" label="Страна" control={control} />
         <InputField name="addressRegion" label="Область / Регион / Район" control={control} />
@@ -77,6 +76,6 @@ export default function AddressInfo({ control, setSameAddress, sameAddress, setV
         </label>
       </div>
       <InputField name="actualAddress" label="Фактический адрес" control={control} />
-    </>
+    </Card>
   );
 }

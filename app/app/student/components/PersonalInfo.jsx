@@ -1,10 +1,12 @@
+import { Card, CardTitle } from '@/components/ui/card';
 import InputField from '@/components/ui/InputField';
 import DropdownField from '@/components/ui/DropdownField';
 import DatePickerField from '@/components/ui/DatePickerField';
 
 export default function PersonalInfo({ control }) {
   return (
-    <>
+    <Card className="mb-4 grid gap-4 p-4">
+      <CardTitle>Личная информация</CardTitle>
       <div className="grid grid-cols-[1fr_5fr_5fr_5fr_5fr] gap-4">
         <InputField name="studentNumber" label="Номер" control={control} />
         <InputField name="lastName" label="Фамилия" control={control} />
@@ -23,6 +25,6 @@ export default function PersonalInfo({ control }) {
         <InputField name="birthPlace" label="Место рождения" control={control} />
         <InputField name="snils" label="СНИЛС" control={control} mask="000-000-000 00" />
       </div>
-    </>
+    </Card>
   );
 }

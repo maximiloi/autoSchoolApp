@@ -52,8 +52,6 @@ export default function StudentForm({ student }) {
           duration: 2000,
           description: student?.id ? 'Данные ученика обновлены' : 'Ученик успешно добавлен',
         });
-
-        reset(student ? updatedStudent : '');
       } else {
         toast({
           duration: 2000,

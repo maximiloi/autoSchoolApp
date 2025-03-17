@@ -23,8 +23,6 @@ export function useActiveGroups(student, reset, setValue, watch) {
       const data = await response.json();
       const activeGroups = data.filter((group) => group.isActive);
       setActiveGroups(activeGroups);
-
-      if (student) reset(student);
     } catch (error) {
       setError(error.message);
       toast({
@@ -35,7 +33,7 @@ export function useActiveGroups(student, reset, setValue, watch) {
     } finally {
       setLoading(false);
     }
-  }, [status, student, reset, toast]);
+  }, [status, student, toast]);
 
   useEffect(() => {
     fetchActiveGroups();

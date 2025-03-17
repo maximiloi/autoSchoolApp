@@ -1,3 +1,4 @@
+import { Card, CardTitle } from '@/components/ui/card';
 import InputField from '@/components/ui/InputField';
 import DropdownField from '@/components/ui/DropdownField';
 import DatePickerField from '@/components/ui/DatePickerField';
@@ -5,8 +6,8 @@ import { DOCUMENT_MASKS } from './documentMasks';
 
 export default function DocumentInfo({ control, documentType }) {
   return (
-    <>
-      <h3 className="text-sm font-semibold">Документ удостоверяющий личность</h3>
+    <Card className="mb-4 grid gap-4 p-4">
+      <CardTitle>Документ удостоверяющий личность</CardTitle>
       <div className="grid grid-cols-3 gap-4">
         <DropdownField
           name="documentType"
@@ -37,6 +38,6 @@ export default function DocumentInfo({ control, documentType }) {
         />
         <DatePickerField name="documentIssueDate" label="Дата выдачи документа" control={control} />
       </div>
-    </>
+    </Card>
   );
 }
