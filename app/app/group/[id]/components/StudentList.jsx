@@ -30,6 +30,7 @@ import ApplicationFormButton from './ApplicationFormButton';
 import BasicContractButton from './BasicContractButton';
 import PersonalizedBookAButton from './PersonalizedBookAButton';
 import PersonalizedBookBButton from './PersonalizedBookBButton';
+import DriverCardButton from './DriverCardButton';
 
 export default function StudentList({ group, company }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -134,6 +135,9 @@ export default function StudentList({ group, company }) {
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <PersonalizedBookBButton group={group} />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <DriverCardButton student={student} company={company} />
                         </DropdownMenuItem>
                       </DropdownMenuGroup>
                     </DropdownMenuContent>
