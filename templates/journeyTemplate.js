@@ -2,7 +2,6 @@ import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
 import { SCHEDULE } from '@/lib/schedule';
-console.log('🚀 ~ SCHEDULE:', SCHEDULE);
 
 export default function journeyTemplate(group = {}, company = {}) {
   const { companyName } = company;
