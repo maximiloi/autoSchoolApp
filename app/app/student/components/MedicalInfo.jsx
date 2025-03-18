@@ -7,8 +7,8 @@ export default function MedicalInfo({ control }) {
     <Card className="mb-4 grid gap-4 p-4">
       <CardTitle>Информация о медицинской справки</CardTitle>
       <div className="grid grid-cols-3 gap-4">
-        <InputField name="medicalSeries" label="Серия" control={control} />
-        <InputField name="medicalNumber" label="Номер" control={control} />
+        <InputField name="medicalSeries" label="Серия справки" control={control} />
+        <InputField name="medicalNumber" label="Номер справки" control={control} />
         <DatePickerField name="medicalIssueDate" label="Дата выдачи справки" control={control} />
       </div>
       <InputField name="medicalIssuer" label="Кем выдана" control={control} />
