@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { IMaskInput } from 'react-imask';
 import {
   Dialog,
   DialogContent,
@@ -8,7 +9,6 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 
 export default function StudentPaymentModalDialog({ isOpen, onClose, student, loading }) {
@@ -22,7 +22,10 @@ export default function StudentPaymentModalDialog({ isOpen, onClose, student, lo
 
   const handleAddPayment = async () => {
     if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
-      ('Введите корректную сумму');
+      toast({
+        variant: 'destructive',
+        description: 'Введите корректную сумму',
+      });
       return;
     }
 
@@ -79,11 +82,18 @@ export default function StudentPaymentModalDialog({ isOpen, onClose, student, lo
           {debt.toLocaleString('ru-RU') + ' р.'}
         </p>
 
-        <Input
-          type="number"
+        <IMaskInput
+          mask={Number}
+          min={0}
+          max={debt} // Максимальное значение - сумма долга
+          radix="."
+          thousandsSeparator=" "
+          inputMode="numeric"
+          className="w-full rounded border px-3 py-2"
           placeholder="Введите сумму"
+          unmask={true}
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onAccept={(value) => setAmount(value)}
         />
 
         <DialogFooter>
