@@ -11,6 +11,7 @@ import InputField from '@/components/ui/InputField';
 import DatePickerField from '@/components/ui/DatePickerField';
 import { CompanyFormSchema } from './company-formSchema';
 import { useCompanyStore } from '@/store/useStore';
+import { Card, CardTitle } from '@/components/ui/card';
 
 export default function CompanyForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -172,33 +173,27 @@ export default function CompanyForm() {
 
 function Section({ title, children }) {
   return (
-    <div>
-      <h3 className="mb-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-        {title}
-      </h3>
+    <Card className="p-4">
+      <CardTitle>{title}</CardTitle>
       <div className="grid grid-cols-3 gap-4">{children}</div>
-    </div>
+    </Card>
   );
 }
 
 function Section1({ title, children }) {
   return (
-    <div>
-      <h3 className="mb-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-        {title}
-      </h3>
+    <Card className="p-4">
+      <CardTitle>{title}</CardTitle>
       <div className="grid gap-4">{children}</div>
-    </div>
+    </Card>
   );
 }
 
 function Section2({ title, children }) {
   return (
-    <div>
-      <h3 className="mb-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-        {title}
-      </h3>
+    <Card className="p-4">
+      <CardTitle>{title}</CardTitle>
       <div className="grid grid-cols-2 gap-4">{children}</div>
-    </div>
+    </Card>
   );
 }
