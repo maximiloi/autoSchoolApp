@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { useCompanyStore } from '@/store/useStore';
 import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/hooks/use-toast';
+
+import { useCompanyStore, useGroupStore } from '@/store/useStore';
 
 import StudentList from './components/StudentList';
 import FooterPage from './components/FooterPage';
@@ -14,21 +16,21 @@ export default function GroupPage() {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [group, setGroupData] = useState(null);
+  const { toast } = useToast();
   const { company } = useCompanyStore();
+  const { group, setGroup } = useGroupStore();
 
   useEffect(() => {
-    if (!id || group) return;
-
     async function fetchDataGroup() {
       try {
         setLoading(true);
-        const groupResponse = await fetch(`/api/group/${id}`);
+        const response = await fetch(`/api/group/${id}`);
+        if (!response.ok) throw new Error('Ошибка загрузки данных о группе');
 
-        if (!groupResponse.ok) throw new Error('Ошибка загрузки данных о группе');
-
-        setGroupData(await groupResponse.json());
+        const data = await response.json();
+        setGroup(data);
       } catch (err) {
+        toast({ variant: 'destructive', description: `${error.message}` });
         setError(err.message);
       } finally {
         setLoading(false);
@@ -38,6 +40,7 @@ export default function GroupPage() {
     fetchDataGroup();
   }, [id]);
 
+  if (!group) return <p>Данные загружаются...</p>;
   if (loading) return <p>Загрузка...</p>;
   if (error) return <p>Ошибка: {error}</p>;
 

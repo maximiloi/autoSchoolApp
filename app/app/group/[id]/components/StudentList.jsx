@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { FileUser, NotepadText, UserRoundMinus } from 'lucide-react';
+import { FileUser, NotepadText, RussianRuble, UserRoundMinus } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -23,8 +23,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
 
 import StudentDeleteModalDialog from './StudentDeleteModalDialog';
+import StudentPaymentModalDialog from './StudentPaymentModalDialog';
 
 import ApplicationFormButton from './ApplicationFormButton';
 import BasicContractButton from './BasicContractButton';
@@ -33,9 +35,11 @@ import PersonalizedBookBButton from './PersonalizedBookBButton';
 import DriverCardButton from './DriverCardButton';
 
 export default function StudentList({ group, company }) {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [loading, setLoading] = useState(false);
+  const toast = useToast();
 
   const handleDelete = async () => {
     if (!selectedStudent) return;
@@ -47,12 +51,14 @@ export default function StudentList({ group, company }) {
       });
 
       if (!res.ok) {
+        toast({ variant: 'destructive', description: 'Ошибка при удалении' });
         throw new Error('Ошибка при удалении');
       }
 
       group.students = group.students.filter((s) => s.id !== selectedStudent.id);
       setIsDialogOpen(false);
     } catch (error) {
+      toast({ variant: 'destructive', description: `Ошибка удаления: ${error.message}` });
       console.error('Ошибка удаления:', error.message);
     } finally {
       setLoading(false);
@@ -79,8 +85,8 @@ export default function StudentList({ group, company }) {
             <TableHead className="w-[20px]">#</TableHead>
             <TableHead className="w-[200px]">ФИО</TableHead>
             <TableHead className="w-[145px]">Дата рождения</TableHead>
+            <TableHead className="w-[80px]">Оплата</TableHead>
             <TableHead className="w-[80px]">Документы</TableHead>
-            {/* <TableHead className="w-[80px]">Вождение</TableHead> */}
             <TableHead className="text-right">Удалить</TableHead>
           </TableRow>
         </TableHeader>
@@ -105,6 +111,27 @@ export default function StudentList({ group, company }) {
                 </TableCell>
                 <TableCell>
                   {format(new Date(student.birthDate), 'dd/MM/yyyy', { locale: ru })}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className={`${
+                      Number(student.trainingCost) >
+                      (student?.payments?.reduce(
+                        (sum, payment) => sum + Number(payment.amount),
+                        0,
+                      ) || 0)
+                        ? 'bg-red-500 hover:bg-red-600'
+                        : 'bg-green-500 hover:bg-green-600'
+                    }`}
+                    onClick={() => {
+                      setSelectedStudent(student);
+                      setIsPaymentDialogOpen(true);
+                    }}
+                  >
+                    <RussianRuble />
+                  </Button>
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
@@ -143,18 +170,13 @@ export default function StudentList({ group, company }) {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
-                {/* <TableCell>
-                <Button variant="outline" size="icon">
-                  <CarFront />
-                </Button>
-              </TableCell> */}
                 <TableCell className="text-right">
                   <Button
                     variant="outline"
                     size="icon"
                     onClick={() => {
                       setSelectedStudent(student);
-                      setIsDialogOpen(true);
+                      setIsDeleteDialogOpen(true);
                     }}
                   >
                     <UserRoundMinus />
@@ -166,9 +188,16 @@ export default function StudentList({ group, company }) {
       </Table>
 
       <StudentDeleteModalDialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
         onDelete={handleDelete}
+        student={selectedStudent}
+        loading={loading}
+      />
+
+      <StudentPaymentModalDialog
+        isOpen={isPaymentDialogOpen}
+        onClose={() => setIsPaymentDialogOpen(false)}
         student={selectedStudent}
         loading={loading}
       />
