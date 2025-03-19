@@ -24,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
+import { useGroupStore } from '@/store/useStore';
 
 import StudentDeleteModalDialog from './StudentDeleteModalDialog';
 import StudentPaymentModalDialog from './StudentPaymentModalDialog';
@@ -37,9 +38,22 @@ import DriverCardButton from './DriverCardButton';
 export default function StudentList({ group, company }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
+  const { setGroup } = useGroupStore();
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+
+  const fetchGroupData = async () => {
+    try {
+      const response = await fetch(`/api/group/${group.id}`);
+      if (!response.ok) throw new Error('Ошибка загрузки данных о группе');
+
+      const updatedGroup = await response.json();
+      setGroup(updatedGroup);
+    } catch (error) {
+      toast({ variant: 'destructive', description: `Ошибка обновления: ${error.message}` });
+    }
+  };
 
   const handleDelete = async () => {
     if (!selectedStudent) return;
@@ -200,6 +214,7 @@ export default function StudentList({ group, company }) {
         onClose={() => setIsPaymentDialogOpen(false)}
         student={selectedStudent}
         loading={loading}
+        onPaymentSuccess={fetchGroupData}
       />
     </>
   );

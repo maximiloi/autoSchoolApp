@@ -11,7 +11,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
-export default function StudentPaymentModalDialog({ isOpen, onClose, student, loading }) {
+export default function StudentPaymentModalDialog({
+  isOpen,
+  onClose,
+  student,
+  loading,
+  onPaymentSuccess,
+}) {
   const [amount, setAmount] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
@@ -44,6 +50,8 @@ export default function StudentPaymentModalDialog({ isOpen, onClose, student, lo
           description: 'Платёж добавлен!',
         });
         setAmount('');
+        onPaymentSuccess();
+        onClose();
       } else {
         toast({
           variant: 'destructive',
