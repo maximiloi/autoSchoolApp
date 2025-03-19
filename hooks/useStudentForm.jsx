@@ -9,36 +9,42 @@ export function useStudentForm(student) {
   const [sameAddress, setSameAddress] = useState(false);
   const { watch, reset, setValue, getValues, ...form } = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      studentNumber: '',
-      lastName: '',
-      firstName: '',
-      phone: '',
-      group: '',
-      trainingCost: '',
-      birthDate: undefined,
-      middleName: '',
-      gender: '',
-      snils: '',
-      birthPlace: '',
-      registrationAddress: '',
-      actualAddress: '',
-      documentType: 'passport',
-      documentIssuer: '',
-      documentCode: '',
-      documentSeries: '',
-      documentNumber: '',
-      documentIssueDate: undefined,
-      medicalSeries: '',
-      medicalNumber: '',
-      medicalIssueDate: undefined,
-      medicalIssuer: '',
-      licenseSeries: '',
-      license: '',
-      region: '',
-      medicalRestriction: '',
-      allowedCategories: '',
-    },
+    defaultValues: student
+      ? {
+          ...student,
+          gender: student.gender || 'male',
+          documentType: student.documentType || 'passport',
+        }
+      : {
+          studentNumber: '',
+          lastName: '',
+          firstName: '',
+          phone: '',
+          group: '',
+          trainingCost: '',
+          birthDate: undefined,
+          middleName: '',
+          gender: 'male',
+          snils: '',
+          birthPlace: '',
+          registrationAddress: '',
+          actualAddress: '',
+          documentType: 'passport',
+          documentIssuer: '',
+          documentCode: '',
+          documentSeries: '',
+          documentNumber: '',
+          documentIssueDate: undefined,
+          medicalSeries: '',
+          medicalNumber: '',
+          medicalIssueDate: undefined,
+          medicalIssuer: '',
+          licenseSeries: '',
+          license: '',
+          region: '',
+          medicalRestriction: '',
+          allowedCategories: '',
+        },
   });
 
   const registrationAddress = watch('registrationAddress');
@@ -60,7 +66,11 @@ export function useStudentForm(student) {
 
   useEffect(() => {
     if (student) {
-      reset({ ...student, documentType: student.documentType || 'passport' });
+      reset({
+        ...student,
+        gender: student.gender || 'male',
+        documentType: student.documentType || 'passport',
+      });
     }
   }, [student]);
 
