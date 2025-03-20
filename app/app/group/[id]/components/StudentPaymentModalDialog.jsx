@@ -86,7 +86,7 @@ export default function StudentPaymentModalDialog({
           </DialogTitle>
           <DialogDescription>
             <strong>Стоимость курса: </strong>{' '}
-            {Number(student?.trainingCost.trim()).toLocaleString('ru-RU') + ' р.'}
+            {Number(student?.trainingCost.trim()).toLocaleString('ru-RU') + ' ₽'}
           </DialogDescription>
         </DialogHeader>
         <Table>
@@ -116,7 +116,7 @@ export default function StudentPaymentModalDialog({
             <TableFooter>
               <TableRow>
                 <TableCell>Оплачено</TableCell>
-                <TableCell className="text-right">{totalPaid.toLocaleString('ru-RU')} р.</TableCell>
+                <TableCell className="text-right">{totalPaid.toLocaleString('ru-RU')} ₽</TableCell>
               </TableRow>
             </TableFooter>
           )}
@@ -124,7 +124,7 @@ export default function StudentPaymentModalDialog({
 
         <p className="text-red-600">
           <strong>Долг: </strong>
-          {debt.toLocaleString('ru-RU') + ' р.'}
+          {debt.toLocaleString('ru-RU') + ' ₽'}
         </p>
 
         <IMaskInput
