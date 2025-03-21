@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-import { SCHEDULE } from '@/lib/schedule';
+import { SCHEDULE } from '@/lib/scheduleLectureTwoHours';
 
 export default function journeyTemplate(group = {}, company = {}) {
   const { companyName } = company;
