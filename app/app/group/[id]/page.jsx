@@ -66,7 +66,7 @@ export default function GroupPage() {
         <Dialog>
           <DialogTrigger asChild>
             <Button
-              className={`w-10 rounded-full text-white ${totalDue > 0 ? 'bg-red-600' : 'bg-green-600'}`}
+              className={`w-10 rounded-full text-white ${totalDue > 0 ? 'bg-red-200 hover:bg-red-300' : 'bg-green-200 hover:bg-green-300'}`}
             >
               <RussianRuble />
             </Button>
