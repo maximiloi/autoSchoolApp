@@ -29,6 +29,17 @@ export default function scheduleTemplate(group = { theoryTeachers: [{}] }, compa
     ? format(new Date(endTrainingDate), 'dd/MM/yyyy', { locale: ru })
     : '____/____/________';
 
+  const studyDays = [
+    'Воскресенье',
+    'Понедельник',
+    'Вторник',
+    'Среда',
+    'Четверг',
+    'Пятница',
+    'Суббота',
+  ];
+  const activeStudyDays = [6, 0, 3].map((day) => studyDays[day]).join(', ');
+
   let currentDate = new Date(startTrainingDate);
   const tableBody = [
     [
@@ -45,7 +56,7 @@ export default function scheduleTemplate(group = { theoryTeachers: [{}] }, compa
 
   let totalHoursSum = 0;
 
-  MERGED_SCHEDULE.forEach((lesson) => {
+  MERGED_SCHEDULE.map((lesson) => {
     while (![0, 3, 6].includes(currentDate.getDay())) {
       currentDate = addDays(currentDate, 1);
     }
@@ -56,7 +67,7 @@ export default function scheduleTemplate(group = { theoryTeachers: [{}] }, compa
     let lastTheme = '';
     totalHoursSum += lesson.totalHours;
 
-    lesson.topics.forEach((topic, index, array) => {
+    lesson.topics.map((topic, index, array) => {
       const isNewTheme = topic.theme !== lastTheme;
       lastTheme = topic.theme;
 
@@ -131,7 +142,7 @@ export default function scheduleTemplate(group = { theoryTeachers: [{}] }, compa
         alignment: 'center',
       },
       {
-        text: `Учебной группы № ${activeGroupNumber} ; Дни занятий: __________________________________`,
+        text: `Учебной группы № ${activeGroupNumber}; Дни занятий: ${activeStudyDays}`,
         style: 'subHeader',
         alignment: 'center',
       },
