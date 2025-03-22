@@ -127,7 +127,7 @@ export default function journeyTemplate(group = {}, company = {}) {
           body: [
             [
               { text: 'Сведения о составе учебной группы', style: 'item' },
-              { text: '2', alignment: 'right' },
+              { text: '3', alignment: 'right' },
             ],
             [{ text: 'Учебные предметы базового курса', style: 'subHeader', colSpan: 2 }, {}],
             [
@@ -135,28 +135,28 @@ export default function journeyTemplate(group = {}, company = {}) {
                 text: 'Учебный предмет "Основы законодательства в сфере дорожного движения"',
                 style: 'item',
               },
-              { text: '3', alignment: 'right' },
+              { text: '4', alignment: 'right' },
             ],
             [
               {
                 text: 'Учебный предмет "Психофизиологические основы деятельности водителя"',
                 style: 'item',
               },
-              { text: '4', alignment: 'right' },
+              { text: '5', alignment: 'right' },
             ],
             [
               {
                 text: 'Учебный предмет "Основы управления транспортными средствами"',
                 style: 'item',
               },
-              { text: '5', alignment: 'right' },
+              { text: '6', alignment: 'right' },
             ],
             [
               {
                 text: 'Учебный предмет "Первая помощь при дорожно-транспортном происшествии"',
                 style: 'item',
               },
-              { text: '6', alignment: 'right' },
+              { text: '7', alignment: 'right' },
             ],
             [{ text: 'Учебные предметы специального цикла', style: 'subHeader', colSpan: 2 }, {}],
             [
@@ -164,14 +164,14 @@ export default function journeyTemplate(group = {}, company = {}) {
                 text: 'Учебный предмет "Устройство и техническое обслуживание транспортных средств категории "В" как объектов управления"',
                 style: 'item',
               },
-              { text: '7', alignment: 'right' },
+              { text: '8', alignment: 'right' },
             ],
             [
               {
                 text: 'Учебный предмет "Основы управления транспортными средствами категории B"',
                 style: 'item',
               },
-              { text: '8', alignment: 'right' },
+              { text: '-', alignment: 'right' },
             ],
             [
               { text: 'Учебные предметы профессионального цикла', style: 'subHeader', colSpan: 2 },
