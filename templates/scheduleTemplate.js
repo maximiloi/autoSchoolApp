@@ -1,4 +1,4 @@
-import { MERGED_SCHEDULE } from '@/lib/MERGED_SCHEDULE';
+import SCHEDULE_LECTURE_FOUR_HOURS from '@/data/scheduleLectureFourHours.json';
 import { format, addDays } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
@@ -56,7 +56,7 @@ export default function scheduleTemplate(group = { theoryTeachers: [{}] }, compa
 
   let totalHoursSum = 0;
 
-  MERGED_SCHEDULE.map((lesson) => {
+  SCHEDULE_LECTURE_FOUR_HOURS.map((lesson) => {
     while (![0, 3, 6].includes(currentDate.getDay())) {
       currentDate = addDays(currentDate, 1);
     }

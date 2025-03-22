@@ -136,8 +136,8 @@ export default function StudentList({ group, company }) {
                         (sum, payment) => sum + Number(payment.amount),
                         0,
                       ) || 0)
-                        ? 'bg-red-500 hover:bg-red-600'
-                        : 'bg-green-500 hover:bg-green-600'
+                        ? 'bg-red-200 hover:bg-red-300'
+                        : 'bg-green-200 hover:bg-green-300'
                     }`}
                     onClick={() => {
                       setSelectedStudent(student);
