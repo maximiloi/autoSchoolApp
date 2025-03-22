@@ -1,4 +1,4 @@
-import { SCHEDULE_LECTURE_FOUR_HOURS } from '@/lib/scheduleLectureFourHours';
+import SCHEDULE_LECTURE_FOUR_HOURS from '@/data/scheduleLectureFourHours.json';
 import { format, addDays } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
