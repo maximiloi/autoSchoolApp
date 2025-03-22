@@ -1,7 +1,59 @@
+import SCHEDULE from '@/data/scheduleLectureFourHours.json';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-import { SCHEDULE } from '@/lib/scheduleLectureTwoHours';
+const themeTable = [
+  'Организация и выполнение грузовых перевозок автотранспортом',
+  'Организация и выполнение пассажирских перевозок автотранспортом',
+  'Основы законодательства в сфере дорожного движения',
+  'Основы управления транспортными средствами',
+  'Первая помощь при дорожно-транспортном происшествии',
+  'Психофизиологические основы деятельности водителя',
+  'Устройство и техническое обслуживание транспортных средств категории «В» как объектов управления',
+];
+
+function generateTrainingSchedule(startTrainingDate, lessons, theme) {
+  let currentDate = new Date(startTrainingDate);
+  let themesMap = {};
+
+  lessons.forEach((lesson) => {
+    while (![0, 3, 6].includes(currentDate.getDay())) {
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    let formattedDate = format(currentDate, 'dd/MM', { locale: ru });
+
+    lesson.topics.forEach((topic) => {
+      if (topic.theme === theme) {
+        if (!themesMap[topic.theme]) {
+          themesMap[topic.theme] = [];
+        }
+        themesMap[topic.theme].push({ ...topic, date: formattedDate });
+      }
+    });
+
+    currentDate.setDate(currentDate.getDate() + 1);
+  });
+
+  const groupedByDate = themesMap[theme]?.reduce((acc, item) => {
+    const dateKey = item.date;
+    if (!acc[dateKey]) {
+      acc[dateKey] = {
+        date: item.date,
+        numbers: [],
+        names: [],
+        hours: 0,
+      };
+    }
+    acc[dateKey].numbers.push(item.number);
+    acc[dateKey].names.push(item.name);
+    acc[dateKey].hours += item.hours;
+
+    return acc;
+  }, {});
+
+  return Object.values(groupedByDate || {});
+}
 
 export default function journeyTemplate(group = {}, company = {}) {
   const { companyName } = company;
@@ -21,12 +73,18 @@ export default function journeyTemplate(group = {}, company = {}) {
     ? `${format(new Date(endTrainingDate), 'PPPP', { locale: ru })}`
     : '____/____/________';
   const sortedStudents = students.sort((a, b) => a.studentNumber - b.studentNumber);
-  const numberOfStudents = students.length;
-  console.log('🚀 ~ journeyTemplate ~ numberOfStudents:', numberOfStudents);
   const fullNameTeacher =
     lastName !== '-' && firstName !== '-'
       ? `${lastName} ${firstName[0]}. ${middleName !== '-' ? middleName[0] + '.' : ''}`
       : '';
+
+  const sortedTopicsByTheme1 = generateTrainingSchedule(startTrainingDate, SCHEDULE, themeTable[2]);
+  const sortedTopicsByTheme2 = generateTrainingSchedule(startTrainingDate, SCHEDULE, themeTable[5]);
+  const sortedTopicsByTheme3 = generateTrainingSchedule(startTrainingDate, SCHEDULE, themeTable[3]);
+  const sortedTopicsByTheme4 = generateTrainingSchedule(startTrainingDate, SCHEDULE, themeTable[4]);
+  const sortedTopicsByTheme5 = generateTrainingSchedule(startTrainingDate, SCHEDULE, themeTable[6]);
+  const sortedTopicsByTheme6 = generateTrainingSchedule(startTrainingDate, SCHEDULE, themeTable[0]);
+  const sortedTopicsByTheme7 = generateTrainingSchedule(startTrainingDate, SCHEDULE, themeTable[1]);
 
   return {
     pageOrientation: 'landscape',
@@ -35,6 +93,8 @@ export default function journeyTemplate(group = {}, company = {}) {
       header: { fontSize: 22, bold: true, alignment: 'center' },
       subHeader: { fontSize: 16, alignment: 'center' },
       item: { fontSize: 12, margin: [0, 2, 0, 2] },
+      tableHeader: { fontSize: 9, alignment: 'center' },
+      table: { fontSize: 7.5 },
     },
     content: [
       { text: companyName, style: 'pageHeader', alignment: 'right' },
@@ -222,14 +282,518 @@ export default function journeyTemplate(group = {}, company = {}) {
       {
         columns: [
           {
-            text: `Учебный предмет: `,
+            text: `Учебный предмет: ${themeTable[2]}`,
             fontSize: 10,
             alignment: 'left',
+            margin: [0, 0, 0, 2],
           },
           {
             text: `Фамилия преподавателя: ${fullNameTeacher}`,
             fontSize: 10,
             alignment: 'right',
+            margin: [0, 0, 0, 2],
+          },
+        ],
+      },
+      {
+        columns: [
+          {
+            width: '50%',
+            table: {
+              widths: [
+                '15%',
+                ...new Array(sortedTopicsByTheme1.length).fill(
+                  `${(100 - 26) / sortedTopicsByTheme1.length}%'`,
+                ),
+                '11%',
+              ],
+              body: [
+                [
+                  { text: 'Фамилия ученика', style: 'tableHeader' },
+                  ...sortedTopicsByTheme1.map((group) => ({
+                    text: group.date,
+                    style: 'tableHeader',
+                  })),
+                  { text: 'Оценка', style: 'tableHeader' },
+                ],
+                ...sortedStudents.map((student) => {
+                  return [
+                    { text: student ? student.lastName : '', style: 'table' },
+                    ...new Array(sortedTopicsByTheme1.length).fill({
+                      text: '',
+                      style: 'table',
+                    }),
+                    { text: '', style: 'table' },
+                  ];
+                }),
+              ],
+            },
+          },
+          {
+            width: '50%',
+            table: {
+              widths: ['10%', '8%', '60%', '9%', '12%'],
+              body: [
+                [
+                  { text: 'Дата', style: 'tableHeader' },
+                  { text: '№ тем', style: 'tableHeader' },
+                  { text: 'Содержание уроков', style: 'tableHeader' },
+                  { text: 'Часы', style: 'tableHeader' },
+                  { text: 'Подпись препод', style: 'tableHeader' },
+                ],
+                ...sortedTopicsByTheme1.map((group) => [
+                  { text: group.date, style: 'table' },
+                  { text: group.numbers.join(', '), style: 'table' },
+                  { text: group.names.join(', '), style: 'table' },
+                  { text: group.hours.toString(), style: 'table' },
+                  { text: '', style: 'table' },
+                ]),
+              ],
+            },
+          },
+        ],
+      },
+      { text: '', pageBreak: 'after' },
+      {
+        columns: [
+          {
+            text: `Учебный предмет: ${themeTable[5]}`,
+            fontSize: 10,
+            alignment: 'left',
+            margin: [0, 0, 0, 2],
+          },
+          {
+            text: `Фамилия преподавателя: ${fullNameTeacher}`,
+            fontSize: 10,
+            alignment: 'right',
+            margin: [0, 0, 0, 2],
+          },
+        ],
+      },
+      {
+        columns: [
+          {
+            width: '50%',
+            table: {
+              widths: [
+                '15%',
+                ...new Array(sortedTopicsByTheme2.length).fill(
+                  `${(100 - 26) / sortedTopicsByTheme2.length}%'`,
+                ),
+                '11%',
+              ],
+              body: [
+                [
+                  { text: 'Фамилия ученика', style: 'tableHeader' },
+                  ...sortedTopicsByTheme2.map((group) => ({
+                    text: group.date,
+                    style: 'tableHeader',
+                  })),
+                  { text: 'Оценка', style: 'tableHeader' },
+                ],
+                ...sortedStudents.map((student) => {
+                  return [
+                    { text: student ? student.lastName : '', style: 'table' },
+                    ...new Array(sortedTopicsByTheme2.length).fill({
+                      text: '',
+                      style: 'table',
+                    }),
+                    { text: '', style: 'table' },
+                  ];
+                }),
+              ],
+            },
+          },
+          {
+            width: '50%',
+            table: {
+              widths: ['10%', '8%', '60%', '9%', '12%'],
+              body: [
+                [
+                  { text: 'Дата', style: 'tableHeader' },
+                  { text: '№ тем', style: 'tableHeader' },
+                  { text: 'Содержание уроков', style: 'tableHeader' },
+                  { text: 'Часы', style: 'tableHeader' },
+                  { text: 'Подпись препод', style: 'tableHeader' },
+                ],
+                ...sortedTopicsByTheme2.map((group) => [
+                  { text: group.date, style: 'table' },
+                  { text: group.numbers.join(', '), style: 'table' },
+                  { text: group.names.join(', '), style: 'table' },
+                  { text: group.hours.toString(), style: 'table' },
+                  { text: '', style: 'table' },
+                ]),
+              ],
+            },
+          },
+        ],
+      },
+      { text: '', pageBreak: 'after' },
+      {
+        columns: [
+          {
+            text: `Учебный предмет: ${themeTable[3]}`,
+            fontSize: 10,
+            alignment: 'left',
+            margin: [0, 0, 0, 2],
+          },
+          {
+            text: `Фамилия преподавателя: ${fullNameTeacher}`,
+            fontSize: 10,
+            alignment: 'right',
+            margin: [0, 0, 0, 2],
+          },
+        ],
+      },
+      {
+        columns: [
+          {
+            width: '50%',
+            table: {
+              widths: [
+                '15%',
+                ...new Array(sortedTopicsByTheme3.length).fill(
+                  `${(100 - 26) / sortedTopicsByTheme3.length}%'`,
+                ),
+                '11%',
+              ],
+              body: [
+                [
+                  { text: 'Фамилия ученика', style: 'tableHeader' },
+                  ...sortedTopicsByTheme3.map((group) => ({
+                    text: group.date,
+                    style: 'tableHeader',
+                  })),
+                  { text: 'Оценка', style: 'tableHeader' },
+                ],
+                ...sortedStudents.map((student) => {
+                  return [
+                    { text: student ? student.lastName : '', style: 'table' },
+                    ...new Array(sortedTopicsByTheme3.length).fill({
+                      text: '',
+                      style: 'table',
+                    }),
+                    { text: '', style: 'table' },
+                  ];
+                }),
+              ],
+            },
+          },
+          {
+            width: '50%',
+            table: {
+              widths: ['10%', '8%', '60%', '9%', '12%'],
+              body: [
+                [
+                  { text: 'Дата', style: 'tableHeader' },
+                  { text: '№ тем', style: 'tableHeader' },
+                  { text: 'Содержание уроков', style: 'tableHeader' },
+                  { text: 'Часы', style: 'tableHeader' },
+                  { text: 'Подпись препод', style: 'tableHeader' },
+                ],
+                ...sortedTopicsByTheme3.map((group) => [
+                  { text: group.date, style: 'table' },
+                  { text: group.numbers.join(', '), style: 'table' },
+                  { text: group.names.join(', '), style: 'table' },
+                  { text: group.hours.toString(), style: 'table' },
+                  { text: '', style: 'table' },
+                ]),
+              ],
+            },
+          },
+        ],
+      },
+      { text: '', pageBreak: 'after' },
+      {
+        columns: [
+          {
+            text: `Учебный предмет: ${themeTable[4]}`,
+            fontSize: 10,
+            alignment: 'left',
+            margin: [0, 0, 0, 2],
+          },
+          {
+            text: `Фамилия преподавателя: ${fullNameTeacher}`,
+            fontSize: 10,
+            alignment: 'right',
+            margin: [0, 0, 0, 2],
+          },
+        ],
+      },
+      {
+        columns: [
+          {
+            width: '50%',
+            table: {
+              widths: [
+                '15%',
+                ...new Array(sortedTopicsByTheme4.length).fill(
+                  `${(100 - 26) / sortedTopicsByTheme4.length}%'`,
+                ),
+                '11%',
+              ],
+              body: [
+                [
+                  { text: 'Фамилия ученика', style: 'tableHeader' },
+                  ...sortedTopicsByTheme4.map((group) => ({
+                    text: group.date,
+                    style: 'tableHeader',
+                  })),
+                  { text: 'Оценка', style: 'tableHeader' },
+                ],
+                ...sortedStudents.map((student) => {
+                  return [
+                    { text: student ? student.lastName : '', style: 'table' },
+                    ...new Array(sortedTopicsByTheme4.length).fill({
+                      text: '',
+                      style: 'table',
+                    }),
+                    { text: '', style: 'table' },
+                  ];
+                }),
+              ],
+            },
+          },
+          {
+            width: '50%',
+            table: {
+              widths: ['10%', '8%', '60%', '9%', '12%'],
+              body: [
+                [
+                  { text: 'Дата', style: 'tableHeader' },
+                  { text: '№ тем', style: 'tableHeader' },
+                  { text: 'Содержание уроков', style: 'tableHeader' },
+                  { text: 'Часы', style: 'tableHeader' },
+                  { text: 'Подпись препод', style: 'tableHeader' },
+                ],
+                ...sortedTopicsByTheme4.map((group) => [
+                  { text: group.date, style: 'table' },
+                  { text: group.numbers.join(', '), style: 'table' },
+                  { text: group.names.join(', '), style: 'table' },
+                  { text: group.hours.toString(), style: 'table' },
+                  { text: '', style: 'table' },
+                ]),
+              ],
+            },
+          },
+        ],
+      },
+      { text: '', pageBreak: 'after' },
+      {
+        columns: [
+          {
+            text: `Учебный предмет: ${themeTable[6]}`,
+            fontSize: 10,
+            alignment: 'left',
+            margin: [0, 0, 0, 2],
+          },
+          {
+            text: `Фамилия преподавателя: ${fullNameTeacher}`,
+            fontSize: 10,
+            alignment: 'right',
+            margin: [0, 0, 0, 2],
+          },
+        ],
+      },
+      {
+        columns: [
+          {
+            width: '50%',
+            table: {
+              widths: [
+                '15%',
+                ...new Array(sortedTopicsByTheme5.length).fill(
+                  `${(100 - 26) / sortedTopicsByTheme5.length}%'`,
+                ),
+                '11%',
+              ],
+              body: [
+                [
+                  { text: 'Фамилия ученика', style: 'tableHeader' },
+                  ...sortedTopicsByTheme5.map((group) => ({
+                    text: group.date,
+                    style: 'tableHeader',
+                  })),
+                  { text: 'Оценка', style: 'tableHeader' },
+                ],
+                ...sortedStudents.map((student) => {
+                  return [
+                    { text: student ? student.lastName : '', style: 'table' },
+                    ...new Array(sortedTopicsByTheme5.length).fill({
+                      text: '',
+                      style: 'table',
+                    }),
+                    { text: '', style: 'table' },
+                  ];
+                }),
+              ],
+            },
+          },
+          {
+            width: '50%',
+            table: {
+              widths: ['10%', '8%', '60%', '9%', '12%'],
+              body: [
+                [
+                  { text: 'Дата', style: 'tableHeader' },
+                  { text: '№ тем', style: 'tableHeader' },
+                  { text: 'Содержание уроков', style: 'tableHeader' },
+                  { text: 'Часы', style: 'tableHeader' },
+                  { text: 'Подпись препод', style: 'tableHeader' },
+                ],
+                ...sortedTopicsByTheme5.map((group) => [
+                  { text: group.date, style: 'table' },
+                  { text: group.numbers.join(', '), style: 'table' },
+                  { text: group.names.join(', '), style: 'table' },
+                  { text: group.hours.toString(), style: 'table' },
+                  { text: '', style: 'table' },
+                ]),
+              ],
+            },
+          },
+        ],
+      },
+      { text: '', pageBreak: 'after' },
+      {
+        columns: [
+          {
+            text: `Учебный предмет: ${themeTable[0]}`,
+            fontSize: 10,
+            alignment: 'left',
+            margin: [0, 0, 0, 2],
+          },
+          {
+            text: `Фамилия преподавателя: ${fullNameTeacher}`,
+            fontSize: 10,
+            alignment: 'right',
+            margin: [0, 0, 0, 2],
+          },
+        ],
+      },
+      {
+        columns: [
+          {
+            width: '50%',
+            table: {
+              widths: ['15%', ...new Array(5).fill(`${(100 - 26) / 5}%'`), '11%'],
+              body: [
+                [
+                  { text: 'Фамилия ученика', style: 'tableHeader' },
+                  ...sortedTopicsByTheme6.map((group) => ({
+                    text: group.date,
+                    style: 'tableHeader',
+                  })),
+                  { text: 'Оценка', style: 'tableHeader' },
+                ],
+                ...sortedStudents.map((student) => {
+                  return [
+                    { text: student ? student.lastName : '', style: 'table' },
+                    ...new Array(5).fill({
+                      text: '',
+                      style: 'table',
+                    }),
+                    { text: '', style: 'table' },
+                  ];
+                }),
+              ],
+            },
+          },
+          {
+            width: '50%',
+            table: {
+              widths: ['10%', '8%', '60%', '9%', '12%'],
+              body: [
+                [
+                  { text: 'Дата', style: 'tableHeader' },
+                  { text: '№ тем', style: 'tableHeader' },
+                  { text: 'Содержание уроков', style: 'tableHeader' },
+                  { text: 'Часы', style: 'tableHeader' },
+                  { text: 'Подпись препод', style: 'tableHeader' },
+                ],
+                ...sortedTopicsByTheme6.map((group) => [
+                  { text: group.date, style: 'table' },
+                  { text: group.numbers.join(', '), style: 'table' },
+                  { text: group.names.join(', '), style: 'table' },
+                  { text: group.hours.toString(), style: 'table' },
+                  { text: '', style: 'table' },
+                ]),
+              ],
+            },
+          },
+        ],
+      },
+      { text: '', pageBreak: 'after' },
+      {
+        columns: [
+          {
+            text: `Учебный предмет: ${themeTable[1]}`,
+            fontSize: 10,
+            alignment: 'left',
+            margin: [0, 0, 0, 2],
+          },
+          {
+            text: `Фамилия преподавателя: ${fullNameTeacher}`,
+            fontSize: 10,
+            alignment: 'right',
+            margin: [0, 0, 0, 2],
+          },
+        ],
+      },
+      {
+        columns: [
+          {
+            width: '50%',
+            table: {
+              widths: [
+                '15%',
+                ...new Array(sortedTopicsByTheme7.length).fill(
+                  `${(100 - 26) / sortedTopicsByTheme7.length}%'`,
+                ),
+                '11%',
+              ],
+              body: [
+                [
+                  { text: 'Фамилия ученика', style: 'tableHeader' },
+                  ...sortedTopicsByTheme7.map((group) => ({
+                    text: group.date,
+                    style: 'tableHeader',
+                  })),
+                  { text: 'Оценка', style: 'tableHeader' },
+                ],
+                ...sortedStudents.map((student) => {
+                  return [
+                    { text: student ? student.lastName : '', style: 'table' },
+                    ...new Array(sortedTopicsByTheme7.length).fill({
+                      text: '',
+                      style: 'table',
+                    }),
+                    { text: '', style: 'table' },
+                  ];
+                }),
+              ],
+            },
+          },
+          {
+            width: '50%',
+            table: {
+              widths: ['10%', '8%', '60%', '9%', '12%'],
+              body: [
+                [
+                  { text: 'Дата', style: 'tableHeader' },
+                  { text: '№ тем', style: 'tableHeader' },
+                  { text: 'Содержание уроков', style: 'tableHeader' },
+                  { text: 'Часы', style: 'tableHeader' },
+                  { text: 'Подпись препод', style: 'tableHeader' },
+                ],
+                ...sortedTopicsByTheme7.map((group) => [
+                  { text: group.date, style: 'table' },
+                  { text: group.numbers.join(', '), style: 'table' },
+                  { text: group.names.join(', '), style: 'table' },
+                  { text: group.hours.toString(), style: 'table' },
+                  { text: '', style: 'table' },
+                ]),
+              ],
+            },
           },
         ],
       },
