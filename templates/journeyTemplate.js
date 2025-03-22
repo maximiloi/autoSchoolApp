@@ -675,7 +675,13 @@ export default function journeyTemplate(group = {}, company = {}) {
           {
             width: '50%',
             table: {
-              widths: ['15%', ...new Array(5).fill(`${(100 - 26) / 5}%'`), '11%'],
+              widths: [
+                '15%',
+                ...new Array(sortedTopicsByTheme6.length).fill(
+                  `${(100 - 26) / sortedTopicsByTheme6.length}%'`,
+                ),
+                '11%',
+              ],
               body: [
                 [
                   { text: 'Фамилия ученика', style: 'tableHeader' },
@@ -688,7 +694,7 @@ export default function journeyTemplate(group = {}, company = {}) {
                 ...sortedStudents.map((student) => {
                   return [
                     { text: student ? student.lastName : '', style: 'table' },
-                    ...new Array(5).fill({
+                    ...new Array(sortedTopicsByTheme6.length).fill({
                       text: '',
                       style: 'table',
                     }),
