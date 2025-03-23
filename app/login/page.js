@@ -29,7 +29,7 @@ const formSchema = z.object({
 
 export default function Login() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
@@ -45,11 +45,16 @@ export default function Login() {
 
     if (res?.ok) {
       router.push('/app');
+      toast({
+        variant: 'success',
+        title: 'Добро пожаловать',
+        // description: 'Неверные учетные данные',
+      });
     } else {
       toast({
+        variant: 'destructive',
         title: 'Ошибка авторизации',
         description: 'Неверные учетные данные',
-        status: 'error',
       });
     }
   };
