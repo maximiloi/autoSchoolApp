@@ -1,12 +1,23 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../../auth/[...nextauth]/route';
 
 const prisma = new PrismaClient();
 
 export async function GET(req, { params }) {
   try {
-    const { id } = await params;
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ error: 'Неавторизованный доступ' }, { status: 401 });
+    }
 
+    const { companyId } = session.user;
+    if (!companyId) {
+      return NextResponse.json({ error: 'Ошибка аутентификации' }, { status: 403 });
+    }
+
+    const { id } = await params;
     if (!id) {
       return NextResponse.json({ error: 'ID компании не указан' }, { status: 400 });
     }

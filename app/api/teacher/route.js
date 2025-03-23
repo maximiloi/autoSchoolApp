@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 export async function GET(req) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ message: 'Неавторизованный доступ' }, { status: 401 });
   }
 
   const { companyId } = session.user;
@@ -26,7 +26,7 @@ export async function GET(req) {
 export async function POST(req) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ message: 'Неавторизованный доступ' }, { status: 401 });
   }
 
   const { companyId, id: userId } = session.user;
