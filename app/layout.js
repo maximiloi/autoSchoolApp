@@ -5,8 +5,7 @@ import { jetBrainsMono } from '../components/fonts/fonts';
 import './globals.css';
 
 export const metadata = {
-  title: 'АвтошколаApp',
-  description: 'Приложение для автошколы',
+  title: 'Панель управление компании | Auto School App',
 };
 
 export default function RootLayout({ children, session }) {
