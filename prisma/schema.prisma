@@ -75,6 +75,7 @@ model Teacher {
   practiceGroups   Group[] @relation(name: "PracticeTeachers")
 
   cars             Car[]
+  drivingSessions   DrivingSession[] 
 
   createdAt        DateTime @default(now())
 }
@@ -156,6 +157,7 @@ model Student {
   company             Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   payments     Payment[]
+  drivingSessions   DrivingSession[] 
 
   createdAt           DateTime @default(now())
 }
@@ -166,4 +168,16 @@ model Payment {
   studentId   String
   amount      Decimal
   paymentDate DateTime @default(now())
+}
+
+model DrivingSession {
+  id         String   @id @default(uuid())
+  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId  String
+  teacher    Teacher? @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  teacherId  String?
+  date       DateTime
+  duration   Decimal  @default(0.0) // Время в часах
+
+  createdAt  DateTime @default(now())
 }
