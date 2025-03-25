@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime/library';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 import { authOptions } from '../auth/[...nextauth]/route';
@@ -33,7 +34,6 @@ export async function GET(req) {
 
     const sessions = await prisma.drivingSession.findMany({
       where: { student: { groupId } },
-      include: { student: true },
     });
 
     return NextResponse.json(sessions);
@@ -43,7 +43,6 @@ export async function GET(req) {
   }
 }
 
-// 🔹 Создать или обновить занятие
 export async function POST(req) {
   try {
     const session = await getServerSession(authOptions);
@@ -56,38 +55,61 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Ошибка аутентификации' }, { status: 403 });
     }
 
-    const { studentId, date, duration } = await req.json();
-    if (!studentId || !date) {
-      return NextResponse.json({ error: 'studentId и date обязательны' }, { status: 400 });
+    const body = await req.json();
+
+    if (!body || !body.sessions || !Array.isArray(body.sessions)) {
+      return NextResponse.json({ error: 'sessions должно быть массивом' }, { status: 400 });
     }
 
-    const student = await prisma.student.findUnique({
-      where: { id: studentId, companyId },
-    });
+    const sessionResults = [];
 
-    if (!student) {
-      return NextResponse.json({ error: 'Студент не найден или нет доступа' }, { status: 404 });
-    }
+    for (const { studentId, date, duration } of body.sessions) {
+      if (!studentId || !date) {
+        sessionResults.push({ error: 'studentId и date обязательны для каждого занятия' });
+        continue;
+      }
 
-    const existingSession = await prisma.drivingSession.findFirst({
-      where: { studentId, date },
-    });
+      const parsedDate = new Date(date);
+      if (isNaN(parsedDate.getTime())) {
+        sessionResults.push({ studentId, error: 'Некорректная дата' });
+        continue;
+      }
 
-    let sessionData;
-    if (existingSession) {
-      sessionData = await prisma.drivingSession.update({
-        where: { id: existingSession.id },
-        data: { duration },
+      const student = await prisma.student.findUnique({
+        where: { id: studentId, companyId },
       });
-    } else {
-      sessionData = await prisma.drivingSession.create({
-        data: { studentId, date, duration },
+
+      if (!student) {
+        sessionResults.push({ studentId, error: 'Студент не найден или нет доступа' });
+        continue;
+      }
+
+      const existingSession = await prisma.drivingSession.findFirst({
+        where: { studentId, date: parsedDate },
       });
+
+      let sessionData;
+      if (existingSession) {
+        sessionData = await prisma.drivingSession.update({
+          where: { id: existingSession.id },
+          data: { duration: new Decimal(duration) },
+        });
+      } else {
+        sessionData = await prisma.drivingSession.create({
+          data: {
+            studentId,
+            date: parsedDate,
+            duration: new Decimal(duration),
+          },
+        });
+      }
+
+      sessionResults.push(sessionData);
     }
 
-    return NextResponse.json(sessionData);
+    return NextResponse.json(sessionResults);
   } catch (error) {
-    console.error('Ошибка сохранения занятия:', error);
+    console.error('Ошибка сохранения занятий:', error);
     return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 });
   }
 }
