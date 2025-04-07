@@ -1,18 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { format } from 'date-fns';
-import { ru } from 'date-fns/locale';
-import { FileUser, NotepadText, RussianRuble, UserRoundMinus } from 'lucide-react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -23,22 +10,35 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { useGroupStore } from '@/store/useStore';
+import { format } from 'date-fns';
+import { ru } from 'date-fns/locale';
+import { FileUser, NotepadText, RussianRuble, UserRoundMinus } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
 
 import StudentDeleteModalDialog from './StudentDeleteModalDialog';
 import StudentPaymentModalDialog from './StudentPaymentModalDialog';
 
 import ApplicationFormButton from './ApplicationFormButton';
 import BasicContractButton from './BasicContractButton';
+import DriverCardButton from './DriverCardButton';
 import PersonalizedBookAButton from './PersonalizedBookAButton';
 import PersonalizedBookBButton from './PersonalizedBookBButton';
-import DriverCardButton from './DriverCardButton';
 
-export default function StudentList({ group, company }) {
+export default function StudentList({ company }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
-  const { setGroup } = useGroupStore();
+  const { group, setGroup } = useGroupStore();
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
@@ -60,20 +60,15 @@ export default function StudentList({ group, company }) {
 
     setLoading(true);
     try {
-      const res = await fetch(`/api/student/${selectedStudent.id}`, {
+      const response = await fetch(`/api/student/${selectedStudent.id}`, {
         method: 'DELETE',
       });
+      if (!response.ok) throw new Error('Ошибка при удалении');
 
-      if (!res.ok) {
-        toast({ variant: 'destructive', description: 'Ошибка при удалении' });
-        throw new Error('Ошибка при удалении');
-      }
-
-      group.students = group.students.filter((s) => s.id !== selectedStudent.id);
-      setIsDialogOpen(false);
+      setIsDeleteDialogOpen(false);
+      fetchGroupData();
     } catch (error) {
       toast({ variant: 'destructive', description: `Ошибка удаления: ${error.message}` });
-      console.error('Ошибка удаления:', error.message);
     } finally {
       setLoading(false);
     }

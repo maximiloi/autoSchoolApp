@@ -1,10 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { format } from 'date-fns';
-import { ru } from 'date-fns/locale';
-import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -12,14 +8,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
+import { format } from 'date-fns';
+import { ru } from 'date-fns/locale';
 import { RussianRuble } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { useCompanyStore, useGroupStore } from '@/store/useStore';
 
-import StudentList from './components/StudentList';
 import FooterPage from './components/FooterPage';
+import StudentList from './components/StudentList';
 
 export default function GroupPage() {
   const { id } = useParams();
@@ -108,7 +108,7 @@ export default function GroupPage() {
         </p>
       </div>
       <Separator className="my-4" />
-      <StudentList group={group} company={company} />
+      <StudentList company={company} />
       <Separator className="my-4" />
       <FooterPage group={group} company={company} />
     </>
