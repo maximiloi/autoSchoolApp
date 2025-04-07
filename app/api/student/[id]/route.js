@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
+import { NextResponse } from 'next/server';
 import { authOptions } from '../../auth/[...nextauth]/route';
 
 const prisma = new PrismaClient();
@@ -39,8 +39,17 @@ export async function GET(req, { params }) {
 
 export async function DELETE(req, { params }) {
   try {
-    const { id } = await params;
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ error: 'Неавторизованный доступ' }, { status: 401 });
+    }
 
+    const { companyId } = session.user;
+    if (!companyId) {
+      return NextResponse.json({ error: 'Ошибка аутентификации' }, { status: 403 });
+    }
+
+    const { id } = await params;
     if (!id) {
       return NextResponse.json({ error: 'ID ученика не указан' }, { status: 400 });
     }
@@ -53,6 +62,8 @@ export async function DELETE(req, { params }) {
   } catch (error) {
     console.error('Ошибка при удалении ученика:', error);
     return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }
 

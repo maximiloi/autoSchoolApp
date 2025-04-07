@@ -162,7 +162,7 @@ model Student {
 
 model Payment {
   id          String   @id @default(uuid())
-  student     Student  @relation(fields: [studentId], references: [id])
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   studentId   String
   amount      Decimal
   paymentDate DateTime @default(now())
