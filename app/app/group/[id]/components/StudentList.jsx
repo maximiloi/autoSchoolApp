@@ -35,10 +35,10 @@ import DriverCardButton from './DriverCardButton';
 import PersonalizedBookAButton from './PersonalizedBookAButton';
 import PersonalizedBookBButton from './PersonalizedBookBButton';
 
-export default function StudentList({ group, company }) {
+export default function StudentList({ company }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
-  const { setGroup } = useGroupStore();
+  const { group, setGroup } = useGroupStore();
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
@@ -65,8 +65,8 @@ export default function StudentList({ group, company }) {
       });
       if (!response.ok) throw new Error('Ошибка при удалении');
 
-      group.students = group.students.filter((s) => s.id !== selectedStudent.id);
       setIsDeleteDialogOpen(false);
+      fetchGroupData();
     } catch (error) {
       toast({ variant: 'destructive', description: `Ошибка удаления: ${error.message}` });
     } finally {
