@@ -75,7 +75,6 @@ model Teacher {
   practiceGroups   Group[] @relation(name: "PracticeTeachers")
 
   cars             Car[]
-  drivingSessions   DrivingSession[] 
 
   createdAt        DateTime @default(now())
 }
@@ -174,10 +173,8 @@ model DrivingSession {
   id         String   @id @default(uuid())
   student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   studentId  String
-  teacher    Teacher? @relation(fields: [teacherId], references: [id], onDelete: SetNull)
-  teacherId  String?
   date       DateTime
-  duration   Decimal  @default(0.0) // Время в часах
+  slot       String?
 
   createdAt  DateTime @default(now())
 }

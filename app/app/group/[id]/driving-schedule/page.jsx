@@ -1,7 +1,13 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -20,11 +26,14 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import TravelSheetButton from './components/TravelSheetButton';
 
+const timeSlots = ['8-10', '10-12', '13-15', '15-17'];
+
 const DrivingSchedule = () => {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [updatedSessions, setUpdatedSessions] = useState([]);
   const { group, setGroup } = useGroupStore();
+  const isGroupLoaded = !!group?.id;
   const { toast } = useToast();
 
   const students = group?.students || [];
@@ -32,45 +41,32 @@ const DrivingSchedule = () => {
   const endTrainingDate = group?.endTrainingDate || null;
 
   useEffect(() => {
-    async function fetchDataGroup() {
+    const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`/api/group/${id}`);
-        if (!response.ok) throw new Error('Ошибка загрузки данных о группе');
 
-        const data = await response.json();
-        setGroup(data);
+        const [groupRes, sessionsRes] = await Promise.all([
+          fetch(`/api/group/${id}`),
+          fetch(`/api/driving-sessions?groupId=${id}`),
+        ]);
+
+        if (!groupRes.ok) throw new Error('Ошибка загрузки данных о группе');
+        if (!sessionsRes.ok) throw new Error('Ошибка загрузки driving sessions');
+
+        const groupData = await groupRes.json();
+        const sessionsData = await sessionsRes.json();
+
+        setGroup(groupData);
+        setUpdatedSessions(sessionsData);
       } catch (error) {
-        toast({ variant: 'destructive', description: `${error.message}` });
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchDataGroup();
-  }, [id]);
-
-  useEffect(() => {
-    if (!group) return;
-
-    const fetchSessions = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`/api/driving-sessions?groupId=${group.id}`);
-        if (!response.ok) throw new Error('Ошибка загрузки driving sessions');
-
-        const data = await response.json();
-        setUpdatedSessions(data);
-      } catch (error) {
-        toast({ variant: 'destructive', description: 'Ошибка: ' + error.message });
+        toast({ variant: 'destructive', description: error.message });
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchSessions();
-  }, [group]);
+    fetchData();
+  }, [id]);
 
   const handleSaveData = async () => {
     try {
@@ -86,27 +82,35 @@ const DrivingSchedule = () => {
 
       toast({ variant: 'success', description: 'Данные успешно сохранены!' });
     } catch (error) {
-      toast({ variant: 'destructive', description: 'Ошибка: ' + error.message });
+      toast({ variant: 'destructive', description: error.message });
     }
   };
 
-  const handleUpdateHours = (studentId, date, newHours) => {
+  const handleUpdateSlot = (studentId, date, selectedSlot) => {
     setUpdatedSessions((prev) => {
-      const updated = prev.map((s) => {
-        if (s.studentId === studentId && s.date === date) {
-          return {
-            ...s,
-            duration: parseFloat(s.duration) + parseFloat(newHours),
-          };
-        }
-        return s;
-      });
+      const newSessions = prev.filter(
+        (s) =>
+          !(
+            new Date(s.date).toISOString().split('T')[0] === date &&
+            s.slot === selectedSlot &&
+            s.studentId !== studentId
+          ),
+      );
 
-      if (!updated.some((s) => s.studentId === studentId && s.date === date)) {
-        updated.push({ studentId, date, duration: newHours });
+      const existingIndex = newSessions.findIndex(
+        (s) =>
+          s.studentId === studentId &&
+          new Date(s.date).toISOString().split('T')[0] === date &&
+          s.slot === selectedSlot,
+      );
+
+      if (existingIndex !== -1) {
+        newSessions.splice(existingIndex, 1);
+      } else {
+        newSessions.push({ studentId, date, slot: selectedSlot });
       }
 
-      return updated;
+      return [...newSessions];
     });
   };
 
@@ -149,7 +153,7 @@ const DrivingSchedule = () => {
                 return (
                   <TableHead
                     key={date.toISOString()}
-                    className={`-rotate-90 py-2 ${isToday ? 'font-bold text-black' : ''}`}
+                    className={`py-2 ${isToday ? 'font-bold text-black' : ''}`}
                   >
                     {format(new Date(date), 'EEE, dd/MM', { locale: ru })}
                   </TableHead>
@@ -162,9 +166,8 @@ const DrivingSchedule = () => {
             {students
               .sort((a, b) => a.studentNumber - b.studentNumber)
               .map((student) => {
-                const totalHours = updatedSessions
-                  .filter((s) => s.studentId === student.id)
-                  .reduce((sum, s) => parseFloat(sum) + parseFloat(s.duration || 0), 0);
+                const totalHours =
+                  updatedSessions.filter((s) => s.studentId === student.id).length * 2;
 
                 return (
                   <TableRow key={student.id}>
@@ -178,30 +181,42 @@ const DrivingSchedule = () => {
                       {totalHours} ч
                     </TableCell>
                     {dates.map((date) => {
+                      const formattedDate = date.toISOString().split('T')[0];
                       const session = updatedSessions.find(
                         (s) =>
                           s.studentId === student.id &&
-                          new Date(s.date).toISOString().split('T')[0] ===
-                            date.toISOString().split('T')[0],
+                          new Date(s.date).toISOString().split('T')[0] === formattedDate,
                       );
 
                       return (
-                        <TableCell key={date.toISOString()} className="w-16">
-                          <Input
-                            type="number"
-                            min={0}
-                            max={2}
-                            step={2}
-                            value={session?.duration ?? 0}
-                            className={session?.duration == null ? 'text-white' : 'text-black'}
-                            onChange={(e) =>
-                              handleUpdateHours(
-                                student.id,
-                                date.toISOString().split('T')[0],
-                                Number(e.target.value),
-                              )
+                        <TableCell key={date.toISOString()} className="w-20">
+                          <Select
+                            value={session?.slot || ''}
+                            onValueChange={(value) =>
+                              handleUpdateSlot(student.id, formattedDate, value)
                             }
-                          />
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {timeSlots.map((slot) => (
+                                <SelectItem
+                                  key={slot}
+                                  value={slot}
+                                  disabled={updatedSessions.some(
+                                    (s) =>
+                                      s.slot === slot &&
+                                      new Date(s.date).toISOString().split('T')[0] ===
+                                        formattedDate &&
+                                      s.studentId !== student.id,
+                                  )}
+                                >
+                                  {slot}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </TableCell>
                       );
                     })}

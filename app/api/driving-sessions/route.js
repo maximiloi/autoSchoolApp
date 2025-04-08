@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime/library';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 import { authOptions } from '../auth/[...nextauth]/route';
@@ -63,7 +62,7 @@ export async function POST(req) {
 
     const sessionResults = [];
 
-    for (const { studentId, date, duration } of body.sessions) {
+    for (const { studentId, date, slot } of body.sessions) {
       if (!studentId || !date) {
         sessionResults.push({ error: 'studentId и date обязательны для каждого занятия' });
         continue;
@@ -92,14 +91,14 @@ export async function POST(req) {
       if (existingSession) {
         sessionData = await prisma.drivingSession.update({
           where: { id: existingSession.id },
-          data: { duration: new Decimal(duration) },
+          data: { slot: slot },
         });
       } else {
         sessionData = await prisma.drivingSession.create({
           data: {
             studentId,
             date: parsedDate,
-            duration: new Decimal(duration),
+            slot: slot,
           },
         });
       }
