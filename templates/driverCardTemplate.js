@@ -18,8 +18,8 @@ export default function driverCardTemplate(student, company) {
   } = student;
   const { companyName, whoIssuedLicense, whenIssuedLicense, license } = company;
   const doc = {
-    number: 45454545,
-    series: 'MASH',
+    number: ________,
+    series: '______',
   };
 
   return {

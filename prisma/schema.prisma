@@ -156,6 +156,7 @@ model Student {
   company             Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   payments     Payment[]
+  drivingSessions   DrivingSession[] 
 
   createdAt           DateTime @default(now())
 }
@@ -166,4 +167,14 @@ model Payment {
   studentId   String
   amount      Decimal
   paymentDate DateTime @default(now())
+}
+
+model DrivingSession {
+  id         String   @id @default(uuid())
+  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId  String
+  date       DateTime
+  slot       String?
+
+  createdAt  DateTime @default(now())
 }

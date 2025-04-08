@@ -1,7 +1,8 @@
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-
+import { CarFront } from 'lucide-react';
+import Link from 'next/link';
 import ApplicationRegisterNewGroupButton from './ApplicationRegisterNewGroupButton';
-import DrivingRecordButton from './DrivingRecordButton';
 import InformationForTrafficPoliceButton from './InformationForTrafficPoliceButton';
 import JourneyTemplateButton from './JourneyTemplateButton';
 import ScheduleTemplateButton from './ScheduleTemplateButton';
@@ -18,7 +19,12 @@ export default function FooterPage({ group, company }) {
       <Separator orientation="vertical" />
       <JourneyTemplateButton group={group} company={company} />
       <Separator orientation="vertical" />
-      <DrivingRecordButton group={group} />
+      <Link href={`/app/group/${group.id}/driving-schedule`}>
+        <Button>
+          <CarFront />
+          Учет практики
+        </Button>
+      </Link>
     </div>
   );
 }
