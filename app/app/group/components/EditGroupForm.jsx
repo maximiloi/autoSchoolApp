@@ -43,7 +43,7 @@ export default function EditGroupForm({ group, onSuccess }) {
 
   const onSubmit = async (values) => {
     if (values.endTrainingDate < values.startTrainingDate) {
-      toast({ variant: 'destructive', description: 'Дата окончания раньше даты начала' });
+      toast({ variant: 'destructive', description: 'Дата окончания раньше даты начала курса' });
       return;
     }
 
@@ -55,13 +55,13 @@ export default function EditGroupForm({ group, onSuccess }) {
         body: JSON.stringify(values),
       });
 
-      if (!response.ok) throw new Error('Ошибка при обновлении дат');
+      if (!response.ok) throw new Error('Ошибка при изменении дат');
 
       const updated = await response.json();
       const { setGroup } = useGroupStore.getState();
       setGroup(updated);
 
-      toast({ description: 'Даты успешно обновлены' });
+      toast({ description: 'Даты курса успешно изменены' });
       if (onSuccess) onSuccess(updated);
     } catch (err) {
       toast({ variant: 'destructive', description: err.message });
