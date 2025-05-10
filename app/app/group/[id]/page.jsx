@@ -12,12 +12,13 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { RussianRuble } from 'lucide-react';
+import { Pencil, RussianRuble } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { useCompanyStore, useGroupStore } from '@/store/useStore';
 
+import EditGroupForm from '../components/EditGroupForm';
 import FooterPage from './components/FooterPage';
 import StudentList from './components/StudentList';
 
@@ -28,6 +29,7 @@ export default function GroupPage() {
   const { toast } = useToast();
   const { company } = useCompanyStore();
   const { group, setGroup } = useGroupStore();
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     async function fetchDataGroup() {
@@ -62,7 +64,7 @@ export default function GroupPage() {
 
   return (
     <>
-      <div className="flex gap-8">
+      <div className="flex items-center gap-8">
         <Dialog>
           <DialogTrigger asChild>
             <Button
@@ -94,6 +96,26 @@ export default function GroupPage() {
         <p className="text-sm">
           Категория: <span className="text-lg text-muted-foreground">{group.category}</span>
         </p>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button className="w-10 rounded-full bg-blue-200 text-white hover:bg-blue-300">
+              <Pencil />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-xl">
+            <DialogTitle>Редактировать группу</DialogTitle>
+            <DialogDescription>
+              Обновите информацию о группе № {group.groupNumber}
+            </DialogDescription>
+            <EditGroupForm
+              group={group}
+              onSuccess={(updatedGroup) => {
+                setGroup(updatedGroup);
+                setOpen(false);
+              }}
+            />
+          </DialogContent>
+        </Dialog>
         <p className="text-sm">
           Начало обучения:{' '}
           <span className="text-lg text-muted-foreground">
