@@ -33,7 +33,6 @@ const DrivingSchedule = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [updatedSessions, setUpdatedSessions] = useState([]);
   const { group, setGroup } = useGroupStore();
-  const isGroupLoaded = !!group?.id;
   const { toast } = useToast();
 
   const students = group?.students || [];
@@ -132,9 +131,12 @@ const DrivingSchedule = () => {
 
   return (
     <div className="min-w-full overflow-hidden">
-      <Button variant="secondary" onClick={handleSaveData}>
-        <Save /> Сохранить данные
-      </Button>
+      <div className="mb-8 flex items-center justify-between">
+        <h1>Планирование вождение у группы № {group.groupNumber}</h1>
+        <Button variant="secondary" onClick={handleSaveData}>
+          <Save /> Сохранить данные
+        </Button>
+      </div>
       <div className="max-h-screen overflow-x-auto">
         <Table className="min-w-max">
           <TableHeader>
