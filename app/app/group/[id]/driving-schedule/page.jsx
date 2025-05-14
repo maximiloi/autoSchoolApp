@@ -233,11 +233,34 @@ const DrivingSchedule = () => {
               <TableCell colSpan={3} className="sticky left-0 z-10 w-[17rem] bg-white">
                 Распечатать путевой лист
               </TableCell>
-              {dates.map((date) => (
-                <TableCell key={date.toISOString()}>
-                  <TravelSheetButton date={date} group={group} company={company} />
-                </TableCell>
-              ))}
+              {dates.map((date) => {
+                const formattedDate = date.toISOString().split('T')[0];
+
+                const daySessions = updatedSessions
+                  .filter((s) => new Date(s.date).toISOString().split('T')[0] === formattedDate)
+                  .map((s) => {
+                    const student = students.find((stu) => stu.id === s.studentId);
+                    if (!student) return null;
+                    return {
+                      firstName: student.firstName,
+                      lastName: student.lastName,
+                      phone: student.phone,
+                      slot: s.slot,
+                    };
+                  })
+                  .filter(Boolean);
+
+                return (
+                  <TableCell key={date.toISOString()}>
+                    <TravelSheetButton
+                      date={date}
+                      group={group}
+                      company={company}
+                      daySessions={daySessions}
+                    />
+                  </TableCell>
+                );
+              })}
             </TableRow>
           </TableFooter>
         </Table>

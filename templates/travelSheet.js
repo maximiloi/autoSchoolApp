@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-export default function travelSheet(date, group, company) {
+export default function travelSheet(date, group, company, daySessions) {
   if (!date || !group || !company) {
     console.error('Ошибка: загрузки данных');
     return null;
@@ -19,6 +19,13 @@ export default function travelSheet(date, group, company) {
   const licenseNumberPracticeTeachers = practiceTeachers[0]?.licenseNumber;
   const licensePracticeTeachers = `${licenseSeriesPracticeTeachers} ${licenseNumberPracticeTeachers}`;
   const snilsPracticeTeachers = practiceTeachers[0]?.snils;
+  const sortedSessions = [...daySessions].sort((a, b) => {
+    const [startA] = a.slot.split('-').map(Number);
+    const [startB] = b.slot.split('-').map(Number);
+    return startA - startB;
+  });
+
+  let totalMinutes = 0;
 
   return {
     pageOrientation: 'landscape',
@@ -184,19 +191,7 @@ export default function travelSheet(date, group, company) {
       { text: '', pageBreak: 'after' },
       {
         table: {
-          widths: [
-            'auto',
-            '*',
-            'auto',
-            'auto',
-            '*',
-            'auto',
-            'auto',
-            'auto',
-            'auto',
-            'auto',
-            'auto',
-          ],
+          widths: ['4%', '17%', 'auto', 'auto', '15%', '6%', '6%', '6%', 'auto', 'auto', 'auto'],
           body: [
             [
               { text: '№ гр.', alignment: 'center', style: 'tabHeader' },
@@ -211,24 +206,48 @@ export default function travelSheet(date, group, company) {
               { text: 'Оценка', alignment: 'center', style: 'tabHeader' },
               { text: 'Подпись учащегося', alignment: 'center', style: 'tabHeader' },
             ],
-            ['', '', '', '', '', '', '', '', '', '', ''],
-            [
-              { text: 'ИТОГО', colSpan: 8, alignment: 'right' },
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-            ],
+            ...sortedSessions.map((student, index) => {
+              const [startTime, endTime] = student.slot.split('-').map(Number);
+              const durationMinutes = (endTime - startTime) * 60;
+              totalMinutes += durationMinutes;
+
+              return [
+                groupNumber,
+                `${student.lastName} ${student.firstName}`,
+                student.phone,
+                '', // Упражнение
+                'Город, Площадка',
+                `${startTime}:00`,
+                `${endTime}:00`,
+                `${endTime - startTime}:00`,
+                '', // Пробег
+                '', // Оценка
+                '', // Подпись
+              ];
+            }),
+            (() => {
+              const hours = Math.floor(totalMinutes / 60);
+              const minutes = totalMinutes % 60;
+              const totalTimeFormatted = `${hours}:${minutes.toString().padStart(2, '0')}`;
+
+              return [
+                { text: 'ИТОГО', colSpan: 7, alignment: 'right' },
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                totalTimeFormatted,
+                '',
+                { text: '', colSpan: 2 },
+                '',
+              ];
+            })(),
           ],
         },
       },
-      { text: 'Мастер (водитель) __________________', alignment: 'right' },
+      { text: 'Мастер (водитель) __________________', alignment: 'right', margin: [0, 20, 0, 0] },
     ],
   };
 }
