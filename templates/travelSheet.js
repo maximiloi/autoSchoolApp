@@ -1,12 +1,13 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-export default function travelSheet(date, group) {
-  if (!date || !group) {
+export default function travelSheet(date, group, company) {
+  if (!date || !group || !company) {
     console.error('Ошибка: загрузки данных');
     return null;
   }
 
+  const { companyName, actualAddress, phone } = company;
   const { groupNumber, practiceTeachers } = group;
   const carModel = practiceTeachers[0]?.cars[0]?.carModel;
   const carNumber = practiceTeachers[0]?.cars[0]?.carNumber;
@@ -31,10 +32,15 @@ export default function travelSheet(date, group) {
           {
             width: '*',
             text: [
-              { text: 'Организация: ____________________________\n', bold: true },
-              { text: 'адрес: _________________________________\n', bold: true },
-              { text: 'телефон: ', bold: true },
-              { text: '22 214\n', decoration: 'underline' },
+              { text: 'Организация: ', bold: true },
+              companyName,
+              { text: '\n' },
+              { text: 'Адрес: ', bold: true },
+              actualAddress,
+              { text: '\n' },
+              { text: 'Телефон: ', bold: true },
+              phone,
+              { text: '\n' },
             ],
           },
           {
@@ -89,28 +95,28 @@ export default function travelSheet(date, group) {
               {
                 text: [
                   { text: 'Время выезда из гаража: ', bold: true },
-                  '__________',
+                  '__________ ',
                   { text: 'час.мин.', bold: true },
                 ],
               },
               {
                 text: [
                   { text: 'Время возвращения в гараж: ', bold: true },
-                  '__________',
+                  '__________ ',
                   { text: 'час.мин.', bold: true },
                 ],
               },
               {
                 text: [
                   { text: 'Показания спидометра при выезде: ', bold: true },
-                  '__________',
+                  '__________ ',
                   { text: 'км.', bold: true },
                 ],
               },
               {
                 text: [
                   { text: 'Показания спидометра при возвращении в гараж: ', bold: true },
-                  '__________',
+                  '__________ ',
                   { text: 'км.', bold: true },
                 ],
               },
@@ -132,10 +138,10 @@ export default function travelSheet(date, group) {
       '\n\n',
       {
         table: {
-          widths: ['auto', '*', '*', 'auto', 'auto', '*', 'auto'],
+          widths: ['3%', '*', '*', '7%', '5%', '*', '5%'],
           body: [
             [
-              { text: '№ п/п', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
+              { text: '№\nп/п', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
               {
                 text: 'Задание мастеру (водителю)',
                 rowSpan: 2,
@@ -157,7 +163,7 @@ export default function travelSheet(date, group) {
               { text: 'причина простоя', alignment: 'center', style: 'tabHeader' },
               { text: 'время', alignment: 'center', style: 'tabHeader' },
             ],
-            ['Обучение практическому вождению', 'Окуловка по городу и району', '', '', '', '', ''],
+            ['1', 'Обучение практическому вождению', 'Окуловка по городу и району', '', '', '', ''],
           ],
         },
       },
@@ -169,8 +175,12 @@ export default function travelSheet(date, group) {
       },
       'коэффициент нормы расхода топлива ________ остаток ________ л.',
       'расчётный расход топлива ____________________ л. получено ________ л.',
-      { text: 'Начальник гаража (зав.курсами) ____________________', margin: [0, 10, 0, 2] },
-      { text: 'подпись', fontSize: 8 },
+      {
+        text: 'Начальник гаража (зав.курсами) ____________________',
+        margin: [0, 10, 0, 2],
+        alignment: 'right',
+      },
+      { text: 'подпись', fontSize: 8, margin: [0, 0, 30, -2], alignment: 'right' },
       { text: '', pageBreak: 'after' },
       {
         table: {

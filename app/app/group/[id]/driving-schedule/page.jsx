@@ -18,7 +18,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
-import { useGroupStore } from '@/store/useStore';
+import { useCompanyStore, useGroupStore } from '@/store/useStore';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { Save } from 'lucide-react';
@@ -33,6 +33,7 @@ const DrivingSchedule = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [updatedSessions, setUpdatedSessions] = useState([]);
   const { group, setGroup } = useGroupStore();
+  const { company } = useCompanyStore();
   const { toast } = useToast();
 
   const students = group?.students || [];
@@ -234,7 +235,7 @@ const DrivingSchedule = () => {
               </TableCell>
               {dates.map((date) => (
                 <TableCell key={date.toISOString()}>
-                  <TravelSheetButton date={date} group={group} />
+                  <TravelSheetButton date={date} group={group} company={company} />
                 </TableCell>
               ))}
             </TableRow>
