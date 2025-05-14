@@ -1,12 +1,13 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-export default function travelSheet(date, group) {
-  if (!date || !group) {
+export default function travelSheet(date, group, company, daySessions) {
+  if (!date || !group || !company) {
     console.error('Ошибка: загрузки данных');
     return null;
   }
 
+  const { companyName, actualAddress, phone } = company;
   const { groupNumber, practiceTeachers } = group;
   const carModel = practiceTeachers[0]?.cars[0]?.carModel;
   const carNumber = practiceTeachers[0]?.cars[0]?.carNumber;
@@ -18,443 +19,239 @@ export default function travelSheet(date, group) {
   const licenseNumberPracticeTeachers = practiceTeachers[0]?.licenseNumber;
   const licensePracticeTeachers = `${licenseSeriesPracticeTeachers} ${licenseNumberPracticeTeachers}`;
   const snilsPracticeTeachers = practiceTeachers[0]?.snils;
+  const sortedSessions = [...daySessions].sort((a, b) => {
+    const [startA] = a.slot.split('-').map(Number);
+    const [startB] = b.slot.split('-').map(Number);
+    return startA - startB;
+  });
+
+  let totalMinutes = 0;
 
   return {
     pageOrientation: 'landscape',
     styles: {
       header: { fontSize: 16, bold: true },
-      stamp: { fontSize: 8, margin: [0, 75, 0, 0] },
       tabHeader: { fontSize: 8 },
     },
     content: [
       {
         columns: [
           {
-            width: '24%',
-            text: 'место для штампа организации',
-            style: 'stamp',
-            alignment: 'center',
+            width: '*',
+            text: [
+              { text: 'Организация: ', bold: true },
+              companyName,
+              { text: '\n' },
+              { text: 'Адрес: ', bold: true },
+              actualAddress,
+              { text: '\n' },
+              { text: 'Телефон: ', bold: true },
+              phone,
+              { text: '\n' },
+            ],
           },
           {
-            width: '40%',
+            width: 'auto',
             stack: [
               {
                 text: `ПУТЕВОЙ ЛИСТ № ${groupNumber}${format(new Date(date), 'ddMM')}`,
                 style: 'header',
+                alignment: 'right',
               },
-              { text: 'на учебный автомобиль', style: 'header' },
+              { text: 'на учебный автомобиль', alignment: 'right' },
+              {
+                text: `${format(new Date(date), "d MMMM yyyy 'г.'", { locale: ru })}`,
+                style: 'header',
+                alignment: 'right',
+                decoration: 'underline',
+              },
+            ],
+          },
+        ],
+      },
+      '\n',
+      {
+        columns: [
+          {
+            width: '50%',
+            stack: [
               {
                 text: [{ text: 'Марка автомобиля: ', bold: true }, carModel],
                 margin: [0, 5, 0, 0],
               },
-              { text: [{ text: 'Государственный №: ', bold: true }, carNumber] },
-              { text: [{ text: 'Мастер: ', bold: true }, fullNamePracticeTeachers] },
+
+              { text: [{ text: 'Государственный номерной знак: ', bold: true }, carNumber] },
+              {
+                text: [
+                  { text: 'Преподаватель (водитель): ', bold: true },
+                  fullNamePracticeTeachers,
+                ],
+              },
               {
                 text: [
                   { text: 'Водительское удостоверение: ', bold: true },
                   licensePracticeTeachers,
                 ],
               },
-              { text: [{ text: 'СНИЛС: ', bold: true }, snilsPracticeTeachers] },
-              { text: 'Время выезда из гаража ч. мин.  ____-____', margin: [0, 5, 0, 0] },
-              { text: 'Время возвращения в гараж ч. мин.  ____-____', margin: [0, 5, 0, 0] },
-            ],
-          },
-          {
-            width: '*',
-            stack: [
-              {
-                text: `${format(new Date(date), "d MMMM yyyy 'г.'", { locale: ru })}`,
-                style: 'header',
-              },
-              {
-                text: 'Предрейсовый контроль технического состояния ТС пройден:',
-                margin: [0, 5, 0, 0],
-              },
-              { text: '_________________________________________________', margin: [0, 2, 0, 0] },
-              {
-                text: 'время	         	подпись	            	расшифровка подписи',
-                fontSize: 8,
-                margin: [0, -3, 0, 0],
-              },
-              {
-                text: 'Прошел предсменный медицинский осмотр, к исполнению трудовых обязанностей допущен:',
-                margin: [0, 5, 0, 0],
-              },
-              { text: '_________________________________________________', margin: [0, 2, 0, 0] },
-              {
-                text: 'время	         	подпись	            	расшифровка подписи',
-                fontSize: 8,
-                margin: [0, -3, 0, 0],
-              },
-              { text: 'Прошел послерейсовый медицинский осмотр:', margin: [0, 5, 0, 0] },
-              { text: '_________________________________________________', margin: [0, 2, 0, 0] },
-              {
-                text: 'время	         	подпись	            	расшифровка подписи',
-                fontSize: 8,
-                margin: [0, -3, 0, 0],
-              },
-            ],
-          },
-        ],
-        columnGap: 10,
-      },
-      {
-        text: [
-          { text: 'Показания спидометра: ', bold: true },
-          { text: '    ' },
-          { text: 'а) при выезде из гаража: ', bold: true },
-          { text: ' ___________ км ' },
-          { text: '    ' },
-          { text: 'б) при возвращении в гараж:', bold: true },
-          { text: ' ___________ км' },
-        ],
-        margin: [0, 10, 0, 0],
-      },
-      {
-        table: {
-          widths: ['5%', '25%', '10%', '25%', '25%', '10%'],
-          body: [
-            [
-              {
-                text: 'Задание мастеру',
-                colSpan: 3,
-                bold: true,
-                alignment: 'center',
-              },
-              '',
-              '',
-              { text: 'Горючее', rowSpan: 2, bold: true, alignment: 'center' },
-              {
-                text: 'Отметки о простоях',
-                colSpan: 2,
-                bold: true,
-                alignment: 'center',
-              },
-              '',
-            ],
-            [
-              { text: 'Группы', fontSize: 8 },
-              { text: 'Фамилия и инициалы учащихся', fontSize: 8 },
-              { text: '№№ упражнений', fontSize: 8 },
-              '',
-              { text: 'Причина простоя в гараже или на линии', fontSize: 8 },
-              { text: 'Время простоя', fontSize: 8 },
-            ],
-            [
-              ' ',
-              '',
-              '',
               {
                 text: [
-                  { text: 'Наличие в баке\t______\tлитр.\n\n', bold: true },
-                  { text: 'Получено:\n' },
-                  { text: '1.\t__________________\tлитр.\n' },
-                  { text: '2.\t__________________\tлитр.\n\n' },
-                  {
-                    text: '_________________________________\n',
-                    margin: [0, 2, 0, 0],
-                  },
-                  {
-                    text: 'подпись\n\n',
-                    fontSize: 8,
-                    margin: [0, -3, 0, 0],
-                  },
-                  { text: 'Остаток горючего в баке по окончании работы\t______\tлитр.\n\n' },
-                  {
-                    text: '_________________________________\n',
-                    margin: [0, 2, 0, 0],
-                  },
-                  {
-                    text: 'подпись\n\n',
-                    fontSize: 8,
-                    margin: [0, -3, 0, 0],
-                  },
+                  { text: 'СНИЛС: ', bold: true },
+                  snilsPracticeTeachers.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1-$2-$3 $4'),
                 ],
-                rowSpan: 12,
               },
-              '',
-              '',
-            ],
-            [' ', '', '', '', '', ''],
-            [' ', '', '', '', '', ''],
-            [' ', '', '', '', '', ''],
-            [' ', '', '', '', '', ''],
-            [' ', '', '', '', '', ''],
-            [' ', '', '', '', '', ''],
-            [' ', '', '', '', '', ''],
-            [
-              ' ',
-              '',
-              '',
-              '',
               {
-                text: 'Отметки о контрольных заездах в автошколу и гараж',
-                colSpan: 2,
-                fontSize: 8,
+                text: [
+                  { text: 'Время выезда из гаража: ', bold: true },
+                  '__________ ',
+                  { text: 'час.мин.', bold: true },
+                ],
               },
-              '',
-            ],
-            [' ', '', '', '', '', ''],
-            [' ', '', '', '', '', ''],
-            [' ', '', '', '', '', ''],
-          ],
-        },
-        layout: 'grid',
-        margin: [0, 10, 0, 0],
-      },
-      {
-        text: 'Дополнительное задание мастеру	____________________________________________________________',
-      },
-      {
-        text: 'Руководитель учебного заведения		____________________________________________________________',
-      },
-      {
-        text: 'Вид сообщения	__________________________________________________ Вид перевозки		__________________________________________________',
-      },
-      {
-        text: 'ВЫПОЛНЕНИЕ ЗАДАНИЯ',
-        bold: true,
-        alignment: 'center',
-        pageBreak: 'before',
-      },
-      {
-        table: {
-          headerRows: 2,
-          widths: [
-            '5.45%',
-            '18.18%',
-            '9.09%',
-            '4.55%',
-            '4.55%',
-            '4.55%',
-            '4.55%',
-            '14.55%',
-            '5.45%',
-            '7.27%',
-            '10.91%',
-            '10.91%',
-          ],
-          body: [
-            [
-              { text: '№№ группы', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
               {
-                text: 'Фамилия и инициалы учащихся',
-                rowSpan: 2,
-                alignment: 'center',
-                style: 'tabHeader',
+                text: [
+                  { text: 'Время возвращения в гараж: ', bold: true },
+                  '__________ ',
+                  { text: 'час.мин.', bold: true },
+                ],
               },
-              { text: 'Упражнение №', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
-              { text: 'Начало занятий', colSpan: 2, alignment: 'center', style: 'tabHeader' },
-              {},
-              { text: 'Конец занятий', colSpan: 2, alignment: 'center', style: 'tabHeader' },
-              {},
-              { text: 'Всего часов', colSpan: 2, alignment: 'center', style: 'tabHeader' },
-              {},
-              { text: 'Пройдено километров', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
-              { text: 'Оценка', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
-              { text: 'Подписи учащихся', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
-            ],
-            [
-              {},
-              {},
-              {},
-              { text: 'Час.', alignment: 'center', style: 'tabHeader' },
-              { text: 'Мин.', alignment: 'center', style: 'tabHeader' },
-              { text: 'Час.', alignment: 'center', style: 'tabHeader' },
-              { text: 'Мин.', alignment: 'center', style: 'tabHeader' },
-              { text: 'Часов прописью', alignment: 'center', style: 'tabHeader' },
-              { text: 'Мин.', alignment: 'center', style: 'tabHeader' },
-              {},
-              {},
-              {},
-            ],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-          ],
-        },
-        layout: 'grid',
-      },
-      {
-        columns: [
-          { width: '*', text: '' },
-          {
-            width: '33%',
-            stack: [
-              { text: 'Мастер', alignment: 'left', margin: [0, 0, 0, 10] },
               {
-                columns: [
-                  {
-                    width: '45%',
-                    stack: [
-                      { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 100, y2: 0, lineWidth: 1 }] },
-                      { text: 'подпись', alignment: 'center', fontSize: 9 },
-                    ],
-                  },
-                  { width: '10%', text: '' },
-                  {
-                    width: '45%',
-                    stack: [
-                      { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 100, y2: 0, lineWidth: 1 }] },
-                      { text: 'расшифровка подписи', alignment: 'center', fontSize: 9 },
-                    ],
-                  },
+                text: [
+                  { text: 'Показания спидометра при выезде: ', bold: true },
+                  '__________ ',
+                  { text: 'км.', bold: true },
+                ],
+              },
+              {
+                text: [
+                  { text: 'Показания спидометра при возвращении в гараж: ', bold: true },
+                  '__________ ',
+                  { text: 'км.', bold: true },
                 ],
               },
             ],
           },
+          {
+            width: '50%',
+            stack: [
+              'Автомобиль технически исправен, выезд разрешаю: \n\n_______________________________________',
+              { text: 'должность, подпись, расшифровка подписи', fontSize: 8 },
+              '\nАвтомобиль в технически исправном состоянии принял водитель: \n\n_______________________________________',
+              { text: 'подпись, расшифровка подписи', fontSize: 8 },
+              '\nВодитель по состоянию здоровья к управлению допущен: \n\n_______________________________________',
+              { text: 'должность, подпись, расшифровка подписи', fontSize: 8 },
+            ],
+          },
         ],
-        margin: [0, 10, 0, 0],
       },
-      {
-        text: 'РЕЗУЛЬТАТЫ РАБОТЫ',
-        bold: true,
-        alignment: 'center',
-        margin: [0, 20, 0, 0],
-      },
+      '\n\n',
       {
         table: {
-          headerRows: 3,
-          widths: [
-            '7.89%',
-            '7.89%',
-            '7.89%',
-            '7.89%',
-            '13.16%',
-            '7.89%',
-            '7.89%',
-            '7.89%',
-            '7.89%',
-            '7.89%',
-            '7.89%',
-            '7.89%',
-          ],
+          widths: ['3%', '*', '*', '7%', '5%', '*', '5%'],
           body: [
             [
-              { text: 'Часы', colSpan: 5, alignment: 'center', style: 'tabHeader' },
-              {},
-              {},
-              {},
-              {},
-              { text: 'Пробег (км.)', colSpan: 3, alignment: 'center', style: 'tabHeader' },
-              {},
-              {},
+              { text: '№\nп/п', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
               {
-                text: 'Расход горючего',
-                colSpan: 4,
-                alignment: 'center',
-                style: 'tabHeader',
-              },
-              {},
-              {},
-              {},
-            ],
-            [
-              { text: 'В наряде', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
-              { text: 'В движении', colSpan: 2, alignment: 'center', style: 'tabHeader' },
-              {},
-              { text: 'Простои', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
-              {
-                text: 'В том числе по технической неисправности',
+                text: 'Задание мастеру (водителю)',
                 rowSpan: 2,
                 alignment: 'center',
                 style: 'tabHeader',
               },
-              { text: 'Общий', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
-              { text: 'В том числе', colSpan: 2, alignment: 'center', style: 'tabHeader' },
+              { text: 'Маршрут движения', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
+              { text: 'Пробег', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
+              { text: 'Час.', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
+              { text: 'Отметки о простоях', colSpan: 2, alignment: 'center', style: 'tabHeader' },
               {},
-              { text: 'По норме', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
-              { text: 'Фактически', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
-              { text: 'Экономия', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
-              { text: 'Перерасход', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
             ],
             [
               {},
-              { text: 'учебные без груза', alignment: 'center', style: 'tabHeader' },
-              { text: 'учебные с грузом', alignment: 'center', style: 'tabHeader' },
-              {},
-              {},
-              {},
-              { text: 'учебные без груза', alignment: 'center', style: 'tabHeader' },
-              { text: 'учебные с грузом', alignment: 'center', style: 'tabHeader' },
               {},
               {},
               {},
               {},
+              { text: 'причина простоя', alignment: 'center', style: 'tabHeader' },
+              { text: 'время', alignment: 'center', style: 'tabHeader' },
             ],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+            ['1', 'Обучение практическому вождению', 'Окуловка по городу и району', '', '', '', ''],
           ],
         },
-        layout: 'grid',
       },
+      '\n\n',
+      {
+        text: 'ДВИЖЕНИЕ ТОПЛИВА',
+        bold: true,
+        margin: [0, 10, 0, 5],
+      },
+      'коэффициент нормы расхода топлива ________ остаток ________ л.',
+      'расчётный расход топлива ____________________ л. получено ________ л.',
+      {
+        text: 'Начальник гаража (зав.курсами) ____________________',
+        margin: [0, 10, 0, 2],
+        alignment: 'right',
+      },
+      { text: 'подпись', fontSize: 8, margin: [0, 0, 30, -2], alignment: 'right' },
+      { text: '', pageBreak: 'after' },
       {
         table: {
-          widths: ['50%', '50%'],
+          widths: ['4%', '17%', 'auto', 'auto', '15%', '6%', '6%', '6%', 'auto', 'auto', 'auto'],
           body: [
             [
-              {
-                stack: [
-                  { text: 'Зам руководителя', alignment: 'center', margin: [0, 5, 0, 2] },
-                  {
-                    columns: [
-                      { text: '________________', alignment: 'center' },
-                      { text: '_________________________', alignment: 'center' },
-                    ],
-                    margin: [0, 0, 0, 2],
-                  },
-                  {
-                    columns: [
-                      { text: 'подпись', alignment: 'center', fontSize: 8, margin: [0, -3, 0, 0] },
-                      {
-                        text: 'расшифровка подписи',
-                        alignment: 'center',
-                        fontSize: 8,
-                        margin: [0, -3, 0, 0],
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                stack: [
-                  { text: 'Бухгалтер', alignment: 'center', margin: [0, 5, 0, 2] },
-                  {
-                    columns: [
-                      { text: '________________', alignment: 'center' },
-                      { text: '_________________________', alignment: 'center' },
-                    ],
-                    margin: [0, 0, 0, 2],
-                  },
-                  {
-                    columns: [
-                      { text: 'подпись', alignment: 'center', fontSize: 8, margin: [0, -3, 0, 0] },
-                      {
-                        text: 'расшифровка подписи',
-                        alignment: 'center',
-                        fontSize: 8,
-                        margin: [0, -3, 0, 0],
-                      },
-                    ],
-                  },
-                ],
-              },
+              { text: '№ гр.', alignment: 'center', style: 'tabHeader' },
+              { text: 'Фамилия, Имя учащегося', alignment: 'center', style: 'tabHeader' },
+              { text: 'Телефон учащегося', alignment: 'center', style: 'tabHeader' },
+              { text: 'Упражнение', alignment: 'center', style: 'tabHeader' },
+              { text: 'Маршрут', alignment: 'center', style: 'tabHeader' },
+              { text: 'Начало занятий\nчас.мин', alignment: 'center', style: 'tabHeader' },
+              { text: 'конец занятий\nчас.мин', alignment: 'center', style: 'tabHeader' },
+              { text: 'Всего часов\nчас.мин', alignment: 'center', style: 'tabHeader' },
+              { text: 'Пробег км.', alignment: 'center', style: 'tabHeader' },
+              { text: 'Оценка', alignment: 'center', style: 'tabHeader' },
+              { text: 'Подпись учащегося', alignment: 'center', style: 'tabHeader' },
             ],
+            ...sortedSessions.map((student, index) => {
+              const [startTime, endTime] = student.slot.split('-').map(Number);
+              const durationMinutes = (endTime - startTime) * 60;
+              totalMinutes += durationMinutes;
+
+              return [
+                groupNumber,
+                `${student.lastName} ${student.firstName}`,
+                student.phone,
+                '', // Упражнение
+                'Город, Площадка',
+                `${startTime}:00`,
+                `${endTime}:00`,
+                `${endTime - startTime}:00`,
+                '', // Пробег
+                '', // Оценка
+                '', // Подпись
+              ];
+            }),
+            (() => {
+              const hours = Math.floor(totalMinutes / 60);
+              const minutes = totalMinutes % 60;
+              const totalTimeFormatted = `${hours}:${minutes.toString().padStart(2, '0')}`;
+
+              return [
+                { text: 'ИТОГО', colSpan: 7, alignment: 'right' },
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                totalTimeFormatted,
+                '',
+                { text: '', colSpan: 2 },
+                '',
+              ];
+            })(),
           ],
         },
-        layout: 'noBorders',
-        margin: [0, 10, 0, 0],
+        layout: {
+          paddingTop: () => 5,
+          paddingBottom: () => 5,
+        },
       },
+      { text: 'Мастер (водитель) __________________', alignment: 'right', margin: [0, 20, 0, 0] },
     ],
   };
 }

@@ -4,7 +4,7 @@ import travelSheet from '@/templates/travelSheet';
 import { Printer } from 'lucide-react';
 import { useCallback } from 'react';
 
-export default function TravelSheetButton({ date, group }) {
+export default function TravelSheetButton({ date, group, company, daySessions }) {
   const pdfMake = usePdfMake();
 
   const generatePDF = useCallback(() => {
@@ -13,7 +13,7 @@ export default function TravelSheetButton({ date, group }) {
       return;
     }
 
-    const docDefinition = travelSheet(date, group);
+    const docDefinition = travelSheet(date, group, company, daySessions);
     if (!docDefinition) return;
 
     pdfMake.createPdf(docDefinition).open();
