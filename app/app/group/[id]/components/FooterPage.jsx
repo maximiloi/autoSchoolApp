@@ -5,12 +5,14 @@ import Link from 'next/link';
 import ApplicationRegisterNewGroupButton from './ApplicationRegisterNewGroupButton';
 import InformationForTrafficPoliceButton from './InformationForTrafficPoliceButton';
 import JourneyTemplateButton from './JourneyTemplateButton';
+import ListGroupButton from './ListGroupButton';
 import ScheduleTemplateButton from './ScheduleTemplateButton';
 
 export default function FooterPage({ group, company }) {
   return (
     <div className="flex space-x-4 text-sm">
       <div className="flex flex-col gap-4">
+        <ListGroupButton group={group} company={company} />
         <ApplicationRegisterNewGroupButton group={group} company={company} />
         <InformationForTrafficPoliceButton group={group} company={company} />
       </div>
