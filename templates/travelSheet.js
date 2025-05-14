@@ -246,6 +246,10 @@ export default function travelSheet(date, group, company, daySessions) {
             })(),
           ],
         },
+        layout: {
+          paddingTop: () => 5,
+          paddingBottom: () => 5,
+        },
       },
       { text: 'Мастер (водитель) __________________', alignment: 'right', margin: [0, 20, 0, 0] },
     ],
