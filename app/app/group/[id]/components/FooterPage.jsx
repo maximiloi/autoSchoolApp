@@ -3,6 +3,7 @@ import { Separator } from '@/components/ui/separator';
 import { CarFront } from 'lucide-react';
 import Link from 'next/link';
 import ApplicationRegisterNewGroupButton from './ApplicationRegisterNewGroupButton';
+import ExamListsButton from './ExamListsButton';
 import InformationForTrafficPoliceButton from './InformationForTrafficPoliceButton';
 import JourneyTemplateButton from './JourneyTemplateButton';
 import ListGroupButton from './ListGroupButton';
@@ -15,6 +16,7 @@ export default function FooterPage({ group, company }) {
       <div className="flex flex-col gap-4">
         <ListGroupButton group={group} company={company} />
         <ApplicationRegisterNewGroupButton group={group} company={company} />
+        <ExamListsButton group={group} company={company} />
         <InformationForTrafficPoliceButton group={group} company={company} />
       </div>
       <Separator orientation="vertical" />
