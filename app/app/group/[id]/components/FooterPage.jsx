@@ -6,6 +6,7 @@ import ApplicationRegisterNewGroupButton from './ApplicationRegisterNewGroupButt
 import InformationForTrafficPoliceButton from './InformationForTrafficPoliceButton';
 import JourneyTemplateButton from './JourneyTemplateButton';
 import ListGroupButton from './ListGroupButton';
+import PracticePlanningButton from './PracticePlanningButton';
 import ScheduleTemplateButton from './ScheduleTemplateButton';
 
 export default function FooterPage({ group, company }) {
@@ -21,12 +22,14 @@ export default function FooterPage({ group, company }) {
       <Separator orientation="vertical" />
       <JourneyTemplateButton group={group} company={company} />
       <Separator orientation="vertical" />
-      <Link href={`/app/group/${group.id}/driving-schedule`}>
-        <Button>
-          <CarFront />
-          Учет практики
-        </Button>
-      </Link>
+      <div className="flex flex-col gap-4">
+        <PracticePlanningButton group={group} />
+        <Link href={`/app/group/${group.id}/driving-schedule`}>
+          <Button>
+            <CarFront /> Учет практики
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }
