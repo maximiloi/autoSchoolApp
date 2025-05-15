@@ -1,4 +1,4 @@
-import { addDays, format } from 'date-fns';
+import { addDays, format, getDay } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
 export default function practicePlanning(group = {}, selectedDate) {
@@ -7,15 +7,20 @@ export default function practicePlanning(group = {}, selectedDate) {
   if (!selectedDate) return null;
 
   const startDate = new Date(selectedDate);
-  const endDate = addDays(startDate, 13); // +14 дней — с учетом включительно
+  const endDate = addDays(startDate, 13);
 
   const activeGroupNumber = groupNumber ?? '_____';
   const activeSelectedTrainingDate = format(startDate, 'dd.MM.yyyy', { locale: ru });
   const activeEndTrainingDate = format(endDate, 'dd.MM.yyyy', { locale: ru });
 
-  const dateHeaders = Array.from({ length: 14 }, (_, i) => {
+  const dateColumns = Array.from({ length: 14 }, (_, i) => {
     const date = addDays(startDate, i);
-    return format(date, 'dd.MM (EEE)', { locale: ru });
+    const dayOfWeek = getDay(date); // 0 - воскресенье, 6 - суббота
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    return {
+      text: format(date, 'dd.MM (EEE)', { locale: ru }),
+      isWeekend,
+    };
   });
 
   const sortedStudents = [...students].sort((a, b) => a.studentNumber - b.studentNumber);
@@ -49,7 +54,11 @@ export default function practicePlanning(group = {}, selectedDate) {
             [
               { text: '№ п/п', style: 'tableHeader' },
               { text: 'ФИО / Телефон', style: 'tableHeader' },
-              ...dateHeaders.map((d) => ({ text: d, style: 'tableHeader' })),
+              ...dateColumns.map((col) => ({
+                text: col.text,
+                style: 'tableHeader',
+                fillColor: col.isWeekend ? '#d2d4da' : null,
+              })),
             ],
             ...sortedStudents.map((student) => [
               { text: student.studentNumber, alignment: 'center' },
@@ -57,7 +66,10 @@ export default function practicePlanning(group = {}, selectedDate) {
                 text: `${student.lastName} ${student.firstName} ${student.middleName ?? ''}\n${student.phone}`,
                 style: 'table',
               },
-              ...Array(14).fill({ text: '' }), // Пустые ячейки
+              ...dateColumns.map((col) => ({
+                text: '',
+                fillColor: col.isWeekend ? '#d2d4da' : null,
+              })),
             ]),
           ],
         },
