@@ -15,7 +15,7 @@ export default function examListsTemplate(group, company, selectedDate) {
     { text: 'Начальнику ОГИБДД ОМВД РФ', style: 'pageHeader', alignment: 'right' },
     { text: 'по Окуловскому району', style: 'pageHeader', alignment: 'right' },
     { text: 'майору полиции Рыжову С.М.', style: 'pageHeader', alignment: 'right' },
-    { text: 'СПИСОК', style: 'header', margin: [0, 15, 0, 0] },
+    { text: 'ЗАЯВЛЕНИЕ', style: 'header', margin: [0, 15, 0, 0] },
     {
       text: `кандидатов в водители, включенных в состав организованной группы`,
       style: 'header',
@@ -69,9 +69,9 @@ export default function examListsTemplate(group, company, selectedDate) {
       },
     },
     {
-      text: `${format(new Date(examDate - 1), 'dd MMMM yyyy г.', { locale: ru })}           Генеральный директор: ________________________________ /${directorSurname} ${directorName[0]}. ${directorPatronymic ? directorPatronymic[0] + '.' : ''}/`,
+      text: `"_____" _______________ ${new Date().getFullYear()} г.\n\nГенеральный директор: __________________________ /${directorSurname} ${directorName[0]}. ${directorPatronymic ? directorPatronymic[0] + '.' : ''}/`,
       margin: [0, 20, 0, 0],
-      alignment: 'center',
+      alignment: 'right',
     },
   ];
 

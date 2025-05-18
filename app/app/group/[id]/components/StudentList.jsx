@@ -22,7 +22,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useGroupStore } from '@/store/useStore';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { FileUser, NotepadText, RussianRuble, UserRoundMinus } from 'lucide-react';
+import { FileUser, NotepadText, RussianRuble, ShieldPlus, UserRoundMinus } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -34,10 +34,12 @@ import BasicContractButton from './BasicContractButton';
 import DriverCardButton from './DriverCardButton';
 import PersonalizedBookAButton from './PersonalizedBookAButton';
 import PersonalizedBookBButton from './PersonalizedBookBButton';
+import StudentCertificateIssueModalDialog from './StudentCertificateIssueModalDialog';
 
 export default function StudentList({ company }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
+  const [isCertificateDialogOpen, setIsCertificateDialogOpen] = useState(false);
   const { group, setGroup } = useGroupStore();
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -94,6 +96,7 @@ export default function StudentList({ company }) {
             <TableHead className="w-[20px]">#</TableHead>
             <TableHead className="w-[200px]">ФИО</TableHead>
             <TableHead className="w-[145px]">Дата рождения</TableHead>
+            <TableHead className="w-[80px]">Выдача Сви-ва</TableHead>
             <TableHead className="w-[80px]">Оплата</TableHead>
             <TableHead className="w-[80px]">Документы</TableHead>
             <TableHead className="text-right">Удалить</TableHead>
@@ -120,6 +123,23 @@ export default function StudentList({ company }) {
                 </TableCell>
                 <TableCell>
                   {format(new Date(student.birthDate), 'dd/MM/yyyy', { locale: ru })}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className={`${
+                      student.certificateNumber === null && student.certificateIssueDate === null
+                        ? 'bg-red-200 hover:bg-red-300'
+                        : 'bg-green-200 hover:bg-green-300'
+                    }`}
+                    onClick={() => {
+                      setSelectedStudent(student);
+                      setIsCertificateDialogOpen(true);
+                    }}
+                  >
+                    <ShieldPlus />
+                  </Button>
                 </TableCell>
                 <TableCell>
                   <Button
@@ -210,6 +230,14 @@ export default function StudentList({ company }) {
         student={selectedStudent}
         loading={loading}
         onPaymentSuccess={fetchGroupData}
+      />
+
+      <StudentCertificateIssueModalDialog
+        isOpen={isCertificateDialogOpen}
+        onClose={() => setIsCertificateDialogOpen(false)}
+        student={selectedStudent}
+        loading={loading}
+        onSuccess={fetchGroupData}
       />
     </>
   );

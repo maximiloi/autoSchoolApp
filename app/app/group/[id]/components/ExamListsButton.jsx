@@ -3,6 +3,7 @@ import { Calendar } from '@/components/ui/calendar';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -44,12 +45,14 @@ export default function ExamListsButton({ group, company }) {
     <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
       <DialogTrigger asChild>
         <Button variant="secondary" disabled={!pdfMake}>
-          <TableProperties /> Список для экзаменов в ГИБДД
+          <TableProperties />
+          Заявление для экзаменов в ГИБДД
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Выберите дату экзамена</DialogTitle>
+          <DialogDescription>для группы №{group.groupNumber}</DialogDescription>
         </DialogHeader>
         <Calendar
           locale={ru}
@@ -63,7 +66,7 @@ export default function ExamListsButton({ group, company }) {
             Отмена
           </Button>
           <Button onClick={generatePDF} disabled={!pdfMake || !selectedDate}>
-            Сформировать списки
+            Сформировать заявление
           </Button>
         </DialogFooter>
       </DialogContent>
