@@ -149,6 +149,8 @@ model Student {
   allowedCategories   String?
   trainingCost        Decimal
   snils               String?
+  certificateNumber   Decimal?
+  certificateIssueDate    DateTime?
 
   groupId             String
   group               Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)

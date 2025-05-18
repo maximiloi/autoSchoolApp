@@ -15,12 +15,10 @@ export default function driverCardTemplate(student, company) {
     medicalIssueDate,
     medicalIssuer,
     medicalNumber,
+    certificateNumber,
+    certificateIssueDate,
   } = student;
   const { companyName, whoIssuedLicense, whenIssuedLicense, license } = company;
-  const doc = {
-    number: ________,
-    series: '______',
-  };
 
   return {
     pageOrientation: 'landscape',
@@ -120,7 +118,7 @@ export default function driverCardTemplate(student, company) {
                 fontSize: 12,
                 bold: true,
                 alignment: 'center',
-                margin: [0, 15, 0, 5],
+                margin: [0, 5, 0, 5],
               },
               {
                 text: [
@@ -146,7 +144,7 @@ export default function driverCardTemplate(student, company) {
                 margin: [0, 5, 0, 5],
               },
               {
-                text: `серия ${doc.series} № ${doc.number} от	${format(new Date(medicalIssueDate), 'dd.MM.yyyy')}  личная подпись ____________`,
+                text: `№ ${certificateNumber} от	${format(new Date(certificateIssueDate), 'dd.MM.yyyy')}  личная подпись ____________`,
                 style: 'text',
                 margin: [0, 0, 0, 5],
               },
@@ -164,7 +162,6 @@ export default function driverCardTemplate(student, company) {
                       },
                       { text: 'Подпись должностного лица', style: 'table' },
                     ],
-                    [{ text: '', margin: [0, 10, 0, 10] }, '', '', '', ''],
                     [{ text: '', margin: [0, 10, 0, 10] }, '', '', '', ''],
                     [{ text: '', margin: [0, 10, 0, 10] }, '', '', '', ''],
                     [{ text: '', margin: [0, 10, 0, 10] }, '', '', '', ''],
