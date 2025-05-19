@@ -1,6 +1,20 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
+function getTotalFormattedTime(sessions) {
+  const totalMinutes = sessions.reduce((sum, session) => {
+    const [start, end] = session.slot.split('-').map(Number);
+    return sum + (end - start) * 60;
+  }, 0);
+
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return {
+    formatted: `${hours}:${minutes.toString().padStart(2, '0')}`,
+    minutes: totalMinutes,
+  };
+}
+
 export default function travelSheet(date, group, company, daySessions) {
   if (!date || !group || !company) {
     console.error('Ошибка: загрузки данных');
@@ -9,23 +23,24 @@ export default function travelSheet(date, group, company, daySessions) {
 
   const { companyName, actualAddress, phone } = company;
   const { groupNumber, practiceTeachers } = group;
-  const carModel = practiceTeachers[0]?.cars[0]?.carModel;
-  const carNumber = practiceTeachers[0]?.cars[0]?.carNumber;
-  const lastNamePracticeTeachers = practiceTeachers[0]?.lastName;
-  const firstNamePracticeTeachers = practiceTeachers[0]?.firstName;
-  const middleNamePracticeTeachers = practiceTeachers[0]?.middleName;
-  const fullNamePracticeTeachers = `${lastNamePracticeTeachers} ${firstNamePracticeTeachers} ${middleNamePracticeTeachers || ''}`;
-  const licenseSeriesPracticeTeachers = practiceTeachers[0]?.licenseSeries;
-  const licenseNumberPracticeTeachers = practiceTeachers[0]?.licenseNumber;
-  const licensePracticeTeachers = `${licenseSeriesPracticeTeachers} ${licenseNumberPracticeTeachers}`;
-  const snilsPracticeTeachers = practiceTeachers[0]?.snils;
+
+  const teacher = practiceTeachers?.[0] || {};
+  const car = teacher?.cars?.[0] || {};
+
+  const fullName =
+    `${teacher.lastName || ''} ${teacher.firstName || ''} ${teacher.middleName || ''}`.trim();
+  const license = `${teacher.licenseSeries || ''} ${teacher.licenseNumber || ''}`.trim();
+  const snilsFormatted =
+    teacher.snils?.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1-$2-$3 $4') || '';
+
   const sortedSessions = [...daySessions].sort((a, b) => {
     const [startA] = a.slot.split('-').map(Number);
     const [startB] = b.slot.split('-').map(Number);
     return startA - startB;
   });
 
-  let totalMinutes = 0;
+  const { formatted: totalTimeFormatted, minutes: totalMinutes } =
+    getTotalFormattedTime(sortedSessions);
 
   return {
     pageOrientation: 'landscape',
@@ -41,13 +56,13 @@ export default function travelSheet(date, group, company, daySessions) {
             text: [
               { text: 'Организация: ', bold: true },
               companyName,
-              { text: '\n' },
+              '\n',
               { text: 'Адрес: ', bold: true },
               actualAddress,
-              { text: '\n' },
+              '\n',
               { text: 'Телефон: ', bold: true },
               phone,
-              { text: '\n' },
+              '\n',
             ],
           },
           {
@@ -60,7 +75,7 @@ export default function travelSheet(date, group, company, daySessions) {
               },
               { text: 'на учебный автомобиль', alignment: 'right' },
               {
-                text: `${format(new Date(date), "d MMMM yyyy 'г.'", { locale: ru })}`,
+                text: format(new Date(date), "d MMMM yyyy 'г.'", { locale: ru }),
                 style: 'header',
                 alignment: 'right',
                 decoration: 'underline',
@@ -75,30 +90,11 @@ export default function travelSheet(date, group, company, daySessions) {
           {
             width: '50%',
             stack: [
-              {
-                text: [{ text: 'Марка автомобиля: ', bold: true }, carModel],
-                margin: [0, 5, 0, 0],
-              },
-
-              { text: [{ text: 'Государственный номерной знак: ', bold: true }, carNumber] },
-              {
-                text: [
-                  { text: 'Преподаватель (водитель): ', bold: true },
-                  fullNamePracticeTeachers,
-                ],
-              },
-              {
-                text: [
-                  { text: 'Водительское удостоверение: ', bold: true },
-                  licensePracticeTeachers,
-                ],
-              },
-              {
-                text: [
-                  { text: 'СНИЛС: ', bold: true },
-                  snilsPracticeTeachers.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1-$2-$3 $4'),
-                ],
-              },
+              { text: [{ text: 'Марка автомобиля: ', bold: true }, car.carModel || ''] },
+              { text: [{ text: 'Гос. номер: ', bold: true }, car.carNumber || ''] },
+              { text: [{ text: 'Преподаватель (водитель): ', bold: true }, fullName] },
+              { text: [{ text: 'Водительское удостоверение: ', bold: true }, license] },
+              { text: [{ text: 'СНИЛС: ', bold: true }, snilsFormatted] },
               {
                 text: [
                   { text: 'Время выезда из гаража: ', bold: true },
@@ -170,16 +166,20 @@ export default function travelSheet(date, group, company, daySessions) {
               { text: 'причина простоя', alignment: 'center', style: 'tabHeader' },
               { text: 'время', alignment: 'center', style: 'tabHeader' },
             ],
-            ['1', 'Обучение практическому вождению', 'Окуловка по городу и району', '', '', '', ''],
+            [
+              '1',
+              'Обучение практическому вождению',
+              'Окуловка по городу и району',
+              '',
+              totalTimeFormatted,
+              '',
+              '',
+            ],
           ],
         },
       },
       '\n\n',
-      {
-        text: 'ДВИЖЕНИЕ ТОПЛИВА',
-        bold: true,
-        margin: [0, 10, 0, 5],
-      },
+      { text: 'ДВИЖЕНИЕ ТОПЛИВА', bold: true, margin: [0, 10, 0, 5] },
       'коэффициент нормы расхода топлива ________ остаток ________ л.',
       'расчётный расход топлива ____________________ л. получено ________ л.',
       {
@@ -208,9 +208,6 @@ export default function travelSheet(date, group, company, daySessions) {
             ],
             ...sortedSessions.map((student, index) => {
               const [startTime, endTime] = student.slot.split('-').map(Number);
-              const durationMinutes = (endTime - startTime) * 60;
-              totalMinutes += durationMinutes;
-
               return [
                 groupNumber,
                 `${student.lastName} ${student.firstName}`,
@@ -225,25 +222,19 @@ export default function travelSheet(date, group, company, daySessions) {
                 '', // Подпись
               ];
             }),
-            (() => {
-              const hours = Math.floor(totalMinutes / 60);
-              const minutes = totalMinutes % 60;
-              const totalTimeFormatted = `${hours}:${minutes.toString().padStart(2, '0')}`;
-
-              return [
-                { text: 'ИТОГО', colSpan: 7, alignment: 'right' },
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                totalTimeFormatted,
-                '',
-                { text: '', colSpan: 2 },
-                '',
-              ];
-            })(),
+            [
+              { text: 'ИТОГО', colSpan: 7, alignment: 'right' },
+              '',
+              '',
+              '',
+              '',
+              '',
+              '',
+              totalTimeFormatted,
+              '',
+              { text: '', colSpan: 2 },
+              '',
+            ],
           ],
         },
         layout: {
