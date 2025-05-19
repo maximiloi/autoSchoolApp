@@ -92,6 +92,7 @@ const DrivingSchedule = () => {
   const handleSave = async () => {
     try {
       await saveSessions(group.id);
+      fetchDrivingData(group.id);
       toast({ variant: 'success', description: 'Данные успешно сохранены!' });
     } catch (error) {
       toast({ variant: 'destructive', description: error.message });
