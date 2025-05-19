@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { useGroupStore } from '@/store/useStore';
-import { format } from 'date-fns';
+import { differenceInYears, format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { FileUser, NotepadText, RussianRuble, ShieldPlus, UserRoundMinus } from 'lucide-react';
 import Link from 'next/link';
@@ -121,7 +121,13 @@ export default function StudentList({ company }) {
                   {student.lastName} {student.firstName}{' '}
                   {student.middleName ? `${student.middleName.charAt(0)}.` : ''}
                 </TableCell>
-                <TableCell>
+                <TableCell
+                  className={
+                    differenceInYears(new Date(student.createdAt), new Date(student.birthDate)) < 18
+                      ? 'text-red-500'
+                      : ''
+                  }
+                >
                   {format(new Date(student.birthDate), 'dd/MM/yyyy', { locale: ru })}
                 </TableCell>
                 <TableCell>
