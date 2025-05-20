@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import usePdfMake from '@/hooks/use-pdfmake';
 import { ru } from 'date-fns/locale';
 import { TableProperties } from 'lucide-react';
@@ -20,11 +21,13 @@ export default function ExamListsButton({ group, company }) {
   const pdfMake = usePdfMake();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [examType, setExamType] = useState('');
 
   const handleDialogOpenChange = (open) => {
     setDialogOpen(open);
     if (!open) {
       setSelectedDate(null);
+      setExamType('');
     }
   };
 
@@ -34,7 +37,7 @@ export default function ExamListsButton({ group, company }) {
       return;
     }
 
-    const docDefinition = examListsTemplate(group, company, selectedDate);
+    const docDefinition = examListsTemplate(group, company, selectedDate, examType);
     if (!docDefinition) return;
 
     pdfMake.createPdf(docDefinition).open();
@@ -51,9 +54,15 @@ export default function ExamListsButton({ group, company }) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Выберите дату экзамена</DialogTitle>
+          <DialogTitle>Укажите тип и дату экзамена</DialogTitle>
           <DialogDescription>для группы №{group.groupNumber}</DialogDescription>
         </DialogHeader>
+        <Input
+          placeholder="Тип экзамена (например, теория)"
+          value={examType}
+          onChange={(e) => setExamType(e.target.value)}
+        />
+
         <Calendar
           locale={ru}
           mode="single"
@@ -65,7 +74,7 @@ export default function ExamListsButton({ group, company }) {
           <Button onClick={() => setDialogOpen(false)} variant="ghost">
             Отмена
           </Button>
-          <Button onClick={generatePDF} disabled={!pdfMake || !selectedDate}>
+          <Button onClick={generatePDF} disabled={!pdfMake || !selectedDate || !examType}>
             Сформировать заявление
           </Button>
         </DialogFooter>
