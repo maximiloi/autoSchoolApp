@@ -32,6 +32,7 @@ import StudentPaymentModalDialog from './StudentPaymentModalDialog';
 import ApplicationFormButton from './ApplicationFormButton';
 import BasicContractButton from './BasicContractButton';
 import DriverCardButton from './DriverCardButton';
+import ParentalStatementButton from './ParentalStatementButton';
 import PersonalizedBookAButton from './PersonalizedBookAButton';
 import PersonalizedBookBButton from './PersonalizedBookBButton';
 import StudentCertificateIssueModalDialog from './StudentCertificateIssueModalDialog';
@@ -185,6 +186,14 @@ export default function StudentList({ company }) {
                         <DropdownMenuItem>
                           <BasicContractButton student={student} group={group} company={company} />
                         </DropdownMenuItem>
+                        {differenceInYears(
+                          new Date(student.createdAt),
+                          new Date(student.birthDate),
+                        ) < 18 && (
+                          <DropdownMenuItem>
+                            <ParentalStatementButton student={student} />
+                          </DropdownMenuItem>
+                        )}
                       </DropdownMenuGroup>
                       <DropdownMenuSeparator />
                       <DropdownMenuGroup>
