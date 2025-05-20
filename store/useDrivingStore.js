@@ -1,3 +1,4 @@
+// useDrivingStore (optimized)
 import { create } from 'zustand';
 import { useGroupStore } from './useStore';
 
@@ -39,38 +40,23 @@ export const useDrivingStore = create((set, get) => ({
   updateSlot: (studentId, dateStr, selectedSlot) => {
     const currentSessions = get().sessions;
     const date = new Date(dateStr);
+    const dateKey = date.toISOString().split('T')[0];
 
-    if (!selectedSlot || selectedSlot === '__clear__') {
-      const cleaned = currentSessions.filter(
-        (s) => !(s.studentId === studentId && s.date.toISOString().split('T')[0] === dateStr),
-      );
-      set({ sessions: cleaned });
-      return;
-    }
-
-    const newSessions = currentSessions.filter(
-      (s) =>
-        !(
-          s.date.toISOString().split('T')[0] === dateStr &&
-          s.slot === selectedSlot &&
-          s.studentId !== studentId
-        ),
+    // Удаляем все сессии для этого студента на эту дату
+    let updated = currentSessions.filter(
+      (s) => !(s.studentId === studentId && s.date.toISOString().split('T')[0] === dateKey),
     );
 
-    const existingIndex = newSessions.findIndex(
-      (s) =>
-        s.studentId === studentId &&
-        s.date.toISOString().split('T')[0] === dateStr &&
-        s.slot === selectedSlot,
+    // Удаляем конфликты (другие студенты с тем же слотом и датой)
+    updated = updated.filter(
+      (s) => !(s.slot === selectedSlot && s.date.toISOString().split('T')[0] === dateKey),
     );
 
-    if (existingIndex !== -1) {
-      newSessions.splice(existingIndex, 1);
-    } else {
-      newSessions.push({ studentId, date, slot: selectedSlot });
+    if (selectedSlot && selectedSlot !== '__clear__') {
+      updated.push({ studentId, date, slot: selectedSlot });
     }
 
-    set({ sessions: [...newSessions] });
+    set({ sessions: updated });
   },
 
   saveSessions: async (groupId) => {
