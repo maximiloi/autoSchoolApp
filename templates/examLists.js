@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-export default function examListsTemplate(group, company, selectedDate) {
+export default function examListsTemplate(group, company, selectedDate, examType) {
   const { companyName, actualAddress, directorSurname, directorName, directorPatronymic } = company;
   const { category, students } = group;
 
@@ -11,7 +11,7 @@ export default function examListsTemplate(group, company, selectedDate) {
   const sortedStudents = students.sort((a, b) => a.studentNumber - b.studentNumber);
   const examDate = new Date(selectedDate);
 
-  const generateExamBlock = (examType) => [
+  const generateExamDocument = (examType) => [
     { text: 'Начальнику ОГИБДД ОМВД РФ', style: 'pageHeader', alignment: 'right' },
     { text: 'по Окуловскому району', style: 'pageHeader', alignment: 'right' },
     { text: 'майору полиции Рыжову С.М.', style: 'pageHeader', alignment: 'right' },
@@ -85,10 +85,6 @@ export default function examListsTemplate(group, company, selectedDate) {
       subHeader: { fontSize: 12, alignment: 'center', margin: [0, 5, 0, 0] },
       tableHeader: { fontSize: 10, alignment: 'center' },
     },
-    content: [
-      ...generateExamBlock('теоретический первично'),
-      { text: '', pageBreak: 'after' },
-      ...generateExamBlock('практический экзамен'),
-    ],
+    content: [...generateExamDocument(examType)],
   };
 }
