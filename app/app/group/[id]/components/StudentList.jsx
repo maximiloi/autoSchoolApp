@@ -124,7 +124,10 @@ export default function StudentList({ company }) {
                 </TableCell>
                 <TableCell
                   className={
-                    differenceInYears(new Date(student.createdAt), new Date(student.birthDate)) < 18
+                    differenceInYears(
+                      new Date(group.startTrainingDate),
+                      new Date(student.birthDate),
+                    ) < 18
                       ? 'text-red-500'
                       : ''
                   }
@@ -187,7 +190,7 @@ export default function StudentList({ company }) {
                           <BasicContractButton student={student} group={group} company={company} />
                         </DropdownMenuItem>
                         {differenceInYears(
-                          new Date(student.createdAt),
+                          new Date(group.startTrainingDate),
                           new Date(student.birthDate),
                         ) < 18 && (
                           <DropdownMenuItem>
