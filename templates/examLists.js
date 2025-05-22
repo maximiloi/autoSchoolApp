@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-export default function examListsTemplate(group, company, selectedDate, examType) {
+export default function examListsTemplate(group, company, selectedDate, examType, emptyRows) {
   const { companyName, actualAddress, directorSurname, directorName, directorPatronymic } = company;
 
   if (!selectedDate) return null;
@@ -65,6 +65,14 @@ export default function examListsTemplate(group, company, selectedDate, examType
               text: format(new Date(student.birthDate), 'dd/MM/yyyy', { locale: ru }),
               alignment: 'center',
             },
+          ]),
+          ...Array.from({ length: emptyRows }).map((_, i) => [
+            { text: sortedStudents.length + i + 1, alignment: 'center' },
+            { text: '' },
+            { text: '' },
+            { text: '' },
+            { text: '' },
+            { text: '' },
           ]),
         ],
       },

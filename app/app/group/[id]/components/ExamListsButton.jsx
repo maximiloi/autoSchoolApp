@@ -16,6 +16,7 @@ import { TableProperties } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
 import examListsTemplate from '@/templates/examLists';
+import EmptyRowsCounter from './EmptyRowsCounter';
 import ExamGroupChange from './ExamGroupChange';
 
 export default function ExamListsButton({ group, company }) {
@@ -23,6 +24,7 @@ export default function ExamListsButton({ group, company }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [modifiedGroup, setModifiedGroup] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [emptyRows, setEmptyRows] = useState(0);
   const [examType, setExamType] = useState('');
   const [filterStudents, setFilterStudents] = useState(
     group.students.map((s) => ({
@@ -41,7 +43,16 @@ export default function ExamListsButton({ group, company }) {
       setSelectedDate(null);
       setExamType('');
       setModifiedGroup(false);
+      setEmptyRows(0);
     }
+  };
+
+  const handleDialogCancelButtonChange = () => {
+    setDialogOpen(false);
+    setSelectedDate(null);
+    setExamType('');
+    setModifiedGroup(false);
+    setEmptyRows(0);
   };
 
   const generatePDF = useCallback(() => {
@@ -50,16 +61,22 @@ export default function ExamListsButton({ group, company }) {
       return;
     }
 
-    const docDefinition = examListsTemplate(filterStudents, company, selectedDate, examType);
+    const docDefinition = examListsTemplate(
+      filterStudents,
+      company,
+      selectedDate,
+      examType,
+      emptyRows,
+    );
     if (!docDefinition) return;
 
     pdfMake.createPdf(docDefinition).open();
     setDialogOpen(false);
-  }, [pdfMake, selectedDate, filterStudents, company]);
-
-  const changesCompositionExam = () => {
-    setModifiedGroup(true);
-  };
+    setSelectedDate(null);
+    setExamType('');
+    setModifiedGroup(false);
+    setEmptyRows(0);
+  }, [pdfMake, selectedDate, filterStudents, company, emptyRows]);
 
   return (
     <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
@@ -94,15 +111,16 @@ export default function ExamListsButton({ group, company }) {
 
         <DialogFooter>
           <div className="flex flex-col gap-4">
-            <Button onClick={() => changesCompositionExam()}>Изменить состав сдающих</Button>
             <div className="flex gap-4">
-              <Button onClick={() => setDialogOpen(false)} variant="ghost">
+              <Button onClick={() => handleDialogCancelButtonChange()} variant="ghost">
                 Отмена
               </Button>
               <Button onClick={generatePDF} disabled={!pdfMake || !selectedDate || !examType}>
                 Сформировать заявление
               </Button>
             </div>
+            <Button onClick={() => setModifiedGroup(true)}>Изменить состав сдающих</Button>
+            <EmptyRowsCounter value={emptyRows} onChange={setEmptyRows} />
           </div>
         </DialogFooter>
       </DialogContent>
