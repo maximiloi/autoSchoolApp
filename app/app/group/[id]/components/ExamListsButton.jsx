@@ -16,18 +16,31 @@ import { TableProperties } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
 import examListsTemplate from '@/templates/examLists';
+import ExamGroupChange from './ExamGroupChange';
 
 export default function ExamListsButton({ group, company }) {
   const pdfMake = usePdfMake();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [modifiedGroup, setModifiedGroup] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [examType, setExamType] = useState('');
+  const [filterStudents, setFilterStudents] = useState(
+    group.students.map((s) => ({
+      id: s.id,
+      groupNumber: group.groupNumber,
+      lastName: s.lastName,
+      firstName: s.firstName,
+      middleName: s.middleName,
+      birthDate: s.birthDate,
+    })),
+  );
 
   const handleDialogOpenChange = (open) => {
     setDialogOpen(open);
     if (!open) {
       setSelectedDate(null);
       setExamType('');
+      setModifiedGroup(false);
     }
   };
 
@@ -37,12 +50,16 @@ export default function ExamListsButton({ group, company }) {
       return;
     }
 
-    const docDefinition = examListsTemplate(group, company, selectedDate, examType);
+    const docDefinition = examListsTemplate(filterStudents, company, selectedDate, examType);
     if (!docDefinition) return;
 
     pdfMake.createPdf(docDefinition).open();
     setDialogOpen(false);
-  }, [pdfMake, selectedDate, group, company]);
+  }, [pdfMake, selectedDate, filterStudents, company]);
+
+  const changesCompositionExam = () => {
+    setModifiedGroup(true);
+  };
 
   return (
     <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
@@ -52,7 +69,7 @@ export default function ExamListsButton({ group, company }) {
           Заявление для экзаменов в ГИБДД
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className={modifiedGroup ? 'max-w-3xl' : 'max-w-xl'}>
         <DialogHeader>
           <DialogTitle>Укажите тип и дату экзамена</DialogTitle>
           <DialogDescription>для группы №{group.groupNumber}</DialogDescription>
@@ -63,20 +80,30 @@ export default function ExamListsButton({ group, company }) {
           onChange={(e) => setExamType(e.target.value)}
         />
 
-        <Calendar
-          locale={ru}
-          mode="single"
-          selected={selectedDate}
-          onSelect={(date) => date && setSelectedDate(date)}
-          initialFocus
-        />
+        <div className="flex gap-4">
+          <Calendar
+            locale={ru}
+            mode="single"
+            selected={selectedDate}
+            onSelect={(date) => date && setSelectedDate(date)}
+            initialFocus
+          />
+
+          {modifiedGroup && <ExamGroupChange group={group} setFilterStudents={setFilterStudents} />}
+        </div>
+
         <DialogFooter>
-          <Button onClick={() => setDialogOpen(false)} variant="ghost">
-            Отмена
-          </Button>
-          <Button onClick={generatePDF} disabled={!pdfMake || !selectedDate || !examType}>
-            Сформировать заявление
-          </Button>
+          <div className="flex flex-col gap-4">
+            <Button onClick={() => changesCompositionExam()}>Изменить состав сдающих</Button>
+            <div className="flex gap-4">
+              <Button onClick={() => setDialogOpen(false)} variant="ghost">
+                Отмена
+              </Button>
+              <Button onClick={generatePDF} disabled={!pdfMake || !selectedDate || !examType}>
+                Сформировать заявление
+              </Button>
+            </div>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
