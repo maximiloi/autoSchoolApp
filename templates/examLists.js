@@ -3,12 +3,11 @@ import { ru } from 'date-fns/locale';
 
 export default function examListsTemplate(group, company, selectedDate, examType) {
   const { companyName, actualAddress, directorSurname, directorName, directorPatronymic } = company;
-  const { category, students } = group;
 
   if (!selectedDate) return null;
 
   const cleanedAddress = (address) => address.replace(/^\d{6},\s*/, '');
-  const sortedStudents = students.sort((a, b) => a.studentNumber - b.studentNumber);
+  const sortedStudents = group.sort((a, b) => a.lastName - b.lastName);
   const examDate = new Date(selectedDate);
 
   const generateExamDocument = (examType) => [
@@ -25,7 +24,7 @@ export default function examListsTemplate(group, company, selectedDate, examType
       style: 'subHeader',
     },
     {
-      text: `направляется список кандидатов в водители в составе организованной группы для сдачи экзаменов на право управления транспортными средствами категория "${category}"`,
+      text: `направляется список кандидатов в водители в составе организованной группы для сдачи экзаменов на право управления транспортными средствами категория "B"`,
       style: 'subHeader',
     },
     {
@@ -46,10 +45,11 @@ export default function examListsTemplate(group, company, selectedDate, examType
       margin: [0, 15, 0, 0],
       fontSize: 10,
       table: {
-        widths: ['8%', '*', '*', '*', '*'],
+        widths: ['7.5%', '11%', '*', '*', '*', '*'],
         body: [
           [
             { text: '№ п/п', style: 'tableHeader' },
+            { text: '№ группы', style: 'tableHeader' },
             { text: 'Фамилия', style: 'tableHeader' },
             { text: 'Имя', style: 'tableHeader' },
             { text: 'Отчество', style: 'tableHeader' },
@@ -57,6 +57,7 @@ export default function examListsTemplate(group, company, selectedDate, examType
           ],
           ...sortedStudents.map((student, index) => [
             { text: index + 1, alignment: 'center' },
+            { text: student.groupNumber, alignment: 'center' },
             { text: student.lastName },
             { text: student.firstName },
             { text: student.middleName || '' },
