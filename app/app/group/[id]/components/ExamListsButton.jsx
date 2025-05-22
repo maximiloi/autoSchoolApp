@@ -44,6 +44,13 @@ export default function ExamListsButton({ group, company }) {
     }
   };
 
+  const handleDialogCancelButtonChange = () => {
+    setDialogOpen(false);
+    setSelectedDate(null);
+    setExamType('');
+    setModifiedGroup(false);
+  };
+
   const generatePDF = useCallback(() => {
     if (!pdfMake) {
       console.error('pdfMake не загружен');
@@ -55,11 +62,10 @@ export default function ExamListsButton({ group, company }) {
 
     pdfMake.createPdf(docDefinition).open();
     setDialogOpen(false);
+    setSelectedDate(null);
+    setExamType('');
+    setModifiedGroup(false);
   }, [pdfMake, selectedDate, filterStudents, company]);
-
-  const changesCompositionExam = () => {
-    setModifiedGroup(true);
-  };
 
   return (
     <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
@@ -94,9 +100,9 @@ export default function ExamListsButton({ group, company }) {
 
         <DialogFooter>
           <div className="flex flex-col gap-4">
-            <Button onClick={() => changesCompositionExam()}>Изменить состав сдающих</Button>
+            <Button onClick={() => setModifiedGroup(true)}>Изменить состав сдающих</Button>
             <div className="flex gap-4">
-              <Button onClick={() => setDialogOpen(false)} variant="ghost">
+              <Button onClick={() => handleDialogCancelButtonChange()} variant="ghost">
                 Отмена
               </Button>
               <Button onClick={generatePDF} disabled={!pdfMake || !selectedDate || !examType}>
