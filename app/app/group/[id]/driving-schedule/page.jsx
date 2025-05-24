@@ -27,7 +27,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import TravelSheetButton from './components/TravelSheetButton';
 
-const timeSlots = ['8-10', '10-12', '13-15', '15-17'];
+const timeSlots = ['8-10', '10-12', '13-15', '15-17', '17-19', '19-21'];
 
 const normalizeDate = (date) => {
   const d = new Date(date);
