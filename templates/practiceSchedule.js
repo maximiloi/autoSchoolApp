@@ -2,7 +2,7 @@ import { addDays, format, getDay, isSameDay, parseISO } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
 export default function practiceSchedule(group = {}, selectedDate, sessions = []) {
-  const { groupNumber, students = [] } = group;
+  const { groupNumber, students = [], practiceTeachers = [] } = group;
 
   if (!selectedDate) return null;
 
@@ -24,6 +24,23 @@ export default function practiceSchedule(group = {}, selectedDate, sessions = []
   });
 
   const sortedStudents = [...students].sort((a, b) => a.studentNumber - b.studentNumber);
+
+  const practiceTeachersBlock =
+    practiceTeachers.length > 0
+      ? [
+          {
+            text: 'Преподаватели практики:',
+            margin: [0, 20, 0, 5],
+            bold: true,
+            fontSize: 12,
+          },
+          ...practiceTeachers.map((t) => ({
+            text: `${t.lastName} ${t.firstName} ${t.middleName ?? ''}\n${t.phone}`,
+            fontSize: 16,
+            margin: [0, 0, 0, 5],
+          })),
+        ]
+      : [];
 
   return {
     pageOrientation: 'landscape',
@@ -79,6 +96,7 @@ export default function practiceSchedule(group = {}, selectedDate, sessions = []
           ],
         },
       },
+      ...practiceTeachersBlock,
     ],
   };
 }
