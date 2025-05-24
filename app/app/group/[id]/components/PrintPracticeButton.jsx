@@ -1,0 +1,103 @@
+'use client';
+
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import usePdfMake from '@/hooks/use-pdfmake';
+import { addDays, format } from 'date-fns';
+import { ru } from 'date-fns/locale';
+import { Printer } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+
+import practiceSchedule from '@/templates/practiceSchedule';
+
+export default function PrintPracticeButton({ group }) {
+  const { groupNumber, id: groupId } = group;
+  const pdfMake = usePdfMake();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [sessions, setSessions] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const fetchSessions = useCallback(
+    async (startDate) => {
+      if (!startDate) return;
+
+      const endDate = addDays(startDate, 13);
+      const query = new URLSearchParams({
+        groupId,
+        startDate: format(startDate, 'yyyy-MM-dd'),
+        endDate: format(endDate, 'yyyy-MM-dd'),
+      });
+
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/driving-sessions/by-range?${query}`);
+        if (!res.ok) throw new Error('Ошибка загрузки');
+        const data = await res.json();
+        setSessions(data);
+      } catch (err) {
+        console.error('Ошибка запроса:', err);
+        setSessions(null);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [groupId],
+  );
+
+  useEffect(() => {
+    if (selectedDate) {
+      fetchSessions(selectedDate);
+    }
+  }, [selectedDate, fetchSessions]);
+
+  const generatePDF = useCallback(() => {
+    if (!pdfMake || !sessions) return;
+
+    const docDefinition = practiceSchedule(group, selectedDate, sessions);
+    if (!docDefinition) return;
+
+    pdfMake.createPdf(docDefinition).open();
+    setDialogOpen(false);
+  }, [pdfMake, group, selectedDate, sessions]);
+
+  return (
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <DialogTrigger asChild>
+        <Button variant="secondary">
+          <Printer /> Печать графика практики
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Выберите дату начала печати графика практики</DialogTitle>
+          <DialogDescription>для группы № {groupNumber}</DialogDescription>
+        </DialogHeader>
+        <Calendar
+          locale={ru}
+          mode="single"
+          selected={selectedDate}
+          onSelect={(date) => date && setSelectedDate(date)}
+          initialFocus
+        />
+        <DialogFooter>
+          <Button onClick={() => setDialogOpen(false)} variant="ghost">
+            Отмена
+          </Button>
+          <Button onClick={generatePDF} disabled={!pdfMake || !sessions || loading}>
+            {loading ? 'Загрузка данных...' : 'Сформировать график'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
