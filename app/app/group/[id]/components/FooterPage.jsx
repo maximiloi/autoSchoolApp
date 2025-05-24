@@ -8,6 +8,7 @@ import InformationForTrafficPoliceButton from './InformationForTrafficPoliceButt
 import JourneyTemplateButton from './JourneyTemplateButton';
 import ListGroupButton from './ListGroupButton';
 import PracticePlanningButton from './PracticePlanningButton';
+import PrintPracticeButton from './PrintPracticeButton';
 import ScheduleTemplateButton from './ScheduleTemplateButton';
 
 export default function FooterPage({ group, company }) {
@@ -31,6 +32,7 @@ export default function FooterPage({ group, company }) {
             <CarFront /> Учет практики
           </Button>
         </Link>
+        <PrintPracticeButton group={group} />
       </div>
     </div>
   );
