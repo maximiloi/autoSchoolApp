@@ -22,7 +22,14 @@ import { useToast } from '@/hooks/use-toast';
 import { useGroupStore } from '@/store/useStore';
 import { differenceInYears, format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { FileUser, NotepadText, RussianRuble, ShieldPlus, UserRoundMinus } from 'lucide-react';
+import {
+  FileUser,
+  MessageSquareReply,
+  NotepadText,
+  RussianRuble,
+  ShieldPlus,
+  UserRoundMinus,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -36,6 +43,7 @@ import ParentalStatementButton from './ParentalStatementButton';
 import PersonalizedBookAButton from './PersonalizedBookAButton';
 import PersonalizedBookBButton from './PersonalizedBookBButton';
 import StudentCertificateIssueModalDialog from './StudentCertificateIssueModalDialog';
+import WhatsAppButton from './WhatsAppButton';
 
 export default function StudentList({ company }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -100,6 +108,7 @@ export default function StudentList({ company }) {
             <TableHead className="w-[80px]">Выдача Сви-ва</TableHead>
             <TableHead className="w-[80px]">Оплата</TableHead>
             <TableHead className="w-[80px]">Документы</TableHead>
+            <TableHead className="w-[80px]">Напоминание</TableHead>
             <TableHead className="text-right">Удалить</TableHead>
           </TableRow>
         </TableHeader>
@@ -212,6 +221,24 @@ export default function StudentList({ company }) {
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <DriverCardButton student={student} company={company} />
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <MessageSquareReply />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56">
+                      <DropdownMenuLabel>Отправка сообщений в WhatsApp</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem>
+                          <WhatsAppButton student={student} />
                         </DropdownMenuItem>
                       </DropdownMenuGroup>
                     </DropdownMenuContent>
