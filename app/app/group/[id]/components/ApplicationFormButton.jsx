@@ -1,9 +1,12 @@
-import { useCallback } from 'react';
 import usePdfMake from '@/hooks/use-pdfmake';
+import { useToast } from '@/hooks/use-toast';
+import { useCallback } from 'react';
+
 import applicationForm from '@/templates/applicationForm';
 
 export default function ApplicationFormButton({ student }) {
   const pdfMake = usePdfMake();
+  const { toast } = useToast();
 
   const generatePDF = useCallback(() => {
     if (!pdfMake) {
@@ -11,7 +14,7 @@ export default function ApplicationFormButton({ student }) {
       return;
     }
 
-    const docDefinition = applicationForm(student);
+    const docDefinition = applicationForm(student, toast);
     if (!docDefinition) return;
 
     pdfMake.createPdf(docDefinition).open();
