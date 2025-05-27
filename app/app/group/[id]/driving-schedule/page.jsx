@@ -1,3 +1,4 @@
+// DrivingScheduleOptimized.jsx
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -24,25 +25,91 @@ import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { Save } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
+import { memo, useEffect, useMemo } from 'react';
 import TravelSheetButton from './components/TravelSheetButton';
 
 const timeSlots = ['8-10', '10-12', '13-15', '15-17', '17-19', '19-21'];
 
 const normalizeDate = (date) => {
   const d = new Date(date);
-  const year = d.getFullYear();
-  const month = `${d.getMonth() + 1}`.padStart(2, '0');
-  const day = `${d.getDate()}`.padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return d.toISOString().split('T')[0];
 };
+
+const DrivingSlotCell = memo(({ studentId, date, session, updateSlot, sessions }) => {
+  const formattedDate = normalizeDate(date);
+
+  return (
+    <TableCell className="w-20">
+      <Select
+        value={session?.slot || ''}
+        onValueChange={(value) => {
+          if (value === '__clear__') {
+            updateSlot(studentId, formattedDate, null);
+          } else {
+            updateSlot(studentId, formattedDate, value);
+          }
+        }}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="" />
+        </SelectTrigger>
+        <SelectContent>
+          {timeSlots.map((slot) => (
+            <SelectItem
+              key={slot}
+              value={slot}
+              disabled={sessions.some(
+                (s) =>
+                  s.slot === slot &&
+                  normalizeDate(s.date) === formattedDate &&
+                  s.studentId !== studentId,
+              )}
+            >
+              {slot}
+            </SelectItem>
+          ))}
+          {session && <SelectItem value="__clear__">Очистить</SelectItem>}
+        </SelectContent>
+      </Select>
+    </TableCell>
+  );
+});
+
+const StudentRow = memo(({ student, dates, sessionMap, sessions, updateSlot }) => {
+  const studentId = student.id;
+  const totalHours = sessions.filter((s) => s.studentId === studentId).length * 2;
+
+  return (
+    <TableRow key={studentId}>
+      <TableCell className="sticky left-0 z-10 bg-white">{student.studentNumber}</TableCell>
+      <TableCell className="sticky left-[2rem] z-10 bg-white">
+        {student.lastName} {student.firstName}
+      </TableCell>
+      <TableCell className="sticky left-[15rem] z-10 bg-white">{totalHours} ч</TableCell>
+      {dates.map((date) => {
+        const formattedDate = normalizeDate(date);
+        const session = sessionMap.get(`${studentId}_${formattedDate}`);
+
+        return (
+          <DrivingSlotCell
+            key={formattedDate + '-' + studentId}
+            studentId={studentId}
+            date={date}
+            session={session}
+            updateSlot={updateSlot}
+            sessions={sessions}
+          />
+        );
+      })}
+    </TableRow>
+  );
+});
 
 const DrivingSchedule = () => {
   const { id } = useParams();
   const { group, setGroup } = useGroupStore();
   const { company } = useCompanyStore();
   const { toast } = useToast();
-
   const { sessions, isLoading, isSaving, fetchDrivingData, updateSlot, saveSessions } =
     useDrivingStore();
 
@@ -57,6 +124,7 @@ const DrivingSchedule = () => {
   const endTrainingDate = group?.endTrainingDate ? new Date(group.endTrainingDate) : null;
 
   const dates = useMemo(() => {
+    if (!startTrainingDate || !endTrainingDate) return [];
     const result = [];
     let current = new Date(startTrainingDate);
     while (current <= endTrainingDate) {
@@ -65,6 +133,14 @@ const DrivingSchedule = () => {
     }
     return result;
   }, [startTrainingDate, endTrainingDate]);
+
+  const sessionMap = useMemo(() => {
+    const map = new Map();
+    for (const s of sessions) {
+      map.set(`${s.studentId}_${normalizeDate(s.date)}`, s);
+    }
+    return map;
+  }, [sessions]);
 
   const daysSessionsMap = useMemo(() => {
     const map = {};
@@ -104,7 +180,7 @@ const DrivingSchedule = () => {
   return (
     <div className="min-w-full overflow-hidden">
       <div className="mb-8 flex items-center justify-between">
-        <h1>Планирование вождения — группа № {group.groupNumber}</h1>
+        <h1>Учет вождения: группы № {group.groupNumber}</h1>
         <Button variant="secondary" onClick={handleSave} disabled={isSaving}>
           <Save className="mr-2 h-4 w-4" />
           {isSaving ? 'Сохранение...' : 'Сохранить данные'}
@@ -135,66 +211,16 @@ const DrivingSchedule = () => {
           <TableBody>
             {students
               .sort((a, b) => a.studentNumber - b.studentNumber)
-              .map((student) => {
-                const studentId = student.id;
-                const totalHours = sessions.filter((s) => s.studentId === studentId).length * 2;
-
-                return (
-                  <TableRow key={studentId}>
-                    <TableCell className="sticky left-0 z-10 bg-white">
-                      {student.studentNumber}
-                    </TableCell>
-                    <TableCell className="sticky left-[2rem] z-10 bg-white">
-                      {student.lastName} {student.firstName}
-                    </TableCell>
-                    <TableCell className="sticky left-[15rem] z-10 bg-white">
-                      {totalHours} ч
-                    </TableCell>
-                    {dates.map((date) => {
-                      const formattedDate = normalizeDate(date);
-                      const session = sessions.find(
-                        (s) => s.studentId === studentId && normalizeDate(s.date) === formattedDate,
-                      );
-
-                      return (
-                        <TableCell key={formattedDate + '-' + studentId} className="w-20">
-                          <Select
-                            value={session?.slot || ''}
-                            onValueChange={(value) => {
-                              if (value === '__clear__') {
-                                updateSlot(studentId, formattedDate, null);
-                              } else {
-                                updateSlot(studentId, formattedDate, value);
-                              }
-                            }}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {timeSlots.map((slot) => (
-                                <SelectItem
-                                  key={slot}
-                                  value={slot}
-                                  disabled={sessions.some(
-                                    (s) =>
-                                      s.slot === slot &&
-                                      normalizeDate(s.date) === formattedDate &&
-                                      s.studentId !== studentId,
-                                  )}
-                                >
-                                  {slot}
-                                </SelectItem>
-                              ))}
-                              {session && <SelectItem value="__clear__">Очистить</SelectItem>}
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
+              .map((student) => (
+                <StudentRow
+                  key={student.id}
+                  student={student}
+                  dates={dates}
+                  sessionMap={sessionMap}
+                  sessions={sessions}
+                  updateSlot={updateSlot}
+                />
+              ))}
           </TableBody>
 
           <TableFooter>
