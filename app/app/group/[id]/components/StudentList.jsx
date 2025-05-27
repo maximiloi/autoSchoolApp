@@ -1,5 +1,12 @@
 'use client';
 
+import { useToast } from '@/hooks/use-toast';
+import { differenceInYears, format } from 'date-fns';
+import { ru } from 'date-fns/locale';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
+import { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -18,10 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useToast } from '@/hooks/use-toast';
 import { useGroupStore } from '@/store/useStore';
-import { differenceInYears, format } from 'date-fns';
-import { ru } from 'date-fns/locale';
 import {
   FileUser,
   MessageSquareReply,
@@ -30,8 +34,6 @@ import {
   ShieldPlus,
   UserRoundMinus,
 } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
 
 import StudentDeleteModalDialog from './StudentDeleteModalDialog';
 import StudentPaymentModalDialog from './StudentPaymentModalDialog';
@@ -46,6 +48,7 @@ import StudentCertificateIssueModalDialog from './StudentCertificateIssueModalDi
 import WhatsAppButton from './WhatsAppButton';
 
 export default function StudentList({ company }) {
+  const { data: session } = useSession();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
   const [isCertificateDialogOpen, setIsCertificateDialogOpen] = useState(false);
@@ -85,6 +88,8 @@ export default function StudentList({ company }) {
     }
   };
 
+  const userRole = session?.user?.role || 'USER';
+
   if (!group.students || group.students.length === 0) {
     return (
       <div className="flex flex-col items-center gap-4">
@@ -108,7 +113,9 @@ export default function StudentList({ company }) {
             <TableHead className="w-[80px]">Выдача Сви-ва</TableHead>
             <TableHead className="w-[80px]">Оплата</TableHead>
             <TableHead className="w-[80px]">Документы</TableHead>
-            <TableHead className="w-[80px]">Напоминание</TableHead>
+            {userRole.toUpperCase() === 'DIRECTOR' && (
+              <TableHead className="w-[80px]">Напоминание</TableHead>
+            )}
             <TableHead className="text-right">Удалить</TableHead>
           </TableRow>
         </TableHeader>
@@ -226,24 +233,26 @@ export default function StudentList({ company }) {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="icon">
-                        <MessageSquareReply />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56">
-                      <DropdownMenuLabel>Отправка сообщений в WhatsApp</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuGroup>
-                        <DropdownMenuItem>
-                          <WhatsAppButton student={student} />
-                        </DropdownMenuItem>
-                      </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
+                {userRole.toUpperCase() === 'DIRECTOR' && (
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="icon">
+                          <MessageSquareReply />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-56">
+                        <DropdownMenuLabel>Отправка сообщений в WhatsApp</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem>
+                            <WhatsAppButton student={student} />
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                )}
                 <TableCell className="text-right">
                   <Button
                     variant="outline"
