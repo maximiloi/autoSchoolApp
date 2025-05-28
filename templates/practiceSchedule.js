@@ -2,7 +2,6 @@ import { addDays, format, getDay, isSameDay, parseISO } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
 export default function practiceSchedule(group = {}, selectedDate, sessions = []) {
-  console.log('🚀 ~ practiceSchedule ~ sessions:', sessions);
   const { groupNumber, students = [], practiceTeachers = [] } = group;
 
   if (!selectedDate) return null;
