@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import usePdfMake from '@/hooks/use-pdfmake';
-import { addDays, format } from 'date-fns';
+import { addDays } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { Printer } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
@@ -27,6 +27,12 @@ export default function PrintPracticeButton({ group }) {
   const [sessions, setSessions] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const toLocalDateString = (date) => {
+    const d = new Date(date);
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().split('T')[0]; // 'yyyy-MM-dd'
+  };
+
   const fetchSessions = useCallback(
     async (startDate) => {
       if (!startDate) return;
@@ -34,8 +40,8 @@ export default function PrintPracticeButton({ group }) {
       const endDate = addDays(startDate, 13);
       const query = new URLSearchParams({
         groupId,
-        startDate: format(startDate, 'yyyy-MM-dd'),
-        endDate: format(endDate, 'yyyy-MM-dd'),
+        startDate: toLocalDateString(startDate),
+        endDate: toLocalDateString(endDate),
       });
 
       setLoading(true);
