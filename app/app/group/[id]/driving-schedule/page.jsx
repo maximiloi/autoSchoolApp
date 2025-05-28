@@ -32,6 +32,7 @@ const timeSlots = ['8-10', '10-12', '13-15', '15-17', '17-19', '19-21'];
 
 const normalizeDate = (date) => {
   const d = new Date(date);
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
   return d.toISOString().split('T')[0];
 };
 

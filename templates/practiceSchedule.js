@@ -1,7 +1,8 @@
-import { addDays, format, getDay, isSameDay, parseISO } from 'date-fns';
+import { addDays, format, getDay, parseISO } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
 export default function practiceSchedule(group = {}, selectedDate, sessions = []) {
+  console.log('🚀 ~ practiceSchedule ~ sessions:', sessions);
   const { groupNumber, students = [], practiceTeachers = [] } = group;
 
   if (!selectedDate) return null;
@@ -12,6 +13,12 @@ export default function practiceSchedule(group = {}, selectedDate, sessions = []
   const activeGroupNumber = groupNumber ?? '_____';
   const activeSelectedTrainingDate = format(startDate, 'dd.MM.yyyy', { locale: ru });
   const activeEndTrainingDate = format(endDate, 'dd.MM.yyyy', { locale: ru });
+
+  const normalizeDate = (date) => {
+    const d = new Date(date);
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().split('T')[0];
+  };
 
   const dateColumns = Array.from({ length: 14 }, (_, i) => {
     const date = addDays(startDate, i);
@@ -81,10 +88,11 @@ export default function practiceSchedule(group = {}, selectedDate, sessions = []
                 style: 'table',
               },
               ...dateColumns.map((col) => {
-                const matchingSession = sessions.find((s) => {
-                  const sessionDate = addDays(parseISO(s.date), 1);
-                  return s.studentId === student.id && isSameDay(sessionDate, col.date);
-                });
+                const matchingSession = sessions.find(
+                  (s) =>
+                    s.studentId === student.id &&
+                    normalizeDate(parseISO(s.date)) === normalizeDate(col.date),
+                );
 
                 return {
                   text: matchingSession?.slot || '',
