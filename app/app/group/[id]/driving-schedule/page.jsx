@@ -37,9 +37,11 @@ const normalizeDate = (date) => {
 
 const DrivingSlotCell = memo(({ studentId, date, session, updateSlot, sessions }) => {
   const formattedDate = normalizeDate(date);
+  const dayOfWeek = new Date(date).getDay();
+  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
   return (
-    <TableCell className="w-20">
+    <TableCell className={`w-20 ${isWeekend ? 'bg-gray-200' : ''}`}>
       <Select
         value={session?.slot || ''}
         onValueChange={(value) => {
@@ -196,10 +198,12 @@ const DrivingSchedule = () => {
               <TableHead className="sticky left-[15rem] z-10 w-[2rem] bg-white">Часы</TableHead>
               {dates.map((date) => {
                 const isToday = normalizeDate(date) === normalizeDate(new Date());
+                const dayOfWeek = date.getDay();
+                const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
                 return (
                   <TableHead
                     key={date.toISOString()}
-                    className={`py-2 ${isToday ? 'font-bold text-black' : ''}`}
+                    className={`py-2 ${isToday ? 'font-bold text-black' : ''} ${isWeekend ? 'bg-gray-300' : ''}`}
                   >
                     {format(date, 'EEE, dd/MM', { locale: ru })}
                   </TableHead>
