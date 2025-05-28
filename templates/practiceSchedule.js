@@ -81,9 +81,10 @@ export default function practiceSchedule(group = {}, selectedDate, sessions = []
                 style: 'table',
               },
               ...dateColumns.map((col) => {
-                const matchingSession = sessions.find(
-                  (s) => s.studentId === student.id && isSameDay(parseISO(s.date), col.date),
-                );
+                const matchingSession = sessions.find((s) => {
+                  const sessionDate = addDays(parseISO(s.date), 1);
+                  return s.studentId === student.id && isSameDay(sessionDate, col.date);
+                });
 
                 return {
                   text: matchingSession?.slot || '',
