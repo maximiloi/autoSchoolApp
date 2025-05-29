@@ -1,6 +1,3 @@
-import { useMemo } from 'react';
-import Link from 'next/link';
-import { ChevronRight, UsersRound, BookUser } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   SidebarGroup,
@@ -12,6 +9,10 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
+import { useGroupStore } from '@/store/useStore';
+import { BookUser, ChevronRight, UsersRound } from 'lucide-react';
+import Link from 'next/link';
+import { useMemo } from 'react';
 
 function GroupList({ groups, title, icon: Icon }) {
   if (groups.length === 0) return null;
@@ -44,15 +45,11 @@ function GroupList({ groups, title, icon: Icon }) {
   );
 }
 
-export default function NavGroups({ groups = [] }) {
-  const activeGroups = useMemo(
-    () => (groups ? groups.filter((group) => group.isActive) : []),
-    [groups],
-  );
-  const archivedGroups = useMemo(
-    () => (groups ? groups.filter((group) => !group.isActive) : []),
-    [groups],
-  );
+export default function NavGroups() {
+  const { groups } = useGroupStore();
+
+  const activeGroups = useMemo(() => groups.filter((g) => g.isActive), [groups]);
+  const archivedGroups = useMemo(() => groups.filter((g) => !g.isActive), [groups]);
 
   return (
     <SidebarGroup>
