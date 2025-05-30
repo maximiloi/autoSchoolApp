@@ -15,7 +15,13 @@ const useGroupStore = create((set) => ({
   setGroups: (groups) => set({ groups }),
   addGroup: (group) => set((state) => ({ groups: [...state.groups, group] })),
 
-  setGroup: (group) => set({ group }),
+  setGroup: (group) =>
+    set((state) => ({
+      groups: state.groups.map((g) => (g.id === group.id ? group : g)),
+      group,
+    })),
+  setSingleGroup: (group) => set({ group }),
+
   reset: () => set({ groups: [], group: null }),
 }));
 
@@ -24,4 +30,4 @@ const resetAllStores = () => {
   useGroupStore.getState().reset();
 };
 
-export { useCompanyStore, useGroupStore, resetAllStores };
+export { resetAllStores, useCompanyStore, useGroupStore };
