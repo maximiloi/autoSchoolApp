@@ -1,11 +1,15 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import QRCode from 'qrcode';
 
-export default function applicationForm(student) {
+export default async function applicationForm(student) {
   if (!student || !student.lastName || !student.firstName || !student.birthDate) {
     console.error('Ошибка: данные о студенте отсутствуют');
     return null;
   }
+
+  const telegramLink = `https://t.me/okulovkaAutoSchool_bot?start=${student.id}`;
+  const qrDataUrl = await QRCode.toDataURL(telegramLink);
 
   return {
     content: [
@@ -82,6 +86,19 @@ export default function applicationForm(student) {
           },
         ],
         margin: [0, 30, 0, 0],
+      },
+      {
+        columns: [
+          {
+            text: 'Отсканируйте QR-код для получения уведомлений от автошколы:\n• Уведомления о запланированных вождениях\n• Напоминания об оплате 10 и 25 числа',
+            margin: [0, 50, 0, 10],
+          },
+          {
+            image: qrDataUrl,
+            width: 150,
+            margin: [0, 30, 0, 0],
+          },
+        ],
       },
     ],
     styles: {
