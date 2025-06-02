@@ -19,6 +19,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "grammy": "^1.36.3",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.474.0",
     "lvovich": "^2.0.2",
@@ -28,6 +29,7 @@
     "pg": "^8.13.1",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
+    "qrcode": "^1.5.4",
     "react": "^19.0.0",
     "react-day-picker": "8.10.1",
     "react-dom": "^19.0.0",
@@ -57,7 +59,9 @@
     "format": "prettier --write '**/**/*.{js,jsx,ts,tsx,css,scss}'",
     "lint": "next lint",
     "prisma": "npx prisma studio ",
-    "start": "next start"
+    "start": "next start",
+    "bot": "node bot/index.js"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "type": "module"
 }
