@@ -33,7 +33,10 @@ async function main() {
         for (const student of group.students) {
           await sendTelegramMessage(
             student.telegramId,
-            `📅 Напоминание: обучение в группе № ${group.groupNumber} начнётся через ${daysBefore} дней — <b>${format(group.startTrainingDate, 'dd.MM.yyyy')}</b>. Пожалуйста, будьте готовы к началу курса!`,
+            `👋 Здравствуйте, <b>${student.lastName} ${student.firstName}</b>!\n\n📅 Напоминаем: обучение в группе №<b>${group.groupNumber}</b> начнётся через <b>${daysBefore}</b> дней — <b>${format(group.startTrainingDate, 'dd.MM.yyyy')}</b>.\n\nПожалуйста, будьте готовы к началу курса.`,
+            {
+              parse_mode: 'HTML',
+            },
           );
         }
       }
