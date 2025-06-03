@@ -3,7 +3,7 @@ import { Bot, InlineKeyboard } from 'grammy';
 
 const bot = new Bot(process.env.TELEGRAM_BOT_TOKEN);
 const prisma = new PrismaClient();
-const ADMIN_CHAT_ID = '3483076';
+const adminChatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
 
 // /start с параметром ?start=studentId
 bot.command('start', async (ctx) => {
@@ -177,7 +177,7 @@ bot.callbackQuery(/^payment_done_(.+)$/, async (ctx) => {
     );
 
     await bot.api.sendMessage(
-      ADMIN_CHAT_ID,
+      adminChatId,
       `💼 Студент <b>${nameText}</b> из группы № <b>${groupNumber}</b> отметил оплату.`,
       {
         parse_mode: 'HTML',
