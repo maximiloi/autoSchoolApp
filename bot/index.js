@@ -3,6 +3,7 @@ import { Bot, InlineKeyboard } from 'grammy';
 
 const bot = new Bot(process.env.TELEGRAM_BOT_TOKEN);
 const prisma = new PrismaClient();
+const ADMIN_CHAT_ID = '3483076';
 
 // /start с параметром ?start=studentId
 bot.command('start', async (ctx) => {
@@ -145,6 +146,98 @@ bot.callbackQuery('view_sessions', async (ctx) => {
   } catch (err) {
     console.error('Ошибка при получении занятий:', err);
     await ctx.reply('Произошла ошибка при получении расписания.');
+  }
+});
+
+// Обработка кнопки "оплатил"
+bot.callbackQuery(/^payment_done_(.+)$/, async (ctx) => {
+  const studentId = ctx.match[1];
+
+  try {
+    const student = await prisma.student.findUnique({
+      where: { id: studentId },
+      include: { group: true, payments: true },
+    });
+
+    if (!student) {
+      await ctx.answerCallbackQuery({ text: 'Студент не найден.', show_alert: true });
+      return;
+    }
+
+    await ctx.editMessageText(
+      `✅ Спасибо, ${student.firstName}! Мы получили информацию об оплате.\n\nПоступление оплат обрабатывается вручную. Как только оплата будет внесена в систему, вы получите подтверждение сообщением.`,
+    );
+
+    const nameText =
+      `${student.firstName} ${student.middleName ?? ''} ${student.lastName[0]}.`.trim();
+    const groupNumber = student.group?.groupNumber ?? '—';
+    const adminKeyboard = new InlineKeyboard().text(
+      '✅ Внесено в систему',
+      `confirm_payment_${student.id}`,
+    );
+
+    await bot.api.sendMessage(
+      ADMIN_CHAT_ID,
+      `💼 Студент <b>${nameText}</b> из группы № <b>${groupNumber}</b> отметил оплату.`,
+      {
+        parse_mode: 'HTML',
+        reply_markup: adminKeyboard,
+      },
+    );
+  } catch (error) {
+    console.error('Ошибка при обработке оплаты:', error);
+    await ctx.answerCallbackQuery({ text: 'Произошла ошибка.', show_alert: true });
+  }
+});
+
+// Обработка кнопки "Внесено в систему"
+bot.callbackQuery(/^confirm_payment_(.+)$/, async (ctx) => {
+  const studentId = ctx.match[1];
+
+  try {
+    const student = await prisma.student.findUnique({
+      where: { id: studentId },
+      include: {
+        group: true,
+        payments: true,
+      },
+    });
+
+    if (!student?.telegramId) {
+      await ctx.answerCallbackQuery({
+        text: 'Студент не найден или нет Telegram ID.',
+        show_alert: true,
+      });
+      return;
+    }
+
+    const trainingCost = student.trainingCost.toNumber();
+    const totalPaid = student.payments.reduce((sum, p) => sum + p.amount.toNumber(), 0);
+    const debt = Math.max(trainingCost - totalPaid, 0);
+
+    const debtMessage =
+      debt === 0
+        ? '✅ Оплата за курс внесена в полном объёме. Спасибо!\n\nℹ️ Напоминания больше не будут приходить.'
+        : `ℹ️ После внесения оплаты в систему, ваша <b>оставшаяся сумма к оплате</b>: <b>${debt} ₽</b>.`;
+
+    await bot.api.sendMessage(
+      student.telegramId,
+      `✅ Мы внесли вашу оплату в систему.\n\n${debtMessage}`,
+      { parse_mode: 'HTML' },
+    );
+
+    const fullName = `${student.lastName} ${student.firstName} ${student.middleName ?? ''}`.trim();
+    const groupNum = student.group?.groupNumber ?? '—';
+
+    await ctx.editMessageText(
+      `☑️ Уведомление отправлено студенту: <b>${fullName}</b> (группа № <b>${groupNum}</b>)`,
+      { parse_mode: 'HTML' },
+    );
+
+    await ctx.answerCallbackQuery();
+  } catch (error) {
+    console.error('Ошибка при подтверждении оплаты:', error);
+    await ctx.answerCallbackQuery({ text: 'Ошибка при отправке уведомления.', show_alert: true });
   }
 });
 
