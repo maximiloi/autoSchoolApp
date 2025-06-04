@@ -110,7 +110,7 @@ export default function StudentList({ company }) {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[40px]"></TableHead>
-            <TableHead className="w-[20px]">tg</TableHead>
+            <TableHead className="w-[20px]"></TableHead>
             <TableHead className="w-[20px]">#</TableHead>
             <TableHead className="w-[200px]">ФИО</TableHead>
             <TableHead className="w-[145px]">Дата рождения</TableHead>

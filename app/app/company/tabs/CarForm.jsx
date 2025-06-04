@@ -1,10 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import InputField from '@/components/ui/InputField';
@@ -15,6 +10,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { toast } from '@/hooks/use-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const formSchema = z.object({
   carModel: z.string(),
@@ -82,8 +82,8 @@ export default function CarForm({ setCars }) {
           description: 'Ошибка при создании автомобиля',
         });
       }
-    } catch (err) {
-      setError(err.message);
+    } catch (error) {
+      console.error('Ошибка при создании автомобиля:', error.message);
     } finally {
       setIsLoading(false);
     }

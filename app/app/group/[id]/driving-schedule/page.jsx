@@ -77,6 +77,7 @@ const DrivingSlotCell = memo(({ studentId, date, session, updateSlot, sessions }
     </TableCell>
   );
 });
+DrivingSlotCell.displayName = 'DrivingSlotCell';
 
 const StudentRow = memo(({ student, dates, sessionMap, sessions, updateSlot }) => {
   const studentId = student.id;
@@ -107,10 +108,11 @@ const StudentRow = memo(({ student, dates, sessionMap, sessions, updateSlot }) =
     </TableRow>
   );
 });
+StudentRow.displayName = 'StudentRow';
 
 const DrivingSchedule = () => {
   const { id } = useParams();
-  const { group, setGroup } = useGroupStore();
+  const { group } = useGroupStore();
   const { company } = useCompanyStore();
   const { toast } = useToast();
   const { sessions, isLoading, isSaving, fetchDrivingData, updateSlot, saveSessions } =

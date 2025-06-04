@@ -1,17 +1,12 @@
-import { useCallback, useMemo, useState } from 'react';
-import { IMaskInput } from 'react-imask';
-import { format } from 'date-fns';
-import { ru } from 'date-fns/locale';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
   DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
 import {
   Table,
   TableBody,
@@ -21,6 +16,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useToast } from '@/hooks/use-toast';
+import { format } from 'date-fns';
+import { ru } from 'date-fns/locale';
+import { useCallback, useMemo, useState } from 'react';
+import { IMaskInput } from 'react-imask';
 
 export default function StudentPaymentModalDialog({
   isOpen,
@@ -72,7 +72,7 @@ export default function StudentPaymentModalDialog({
         toast({ variant: 'destructive', description: 'Ошибка: ' + data.error });
       }
     } catch (error) {
-      toast({ variant: 'destructive', description: 'Ошибка сервера' });
+      toast({ variant: 'destructive', description: `Ошибка сервера ${error}` });
     }
     setSubmitting(false);
   }, [amount, student, onPaymentSuccess, onClose, toast]);

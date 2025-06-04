@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
-import { useWatch } from 'react-hook-form';
 import { Card, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import InputField from '@/components/ui/InputField';
+import { useEffect } from 'react';
+import { useWatch } from 'react-hook-form';
 
 export default function AddressInfo({ control, setSameAddress, sameAddress, setValue, getValues }) {
   const addressFields = [
@@ -36,12 +36,14 @@ export default function AddressInfo({ control, setSameAddress, sameAddress, setV
     setValue('registrationAddress', addressParts.join(', '));
   };
 
-  useEffect(
-    () => {
-      updateRegistrationAddress();
-    },
-    addressFields.map((field) => useWatch({ control, name: field })),
-  );
+  const watchedFields = useWatch({
+    control,
+    name: addressFields,
+  });
+
+  useEffect(() => {
+    updateRegistrationAddress();
+  }, [watchedFields]);
 
   return (
     <Card className="mb-4 grid gap-4 p-4">

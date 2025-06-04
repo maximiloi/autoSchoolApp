@@ -1,20 +1,20 @@
 'use client';
 
-import { useState } from 'react';
-import { useSession } from 'next-auth/react';
+import { useToast } from '@/hooks/use-toast';
 import { useActiveGroups } from '@/hooks/useActiveGroups';
 import { useStudentForm } from '@/hooks/useStudentForm';
-import { useToast } from '@/hooks/use-toast';
+import { useSession } from 'next-auth/react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 
-import GroupSelection from './GroupSelection';
-import PersonalInfo from './PersonalInfo';
-import DocumentInfo from './DocumentInfo';
-import MedicalInfo from './MedicalInfo';
 import AdditionalInfo from './AdditionalInfo';
 import AddressInfo from './AddressInfo';
+import DocumentInfo from './DocumentInfo';
+import GroupSelection from './GroupSelection';
+import MedicalInfo from './MedicalInfo';
+import PersonalInfo from './PersonalInfo';
 
 export default function StudentForm({ student }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +47,7 @@ export default function StudentForm({ student }) {
       });
 
       if (response.ok) {
-        const updatedStudent = await response.json();
+        await response.json();
         toast({
           duration: 2000,
           description: student?.id ? 'Данные ученика обновлены' : 'Ученик успешно добавлен',

@@ -6,7 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useGroupStore } from '@/store/useStore';
 import { useState } from 'react';
 
-function ArchivingSwitch({ field }) {
+function ArchivingSwitch() {
   const { group, setGroup } = useGroupStore();
   const { toast } = useToast();
   const [isArchived, setIsArchived] = useState(group.isActive);

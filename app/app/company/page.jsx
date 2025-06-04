@@ -1,22 +1,22 @@
 'use client';
 
-import { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useState } from 'react';
 
-import CompanyForm from './tabs/company';
-import TeachersTable from './tabs/TeachersTable';
-import TeachersForm from './tabs/TeachersForm';
-import CarTable from './tabs/CarTable';
 import CarForm from './tabs/CarForm';
+import CarTable from './tabs/CarTable';
+import CompanyForm from './tabs/company';
+import TeachersForm from './tabs/TeachersForm';
+import TeachersTable from './tabs/TeachersTable';
 
-export default function companyInfo() {
+export default function CompanyInfo() {
   const [teachers, setTeachers] = useState([]);
   const [cars, setCars] = useState([]);
 

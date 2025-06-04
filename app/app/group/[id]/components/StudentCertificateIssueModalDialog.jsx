@@ -78,7 +78,7 @@ export default function StudentCertificateIssueModalDialog({
         toast({ variant: 'destructive', description: 'Ошибка: ' + data.error });
       }
     } catch (error) {
-      toast({ variant: 'destructive', description: 'Ошибка сервера' });
+      toast({ variant: 'destructive', description: `Ошибка сервера: ${error}` });
     }
     setSubmitting(false);
   }, [certificateNumber, certificateIssueDate, student, onClose, toast]);

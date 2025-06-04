@@ -40,6 +40,7 @@ export default [
       'react/react-in-jsx-scope': 'off',
       'react/jsx-uses-react': 'off',
       'react/prop-types': 'off',
+      'react-hooks/exhaustive-deps': 'off',
     },
   },
 ];
