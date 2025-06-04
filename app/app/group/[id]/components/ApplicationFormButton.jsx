@@ -15,7 +15,7 @@ export default function ApplicationFormButton({ student }) {
     }
 
     try {
-      const docDefinition = await applicationForm(student);
+      const docDefinition = await applicationForm(student, toast);
       if (!docDefinition) return;
 
       pdfMake.createPdf(docDefinition).open();
