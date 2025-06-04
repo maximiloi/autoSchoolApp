@@ -8,16 +8,20 @@ export default function ApplicationFormButton({ student }) {
   const pdfMake = usePdfMake();
   const { toast } = useToast();
 
-  const generatePDF = useCallback(() => {
+  const generatePDF = useCallback(async () => {
     if (!pdfMake) {
       console.error('pdfMake не загружен');
       return;
     }
 
-    const docDefinition = applicationForm(student, toast);
-    if (!docDefinition) return;
+    try {
+      const docDefinition = await applicationForm(student);
+      if (!docDefinition) return;
 
-    pdfMake.createPdf(docDefinition).open();
+      pdfMake.createPdf(docDefinition).open();
+    } catch (error) {
+      console.error('Ошибка при генерации PDF:', error);
+    }
   }, [pdfMake, student]);
 
   return (

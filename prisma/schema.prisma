@@ -151,6 +151,7 @@ model Student {
   snils               String?
   certificateNumber   Decimal?
   certificateIssueDate    DateTime?
+  telegramId          String? @unique
 
   groupId             String
   group               Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)

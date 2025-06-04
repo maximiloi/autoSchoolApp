@@ -17,3 +17,5 @@ Components - Shadcn UI
 Auth - NextAuth.js (JWT)
 
 Formatting - Prettier
+
+Telegram Bot - Grammy

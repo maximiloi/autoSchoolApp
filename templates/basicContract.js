@@ -1,8 +1,9 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { inclineFirstname, inclineLastname, inclineMiddlename } from 'lvovich';
+import QRCode from 'qrcode';
 
-export default function basicContract(student, group, company, toast) {
+export default async function basicContract(student, group, company, toast) {
   if (!student || !group || !company) {
     toast?.({
       variant: 'destructive',
@@ -61,6 +62,9 @@ export default function basicContract(student, group, company, toast) {
     });
     return null;
   }
+
+  const telegramLink = `https://t.me/okulovkaAutoSchool_bot?start=${student.id}`;
+  const qrDataUrl = await QRCode.toDataURL(telegramLink);
 
   return {
     content: [
@@ -236,6 +240,19 @@ export default function basicContract(student, group, company, toast) {
       {
         text: `"______"   ______________________    ______          _________________________/${student.lastName} ${student.firstName[0]}. ${student.middleName ? student.middleName[0] + '.' : ''}/`,
         style: 'upColontitul',
+      },
+      {
+        columns: [
+          {
+            text: `Отсканируйте QR-код для получения уведомлений в Telegram от автошколы:\n\n• Уведомления о начале учебного курса в группе № ${group?.groupNumber}\n• Уведомления о запланированных вождениях\n• Напоминания об оплате 10 и 25 числа`,
+            margin: [0, 50, 0, 10],
+          },
+          {
+            image: qrDataUrl,
+            width: 150,
+            margin: [0, 30, 0, 0],
+          },
+        ],
       },
     ],
 

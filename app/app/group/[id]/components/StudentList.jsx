@@ -26,18 +26,23 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useGroupStore } from '@/store/useStore';
+import { differenceInYears, format } from 'date-fns';
+import { ru } from 'date-fns/locale';
 import {
   FileUser,
-  MessageSquareReply,
   NotepadText,
   RussianRuble,
+  Send,
   ShieldPlus,
   UserRoundMinus,
 } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
 
 import StudentDeleteModalDialog from './StudentDeleteModalDialog';
 import StudentPaymentModalDialog from './StudentPaymentModalDialog';
 
+import { Hint } from '@/components/ui/Hint';
 import ApplicationFormButton from './ApplicationFormButton';
 import BasicContractButton from './BasicContractButton';
 import DriverCardButton from './DriverCardButton';
@@ -107,6 +112,7 @@ export default function StudentList({ company }) {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[40px]"></TableHead>
+            <TableHead className="w-[20px]">tg</TableHead>
             <TableHead className="w-[20px]">#</TableHead>
             <TableHead className="w-[200px]">ФИО</TableHead>
             <TableHead className="w-[145px]">Дата рождения</TableHead>
@@ -127,11 +133,20 @@ export default function StudentList({ company }) {
             .map((student) => (
               <TableRow key={student.id}>
                 <TableCell>
-                  <Button variant="ghost" size="icon">
-                    <Link href={`/app/student/${student.id}`}>
-                      <FileUser />
-                    </Link>
-                  </Button>
+                  <Hint tooltip="Редактировать информацию о студенте">
+                    <Button variant="ghost" size="icon">
+                      <Link href={`/app/student/${student.id}`}>
+                        <FileUser />
+                      </Link>
+                    </Button>
+                  </Hint>
+                </TableCell>
+                <TableCell className="pt-4">
+                  {student.telegramId && (
+                    <Hint tooltip="Студент подписан на телеграм бот">
+                      <Send className="h-4 w-4" />
+                    </Hint>
+                  )}
                 </TableCell>
                 <TableCell>{student.studentNumber}</TableCell>
                 <TableCell className="font-medium">
