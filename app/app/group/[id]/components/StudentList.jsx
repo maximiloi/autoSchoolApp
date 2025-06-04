@@ -17,6 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Hint } from '@/components/ui/Hint';
 import {
   Table,
   TableBody,
@@ -26,23 +27,19 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useGroupStore } from '@/store/useStore';
-import { differenceInYears, format } from 'date-fns';
-import { ru } from 'date-fns/locale';
 import {
   FileUser,
+  MessageSquareReply,
   NotepadText,
   RussianRuble,
   Send,
   ShieldPlus,
   UserRoundMinus,
 } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
 
 import StudentDeleteModalDialog from './StudentDeleteModalDialog';
 import StudentPaymentModalDialog from './StudentPaymentModalDialog';
 
-import { Hint } from '@/components/ui/Hint';
 import ApplicationFormButton from './ApplicationFormButton';
 import BasicContractButton from './BasicContractButton';
 import DriverCardButton from './DriverCardButton';
@@ -51,6 +48,7 @@ import PersonalizedBookAButton from './PersonalizedBookAButton';
 import PersonalizedBookBButton from './PersonalizedBookBButton';
 import StudentCertificateIssueModalDialog from './StudentCertificateIssueModalDialog';
 import WhatsAppButton from './WhatsAppButton';
+import WhatsAppButton1 from './WhatsAppButton1';
 
 export default function StudentList({ company }) {
   const { data: session } = useSession();
@@ -262,6 +260,9 @@ export default function StudentList({ company }) {
                         <DropdownMenuGroup>
                           <DropdownMenuItem>
                             <WhatsAppButton student={student} />
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <WhatsAppButton1 student={student} />
                           </DropdownMenuItem>
                         </DropdownMenuGroup>
                       </DropdownMenuContent>
