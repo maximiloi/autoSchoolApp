@@ -3,9 +3,63 @@ import { ru } from 'date-fns/locale';
 import { inclineFirstname, inclineLastname, inclineMiddlename } from 'lvovich';
 import QRCode from 'qrcode';
 
-export default async function basicContract(student, group, company) {
+export default async function basicContract(student, group, company, toast) {
   if (!student || !group || !company) {
-    console.error('Ошибка: не все данные');
+    toast?.({
+      variant: 'destructive',
+      description: 'Отсутствуют данные: student, group или company',
+    });
+    return null;
+  }
+
+  const missingFields = [];
+
+  // Проверка student
+  if (!student.lastName) missingFields.push('фамилия студента');
+  if (!student.firstName) missingFields.push('имя студента');
+  if (!student.middleName) missingFields.push('отчество студента');
+  if (!student.studentNumber) missingFields.push('номер студента');
+  if (!student.birthDate) missingFields.push('дата рождения студента');
+  if (!student.actualAddress) missingFields.push('адрес проживания студента');
+  if (!student.phone) missingFields.push('телефон студента');
+  if (!student.documentSeries) missingFields.push('серия паспорта');
+  if (!student.documentNumber) missingFields.push('номер паспорта');
+  if (!student.documentIssuer) missingFields.push('кем выдан паспорт');
+  if (!student.documentIssueDate) missingFields.push('дата выдачи паспорта');
+  if (!student.createdAt) missingFields.push('дата создания записи студента');
+  if (!student.trainingCost) missingFields.push('стоимость обучения');
+
+  // Проверка group
+  if (!group.groupNumber) missingFields.push('номер группы');
+  if (!group.category) missingFields.push('категория');
+  if (!group.startTrainingDate) missingFields.push('дата начала обучения');
+  if (!group.endTrainingDate) missingFields.push('дата окончания обучения');
+
+  // Проверка company
+  if (!company.city) missingFields.push('город компании');
+  if (!company.companyName) missingFields.push('название компании');
+  if (!company.license) missingFields.push('номер лицензии');
+  if (!company.whoIssuedLicense) missingFields.push('кем выдана лицензия');
+  if (!company.whenIssuedLicense) missingFields.push('дата выдачи лицензии');
+  if (!company.directorSurname) missingFields.push('фамилия директора');
+  if (!company.directorName) missingFields.push('имя директора');
+  if (!company.directorPatronymic) missingFields.push('отчество директора');
+  if (!company.inn) missingFields.push('ИНН');
+  if (!company.kpp) missingFields.push('КПП');
+  if (!company.legalAddress) missingFields.push('юридический адрес');
+  if (!company.account) missingFields.push('расчетный счёт');
+  if (!company.bank) missingFields.push('банк');
+  if (!company.bik) missingFields.push('БИК');
+  if (!company.correspondentAccount) missingFields.push('корреспондентский счёт');
+  if (!company.phone) missingFields.push('телефон компании');
+  if (!company.email) missingFields.push('email компании');
+
+  if (missingFields.length > 0) {
+    toast?.({
+      variant: 'destructive',
+      title: 'Недостаточно данных',
+      description: `Отсутствуют поля: ${missingFields.join(', ')}`,
+    });
     return null;
   }
 
@@ -126,9 +180,11 @@ export default async function basicContract(student, group, company) {
         text: [
           `4.1. Стоимость образовательных услуг, указанных в разделе 1 настоящего договора,составляет ${student.trainingCost} рублей.`,
           '\n4.2. Заказчик может оплатить услуги единовременно, в день заключения настоящего договора, либо в рассрочку в следующем порядке:',
-          `\n- В первую неделю обучения: ${Math.floor(student.trainingCost / 3 / 10) * 10} рублей.'`,
-          `\n- Во второй месяц обучения: ${Math.floor(student.trainingCost / 3 / 10) * 10} рублей.`,
-          `\n- В третий месяц обучения: ${Math.ceil(student.trainingCost / 3 / 10) * 10} рублей.`,
+          '\n- Авансовый платеж в день подачи документов: 10 000 рублей.',
+          '\n- В первый месяц обучения до 24 числа: 7 500 рублей.',
+          '\n- Во второй месяц обучения до 9 числа: 7 500 рублей.',
+          '\n- Во второй месяц обучения до 24 числа: 7 500 рублей.',
+          '\n- В третий месяц обучения до 9 числа: 7 500 рублей.',
           '\n4.3. Оплата по настоящему договору осуществляется Заказчиком путем внесения наличных денежных средств в кассу Исполнителя по месту его нахождения или на расчетный счет Исполнителя.',
         ],
       },
@@ -172,7 +228,7 @@ export default async function basicContract(student, group, company) {
             ],
             [
               `${company.companyName}\nИНН/КПП: ${company.inn}/${company.kpp}\nЮридический адрес: ${company.legalAddress}\n\nБанковские реквизиты:\nр/с ${company.account}\nв ${company.bank} ${company.city}\nБИК: ${company.bik}\nк/c ${company.correspondentAccount}\n\nТелефон: ${company.phone}\ne-mail: ${company.email}\n\n\n\n____________________/${company.directorSurname} ${company.directorName[0]}. ${company.directorPatronymic ? company.directorPatronymic[0] + '.' : ''}/\n\n\n\n\n\n`,
-              `Фамилия: ${student.lastName}\nИмя: ${student.firstName}\nОтчество: ${student.middleName}\n\nДата рождения: ${format(new Date(student.birthDate), 'PPP', { locale: ru })}\nАдрес проживания: ${student.actualAddress}\nТелефон: ${student.phone}\n\nПаспорт: серия ${student.documentSeries} номер ${student.documentNumber} выдан ${student.documentIssuer}\n\n\n\n____________________/${student.lastName} ${student.firstName[0]}. ${student.middleName ? student.middleName[0] + '.' : ''}/\n\n\n\n\n\n`,
+              `Фамилия: ${student.lastName}\nИмя: ${student.firstName}\nОтчество: ${student.middleName}\n\nДата рождения: ${format(new Date(student.birthDate), 'PPP', { locale: ru })}\nАдрес проживания: ${student.actualAddress}\nТелефон: ${student.phone}\n\nПаспорт: серия ${student.documentSeries} номер ${student.documentNumber} выдан ${student.documentIssuer} ${format(new Date(student.documentIssueDate), 'dd MMMM yyyy года.', { locale: ru })}\n\n\n\n____________________/${student.lastName} ${student.firstName[0]}. ${student.middleName ? student.middleName[0] + '.' : ''}/\n\n\n\n\n\n`,
             ],
           ],
         },

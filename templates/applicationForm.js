@@ -2,9 +2,32 @@ import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import QRCode from 'qrcode';
 
-export default async function applicationForm(student) {
-  if (!student || !student.lastName || !student.firstName || !student.birthDate) {
-    console.error('Ошибка: данные о студенте отсутствуют');
+export default async function applicationForm(student, toast) {
+  if (!student) {
+    toast?.({ variant: 'destructive', description: 'Отсутствует объект student' });
+    return null;
+  }
+
+  const missingFields = [];
+
+  if (!student.lastName) missingFields.push('фамилия');
+  if (!student.firstName) missingFields.push('имя');
+  if (!student.birthDate) missingFields.push('дата рождения');
+  if (!student.birthPlace) missingFields.push('место рождения');
+  if (!student.documentSeries) missingFields.push('серия паспорта');
+  if (!student.documentNumber) missingFields.push('номер паспорта');
+  if (!student.documentCode) missingFields.push('код подразделения');
+  if (!student.documentIssuer) missingFields.push('кем выдан паспорт');
+  if (!student.documentIssueDate) missingFields.push('дата выдачи паспорта');
+  if (!student.registrationAddress) missingFields.push('адрес регистрации');
+  if (!student.phone) missingFields.push('телефон');
+
+  if (missingFields.length > 0) {
+    toast?.({
+      variant: 'destructive',
+      title: 'Недостаточно данных',
+      description: `Отсутствуют поля: ${missingFields.join(', ')}`,
+    });
     return null;
   }
 
@@ -38,7 +61,7 @@ export default async function applicationForm(student) {
             ],
             [
               { text: '2. Место рождения', bold: true, margin: [0, 2, 0, 2] },
-              { text: student.birthPlace || '', margin: [0, 2, 0, 2] },
+              { text: student.birthPlace, margin: [0, 2, 0, 2] },
             ],
             [
               { text: '3. Дата рождения', bold: true, margin: [0, 2, 0, 2] },
@@ -50,17 +73,17 @@ export default async function applicationForm(student) {
             [
               { text: '4. Паспорт', bold: true, margin: [0, 2, 0, 2] },
               {
-                text: `серия: ${student.documentSeries || ' '}  номер: ${student.documentNumber || ' '}  выдан: ${student.documentIssuer || ' '}`,
+                text: `серия: ${student.documentSeries}  номер: ${student.documentNumber}  выдан: ${format(new Date(student.documentIssueDate), 'dd MMMM yyyy года.', { locale: ru })} ${student.documentIssuer} код подразделения: ${student.documentCode}`,
                 margin: [0, 2, 0, 2],
               },
             ],
             [
               { text: '5. Адрес', bold: true, margin: [0, 2, 0, 2] },
-              { text: student.registrationAddress || '', margin: [0, 2, 0, 2] },
+              { text: student.registrationAddress, margin: [0, 2, 0, 2] },
             ],
             [
               { text: '6. Телефон', bold: true, margin: [0, 2, 0, 2] },
-              { text: student.phone || ' ', margin: [0, 2, 0, 2] },
+              { text: student.phone, margin: [0, 2, 0, 2] },
             ],
           ],
         },

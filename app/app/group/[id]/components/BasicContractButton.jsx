@@ -1,10 +1,12 @@
 import usePdfMake from '@/hooks/use-pdfmake';
+import { useToast } from '@/hooks/use-toast';
 import { useCallback } from 'react';
 
 import basicContract from '@/templates/basicContract';
 
 export default function BasicContractButton({ student, group, company }) {
   const pdfMake = usePdfMake();
+  const { toast } = useToast();
 
   const generatePDF = useCallback(async () => {
     if (!pdfMake) {

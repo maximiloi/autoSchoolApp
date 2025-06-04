@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import usePdfMake from '@/hooks/use-pdfmake';
 import { ru } from 'date-fns/locale';
 import { TableProperties } from 'lucide-react';
@@ -76,7 +76,7 @@ export default function ExamListsButton({ group, company }) {
     setExamType('');
     setModifiedGroup(false);
     setEmptyRows(0);
-  }, [pdfMake, selectedDate, filterStudents, company, emptyRows]);
+  }, [pdfMake, selectedDate, filterStudents, company, emptyRows, examType]);
 
   return (
     <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
@@ -91,11 +91,20 @@ export default function ExamListsButton({ group, company }) {
           <DialogTitle>Укажите тип и дату экзамена</DialogTitle>
           <DialogDescription>для группы №{group.groupNumber}</DialogDescription>
         </DialogHeader>
-        <Input
-          placeholder="Тип экзамена (например, теория)"
-          value={examType}
-          onChange={(e) => setExamType(e.target.value)}
-        />
+
+        <RadioGroup value={examType} onValueChange={setExamType}>
+          <div className="flex space-x-4">
+            <label className="flex items-center gap-2 rounded-md border border-gray-300 px-4 py-2">
+              <RadioGroupItem value="Теория" className="peer" />
+              Теория
+            </label>
+
+            <label className="flex items-center gap-2 rounded-md border border-gray-300 px-4 py-2">
+              <RadioGroupItem value="Практика" className="peer" />
+              Практика
+            </label>
+          </div>
+        </RadioGroup>
 
         <div className="flex gap-4">
           <Calendar

@@ -5,6 +5,7 @@ import { Calendar } from '@/components/ui/calendar';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -18,6 +19,7 @@ import { NotebookPen } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
 export default function PracticePlanningButton({ group }) {
+  const { groupNumber } = group;
   const pdfMake = usePdfMake();
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -53,6 +55,7 @@ export default function PracticePlanningButton({ group }) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Выберите дату начала практики</DialogTitle>
+          <DialogDescription>для группы № {groupNumber}</DialogDescription>
         </DialogHeader>
         <Calendar
           locale={ru}
