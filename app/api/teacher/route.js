@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]/route';
 import { PrismaClient } from '@prisma/client';
+import { getServerSession } from 'next-auth';
+import { NextResponse } from 'next/server';
+import { authOptions } from '../auth/[...nextauth]/route';
 
 const prisma = new PrismaClient();
 
-export async function GET(req) {
+export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session || !session.user) {
     return NextResponse.json({ message: 'Неавторизованный доступ' }, { status: 401 });
@@ -19,6 +19,7 @@ export async function GET(req) {
     });
     return NextResponse.json(teachers);
   } catch (error) {
+    console.error('Ошибка загрузки учителей:', error);
     return NextResponse.json({ message: 'Ошибка сервера' }, { status: 500 });
   }
 }
@@ -45,6 +46,7 @@ export async function POST(req) {
 
     return NextResponse.json(newTeacher, { status: 201 });
   } catch (error) {
+    console.error('Ошибка создания учителя:', error);
     return NextResponse.json({ message: 'Ошибка при создании' }, { status: 500 });
   }
 }

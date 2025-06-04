@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
+import { NextResponse } from 'next/server';
 import { authOptions } from '../../auth/[...nextauth]/route';
 
 const prisma = new PrismaClient();
@@ -52,6 +52,7 @@ export async function PUT(req) {
 
     return NextResponse.json(updatedCompany, { status: 200 });
   } catch (error) {
+    console.error('Ошибка при обновлении данных компании', error);
     return NextResponse.json({ error: 'Ошибка при обновлении данных компании' }, { status: 500 });
   }
 }

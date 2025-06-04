@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
@@ -21,6 +21,7 @@ export async function POST(req) {
 
     return NextResponse.json({ payment });
   } catch (error) {
+    console.error('Ошибка создания оплаты:', error);
     return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 });
   }
 }
