@@ -1,17 +1,17 @@
 import { PrismaClient } from '@prisma/client';
-import { getServerSession } from 'next-auth';
+import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
-import { authOptions } from '../auth/[...nextauth]/route';
 
 const prisma = new PrismaClient();
 
-export async function GET() {
-  const session = await getServerSession(authOptions);
-  if (!session) {
+export async function GET(req) {
+  const token = await getToken({ req });
+
+  if (!token) {
     return NextResponse.json({ error: 'Неавторизованный доступ' }, { status: 401 });
   }
 
-  const { companyId } = session.user;
+  const { companyId } = token;
   if (!companyId) {
     return NextResponse.json({ error: 'Ошибка аутентификации' }, { status: 403 });
   }
@@ -39,6 +39,17 @@ export async function GET() {
 
 export async function POST(req) {
   try {
+    const token = await getToken({ req });
+
+    if (!token) {
+      return NextResponse.json({ error: 'Неавторизованный доступ' }, { status: 401 });
+    }
+
+    const { companyId } = token;
+    if (!companyId) {
+      return NextResponse.json({ error: 'Ошибка аутентификации' }, { status: 403 });
+    }
+
     const data = await req.json();
 
     const newGroup = await prisma.group.create({
@@ -47,7 +58,7 @@ export async function POST(req) {
         category: data.category,
         startTrainingDate: new Date(data.startTrainingDate),
         endTrainingDate: new Date(data.endTrainingDate),
-        companyId: data.companyId,
+        companyId,
         theoryTeachers: {
           connect: data.theoryTeachers.map((teacher) => ({ id: teacher.id })),
         },

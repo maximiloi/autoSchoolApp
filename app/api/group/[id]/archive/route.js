@@ -1,14 +1,15 @@
 import { PrismaClient } from '@prisma/client';
-import { getServerSession } from 'next-auth';
+import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
-import { authOptions } from '../../../auth/[...nextauth]/route';
 
 const prisma = new PrismaClient();
 
 export async function PATCH(req, { params }) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: 'Не авторизован' }, { status: 401 });
+    const token = await getToken({ req });
+    if (!token) {
+      return NextResponse.json({ error: 'Не авторизован' }, { status: 401 });
+    }
 
     const { id } = params;
     const { isActive } = await req.json();

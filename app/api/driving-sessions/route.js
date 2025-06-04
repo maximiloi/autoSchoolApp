@@ -1,18 +1,17 @@
 import { PrismaClient } from '@prisma/client';
-import { getServerSession } from 'next-auth';
+import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
-import { authOptions } from '../auth/[...nextauth]/route';
 
 const prisma = new PrismaClient();
 
 export async function GET(req) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) {
+    const token = await getToken({ req });
+    if (!token) {
       return NextResponse.json({ error: 'Неавторизованный доступ' }, { status: 401 });
     }
 
-    const { companyId } = session.user;
+    const { companyId } = token;
     if (!companyId) {
       return NextResponse.json({ error: 'Ошибка аутентификации' }, { status: 403 });
     }
@@ -44,12 +43,12 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) {
+    const token = await getToken({ req });
+    if (!token) {
       return NextResponse.json({ error: 'Неавторизованный доступ' }, { status: 401 });
     }
 
-    const { companyId } = session.user;
+    const { companyId } = token;
     if (!companyId) {
       return NextResponse.json({ error: 'Ошибка аутентификации' }, { status: 403 });
     }
@@ -91,14 +90,14 @@ export async function POST(req) {
       if (existingSession) {
         sessionData = await prisma.drivingSession.update({
           where: { id: existingSession.id },
-          data: { slot: slot },
+          data: { slot },
         });
       } else {
         sessionData = await prisma.drivingSession.create({
           data: {
             studentId,
             date: parsedDate,
-            slot: slot,
+            slot,
           },
         });
       }

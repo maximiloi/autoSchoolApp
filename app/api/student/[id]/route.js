@@ -1,23 +1,23 @@
 import { PrismaClient } from '@prisma/client';
-import { getServerSession } from 'next-auth';
+import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
-import { authOptions } from '../../auth/[...nextauth]/route';
 
 const prisma = new PrismaClient();
+const secret = process.env.NEXTAUTH_SECRET;
 
 export async function GET(req, { params }) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) {
+    const token = await getToken({ req, secret });
+    if (!token) {
       return NextResponse.json({ error: 'Неавторизованный доступ' }, { status: 401 });
     }
 
-    const { companyId } = session.user;
+    const { companyId } = token;
     if (!companyId) {
       return NextResponse.json({ error: 'Ошибка аутентификации' }, { status: 403 });
     }
 
-    const { id } = await params;
+    const { id } = params;
     if (!id) {
       return NextResponse.json({ error: 'ID ученика не указан' }, { status: 400 });
     }
@@ -27,38 +27,49 @@ export async function GET(req, { params }) {
     });
 
     if (!student) {
-      return NextResponse.json({ error: 'Ученика не найдена' }, { status: 404 });
+      return NextResponse.json({ error: 'Ученик не найден' }, { status: 404 });
+    }
+
+    if (student.companyId !== companyId) {
+      return NextResponse.json({ error: 'Доступ запрещён' }, { status: 403 });
     }
 
     return NextResponse.json(student);
   } catch (error) {
-    console.error('Ошибка при получении Ученика:', error);
+    console.error('Ошибка при получении ученика:', error);
     return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 });
   }
 }
 
 export async function DELETE(req, { params }) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) {
+    const token = await getToken({ req, secret });
+    if (!token) {
       return NextResponse.json({ error: 'Неавторизованный доступ' }, { status: 401 });
     }
 
-    const { companyId } = session.user;
+    const { companyId } = token;
     if (!companyId) {
       return NextResponse.json({ error: 'Ошибка аутентификации' }, { status: 403 });
     }
 
-    const { id } = await params;
+    const { id } = params;
     if (!id) {
       return NextResponse.json({ error: 'ID ученика не указан' }, { status: 400 });
     }
 
-    await prisma.student.delete({
+    const student = await prisma.student.findUnique({
       where: { id },
+      select: { companyId: true },
     });
 
-    return NextResponse.json({ message: 'Ученик успешно удален' });
+    if (!student || student.companyId !== companyId) {
+      return NextResponse.json({ error: 'Доступ запрещён' }, { status: 403 });
+    }
+
+    await prisma.student.delete({ where: { id } });
+
+    return NextResponse.json({ message: 'Ученик успешно удалён' });
   } catch (error) {
     console.error('Ошибка при удалении ученика:', error);
     return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 });
@@ -69,7 +80,30 @@ export async function DELETE(req, { params }) {
 
 export async function PUT(req, { params }) {
   try {
-    const { id } = await params;
+    const token = await getToken({ req, secret });
+    if (!token) {
+      return NextResponse.json({ error: 'Неавторизованный доступ' }, { status: 401 });
+    }
+
+    const { companyId } = token;
+    if (!companyId) {
+      return NextResponse.json({ error: 'Ошибка аутентификации' }, { status: 403 });
+    }
+
+    const { id } = params;
+    if (!id) {
+      return NextResponse.json({ error: 'ID ученика не указан' }, { status: 400 });
+    }
+
+    const existingStudent = await prisma.student.findUnique({
+      where: { id },
+      select: { companyId: true },
+    });
+
+    if (!existingStudent || existingStudent.companyId !== companyId) {
+      return NextResponse.json({ error: 'Доступ запрещён' }, { status: 403 });
+    }
+
     const data = await req.json();
 
     if (data.group) {
@@ -82,9 +116,9 @@ export async function PUT(req, { params }) {
       data,
     });
 
-    return NextResponse.json({ message: 'Ученик успешно обновлен', updatedStudent });
+    return NextResponse.json({ message: 'Ученик успешно обновлён', updatedStudent });
   } catch (error) {
-    console.error('Ошибка обновления студента:', error.message);
+    console.error('Ошибка обновления студента:', error);
     return NextResponse.json({ error: 'Ошибка при обновлении данных студента' }, { status: 500 });
   }
 }

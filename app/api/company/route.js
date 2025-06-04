@@ -1,18 +1,18 @@
-import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]/route';
+import { getToken } from 'next-auth/jwt';
+import { NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
 export async function POST(req) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const token = await getToken({ req });
+
+    if (!token?.id) {
       return NextResponse.json({ error: 'Неавторизованный доступ' }, { status: 401 });
     }
 
-    const userId = session.user.id;
+    const userId = token.id;
     const data = await req.json();
 
     const user = await prisma.user.findUnique({

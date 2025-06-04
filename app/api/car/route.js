@@ -1,21 +1,18 @@
 import { PrismaClient } from '@prisma/client';
-import { getServerSession } from 'next-auth';
+import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
-import { authOptions } from '../auth/[...nextauth]/route';
 
 const prisma = new PrismaClient();
 
-export async function GET() {
-  const session = await getServerSession(authOptions);
-  if (!session || !session.user) {
+export async function GET(req) {
+  const token = await getToken({ req });
+  if (!token || !token.companyId) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
-  const { companyId } = session.user;
-
   try {
     const cars = await prisma.car.findMany({
-      where: { companyId },
+      where: { companyId: token.companyId },
     });
     return NextResponse.json(cars);
   } catch (error) {
@@ -25,19 +22,18 @@ export async function GET() {
 }
 
 export async function POST(req) {
-  const session = await getServerSession(authOptions);
-  if (!session || !session.user) {
+  const token = await getToken({ req });
+  if (!token || !token.companyId) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
-  const { companyId } = session.user;
   const body = await req.json();
 
   try {
     const newCar = await prisma.car.create({
       data: {
         ...body,
-        companyId,
+        companyId: token.companyId,
       },
     });
 

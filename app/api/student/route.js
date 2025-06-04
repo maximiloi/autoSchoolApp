@@ -1,10 +1,22 @@
+import { Prisma, PrismaClient } from '@prisma/client';
+import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
-import { PrismaClient, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
+const secret = process.env.NEXTAUTH_SECRET;
 
 export async function POST(req) {
   try {
+    const token = await getToken({ req, secret });
+    if (!token) {
+      return NextResponse.json({ error: 'Неавторизованный доступ' }, { status: 401 });
+    }
+
+    const { companyId } = token;
+    if (!companyId) {
+      return NextResponse.json({ error: 'Ошибка аутентификации' }, { status: 403 });
+    }
+
     const data = await req.json();
 
     const newStudent = await prisma.student.create({
@@ -12,11 +24,11 @@ export async function POST(req) {
         studentNumber: data.studentNumber,
         lastName: data.lastName,
         firstName: data.firstName,
+        middleName: data.middleName,
         phone: data.phone,
         groupId: data.group,
         trainingCost: new Prisma.Decimal(data.trainingCost),
         birthDate: new Date(data.birthDate),
-        middleName: data.middleName,
         gender: data.gender,
         snils: data.snils,
         birthPlace: data.birthPlace,
@@ -46,13 +58,15 @@ export async function POST(req) {
         placeOfWork: data.placeOfWork,
         medicalRestriction: data.medicalRestriction,
         allowedCategories: data.allowedCategories,
-        companyId: data.companyId,
+        companyId: companyId, // ✅ безопасно из токена
       },
     });
 
     return NextResponse.json(newStudent, { status: 201 });
   } catch (error) {
-    console.error('Error creating student:', error);
+    console.error('Ошибка при создании ученика:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }
