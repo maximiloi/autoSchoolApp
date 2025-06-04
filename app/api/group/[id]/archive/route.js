@@ -11,7 +11,7 @@ export async function PATCH(req, { params }) {
       return NextResponse.json({ error: 'Не авторизован' }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = await params;
     const { isActive } = await req.json();
 
     if (typeof isActive !== 'boolean') {

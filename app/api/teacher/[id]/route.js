@@ -16,7 +16,7 @@ async function getAuth(req) {
 export async function GET(req, { params }) {
   try {
     const { companyId } = await getAuth(req);
-    const { id } = params;
+    const { id } = await params;
 
     if (!id) {
       return NextResponse.json({ error: 'ID преподавателя не указан' }, { status: 400 });
@@ -44,7 +44,7 @@ export async function GET(req, { params }) {
 export async function DELETE(req, { params }) {
   try {
     const { companyId } = await getAuth(req);
-    const { id } = params;
+    const { id } = await params;
 
     if (!id) {
       return NextResponse.json({ error: 'ID преподавателя не указан' }, { status: 400 });
@@ -69,7 +69,7 @@ export async function DELETE(req, { params }) {
 export async function PUT(req, { params }) {
   try {
     const { companyId } = await getAuth(req);
-    const { id } = params;
+    const { id } = await params;
     const data = await req.json();
 
     if (!id) {

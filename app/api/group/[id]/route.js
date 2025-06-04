@@ -16,7 +16,7 @@ export async function GET(req, { params }) {
       return NextResponse.json({ error: 'Ошибка аутентификации' }, { status: 403 });
     }
 
-    const { id } = params;
+    const { id } = await params;
     if (!id) {
       return NextResponse.json({ error: 'ID группы не указан' }, { status: 400 });
     }
@@ -30,7 +30,6 @@ export async function GET(req, { params }) {
       },
     });
 
-    // Проверка принадлежности группы компании (дополнительно)
     if (!group || group.companyId !== companyId) {
       return NextResponse.json({ error: 'Доступ запрещён' }, { status: 403 });
     }
@@ -54,7 +53,7 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ error: 'Ошибка аутентификации' }, { status: 403 });
     }
 
-    const { id } = params;
+    const { id } = await params;
     if (!id) {
       return NextResponse.json({ error: 'ID группы не указан' }, { status: 400 });
     }
