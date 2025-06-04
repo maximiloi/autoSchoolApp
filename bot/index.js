@@ -3,7 +3,9 @@ import { Bot, InlineKeyboard } from 'grammy';
 
 const bot = new Bot(process.env.TELEGRAM_BOT_TOKEN);
 const prisma = new PrismaClient();
-const adminChatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
+const adminChatIds = process.env.TELEGRAM_ADMIN_CHAT_ID?.split(',')
+  .map((id) => id.trim())
+  .filter(Boolean);
 
 // /start с параметром ?start=studentId
 bot.command('start', async (ctx) => {
@@ -40,7 +42,7 @@ bot.command('start', async (ctx) => {
     ✅ Вы успешно <b>подписались на уведомления</b>.
     
     ℹ️ Вы проходите обучение в группе № <b>${student.group.groupNumber}</b>, начало занятий — <b>${student.group.startTrainingDate.toLocaleDateString('ru-RU')} г</b>.
-    💳 Стоимость курса составляет <b>${student.trainingCost.toFixed(2)} ₽</b>.
+    💳 Стоимость курса составляет <b>${student.trainingCost.toFixed(2).toLocaleString('ru-RU')} ₽</b>.
     
     📬 Теперь вы будете получать:
     • 🚗 Уведомления о запланированных занятиях по вождению  
@@ -142,7 +144,7 @@ bot.callbackQuery('view_sessions', async (ctx) => {
       .join('\n');
 
     await ctx.answerCallbackQuery();
-    await ctx.reply(`🚘 Ваши ближайшие занятия:\n\n${message}`);
+    await ctx.reply(`🚘 Ваши ближайшие вождения:\n\n${message}`);
   } catch (err) {
     console.error('Ошибка при получении занятий:', err);
     await ctx.reply('Произошла ошибка при получении расписания.');
@@ -176,13 +178,18 @@ bot.callbackQuery(/^payment_done_(.+)$/, async (ctx) => {
       `confirm_payment_${student.id}`,
     );
 
-    await bot.api.sendMessage(
-      adminChatId,
-      `💼 Студент <b>${nameText}</b> из группы № <b>${groupNumber}</b> отметил оплату.`,
-      {
-        parse_mode: 'HTML',
-        reply_markup: adminKeyboard,
-      },
+    await Promise.all(
+      adminChatIds.map(async (id) => {
+        try {
+          await bot.api.sendMessage(
+            id,
+            `💼 Студент <b>${nameText}</b> из группы № <b>${groupNumber}</b> отметил оплату.`,
+            { parse_mode: 'HTML', reply_markup: adminKeyboard },
+          );
+        } catch (err) {
+          console.error(`Не удалось отправить сообщение админу ${id}:`, err);
+        }
+      }),
     );
   } catch (error) {
     console.error('Ошибка при обработке оплаты:', error);
@@ -217,7 +224,7 @@ bot.callbackQuery(/^confirm_payment_(.+)$/, async (ctx) => {
 
     const debtMessage =
       debt === 0
-        ? '✅ Оплата за курс внесена в полном объёме. Спасибо!\n\nℹ️ Напоминания больше не будут приходить.'
+        ? '✅ Оплата за курс внесена в полном объёме. Спасибо!\n\nℹ️ Напоминания про оплату больше не будут приходить.'
         : `ℹ️ После внесения оплаты в систему, ваша <b>оставшаяся сумма к оплате</b>: <b>${debt} ₽</b>.`;
 
     await bot.api.sendMessage(
