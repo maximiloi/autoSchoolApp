@@ -5,14 +5,14 @@ export async function middleware(req) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const { pathname } = req.nextUrl;
 
-  const isAuthPage = pathname === '/';
+  const isLoginPage = pathname === '/login';
   const isAdminPage = pathname.startsWith('/admin');
 
-  if (!token) {
+  if (!token && !isLoginPage) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  if (token && isAuthPage) {
+  if (token && isLoginPage) {
     return NextResponse.redirect(new URL('/app', req.url));
   }
 
@@ -24,5 +24,5 @@ export async function middleware(req) {
 }
 
 export const config = {
-  matcher: ['/', '/app/:path*', '/admin/:path*'],
+  matcher: ['/', '/login', '/app/:path*', '/admin/:path*'],
 };
