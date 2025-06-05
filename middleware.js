@@ -16,7 +16,7 @@ export async function middleware(req) {
     return NextResponse.redirect(new URL('/app', req.url));
   }
 
-  if (isAdminPage && token.role !== 'ADMIN') {
+  if (isAdminPage && token?.role !== 'ADMIN') {
     return NextResponse.redirect(new URL('/app', req.url));
   }
 
