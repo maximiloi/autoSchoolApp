@@ -6,17 +6,15 @@ export async function middleware(req) {
   const { pathname } = req.nextUrl;
 
   const isLoginPage = pathname === '/login';
-  const isAdminPage = pathname.startsWith('/admin');
+  const isPublic = ['/login', '/register'].includes(pathname);
 
-  if (!token && !isLoginPage) {
+  // Неавторизованный пользователь — может быть только на публичных страницах
+  if (!token && !isPublic) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
+  // Авторизован и пытается попасть на /login — перенаправить на /app
   if (token && isLoginPage) {
-    return NextResponse.redirect(new URL('/app', req.url));
-  }
-
-  if (isAdminPage && token?.role !== 'ADMIN') {
     return NextResponse.redirect(new URL('/app', req.url));
   }
 
