@@ -10,13 +10,13 @@ export const metadata = {
 
 export default function RootLayout({ children, session }) {
   return (
-    <Providers session={session}>
-      <html lang="ru">
-        <body className={`${jetBrainsMono.className} antialiased`}>
+    <html lang="ru">
+      <body className={`${jetBrainsMono.className} antialiased`}>
+        <Providers session={session}>
           {children}
           <Toaster />
-        </body>
-      </html>
-    </Providers>
+        </Providers>
+      </body>
+    </html>
   );
 }
