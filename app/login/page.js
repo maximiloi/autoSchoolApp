@@ -1,25 +1,24 @@
 'use client';
 
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
-import Link from 'next/link';
 import { LogIn } from 'lucide-react';
+import { signIn, useSession } from 'next-auth/react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
@@ -40,7 +39,7 @@ export default function Login() {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    const res = await signIn('credentials', { ...data, redirect: false });
+    const res = await signIn('credentials', { ...data, redirect: false, callbackUrl: '/app' });
     setLoading(false);
 
     if (res?.ok) {
@@ -48,7 +47,6 @@ export default function Login() {
       toast({
         variant: 'success',
         title: 'Добро пожаловать',
-        // description: 'Неверные учетные данные',
       });
     } else {
       toast({
