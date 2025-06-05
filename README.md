@@ -14,7 +14,7 @@ Styling - Tailwind CSS
 
 Components - Shadcn UI
 
-Auth - NextAuth.js (JWT)
+Auth - NextAuth.js (JWT) migrate next-auth@5
 
 Formatting - Prettier
 
