@@ -3,9 +3,10 @@ import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
+const secret = process.env.NEXTAUTH_SECRET;
 
 export async function GET(req) {
-  const token = await getToken({ req });
+  const token = await getToken({ req, secret });
 
   if (!token) {
     return NextResponse.json({ error: 'Неавторизованный доступ' }, { status: 401 });
@@ -39,7 +40,7 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    const token = await getToken({ req });
+    const token = await getToken({ req, secret });
 
     if (!token) {
       return NextResponse.json({ error: 'Неавторизованный доступ' }, { status: 401 });
