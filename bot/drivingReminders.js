@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { addDays, format } from 'date-fns';
 import { Bot } from 'grammy';
-import { sendTelegramMessage } from './sendTelegramMessage.js';
 
 const prisma = new PrismaClient();
 const bot = new Bot(process.env.TELEGRAM_BOT_TOKEN);
@@ -24,7 +23,7 @@ function formatTimeRange(slot) {
 async function main() {
   for (const adminId of adminChatIds) {
     try {
-      await sendTelegramMessage(adminId, '⚙️ Скрипт напоминания о вождении запущен');
+      await bot.api.sendMessage(adminId, '⚙️ Скрипт напоминания о вождении запущен');
     } catch (err) {
       console.error(`Ошибка при уведомлении админа ${adminId} о запуске скрипта:`, err);
     }
@@ -89,7 +88,7 @@ async function main() {
 
         for (const adminId of adminChatIds) {
           try {
-            await sendTelegramMessage(adminId, removalMsg, { parse_mode: 'Markdown' });
+            await bot.api.sendMessage(adminId, removalMsg, { parse_mode: 'Markdown' });
           } catch (err) {
             console.error(`Ошибка при отправке админу ${adminId} об удалении студента:`, err);
           }
@@ -103,7 +102,7 @@ async function main() {
 
     for (const adminId of adminChatIds) {
       try {
-        await sendTelegramMessage(adminId, reportMessage);
+        await bot.api.sendMessage(adminId, reportMessage);
       } catch (error) {
         console.error(`Ошибка при отправке отчета админу ${adminId}:`, error);
       }
