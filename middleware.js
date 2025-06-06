@@ -5,16 +5,18 @@ export async function middleware(req) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const { pathname } = req.nextUrl;
 
-  const isLoginPage = pathname === '/login';
-  const isPublic = ['/login', '/register'].includes(pathname);
+  const isAuthPage = pathname === '/';
+  const isAdminPage = pathname.startsWith('/admin');
 
-  // Неавторизованный пользователь — может быть только на публичных страницах
-  if (!token && !isPublic) {
+  if (!token) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  // Авторизован и пытается попасть на /login — перенаправить на /app
-  if (token && isLoginPage) {
+  if (token && isAuthPage) {
+    return NextResponse.redirect(new URL('/app', req.url));
+  }
+
+  if (isAdminPage && token.role !== 'ADMIN') {
     return NextResponse.redirect(new URL('/app', req.url));
   }
 
@@ -22,5 +24,5 @@ export async function middleware(req) {
 }
 
 export const config = {
-  matcher: ['/', '/login', '/app/:path*', '/admin/:path*'],
+  matcher: ['/', '/app/:path*', '/admin/:path*'],
 };
