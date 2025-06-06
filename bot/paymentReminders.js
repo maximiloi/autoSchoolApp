@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { InlineKeyboard } from 'grammy';
-import { sendTelegramMessage } from '../lib/telegramBot.js';
+import { sendTelegramMessage } from './sendTelegramMessage.js';
 
 const prisma = new PrismaClient();
 const dateFirstReminder = 10;

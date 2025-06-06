@@ -36,6 +36,22 @@ bot.command('start', async (ctx) => {
       data: { telegramId: chatId },
     });
 
+    // Уведомление администраторам
+    const fullName = `${student.lastName} ${student.firstName} ${student.middleName ?? ''}`.trim();
+    const groupNumber = student.group?.groupNumber ?? '—';
+    const activationMessage = `📲 Студент <b>${fullName}</b> из группы № <b>${groupNumber}</b> активировал Telegram-бот.`;
+
+    await Promise.all(
+      adminChatIds.map(async (adminId) => {
+        try {
+          await bot.api.sendMessage(adminId, activationMessage, { parse_mode: 'HTML' });
+        } catch (error) {
+          console.error(`Ошибка при уведомлении админа ${adminId}:`, error);
+        }
+      }),
+    );
+
+    // Сообщение студенту
     const message = `
     👋 Здравствуйте, <b>${student.lastName} ${student.firstName}</b>!
     

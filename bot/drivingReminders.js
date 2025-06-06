@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { addDays, format } from 'date-fns';
-import { sendTelegramMessage } from '../lib/telegramBot.js';
+import { sendTelegramMessage } from './sendTelegramMessage.js';
 
 const prisma = new PrismaClient();
 
