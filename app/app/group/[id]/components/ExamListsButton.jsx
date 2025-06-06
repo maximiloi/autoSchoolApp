@@ -34,6 +34,7 @@ export default function ExamListsButton({ group, company }) {
       firstName: s.firstName,
       middleName: s.middleName,
       birthDate: s.birthDate,
+      phone: s.phone,
     })),
   );
 

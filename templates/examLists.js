@@ -45,7 +45,7 @@ export default function examListsTemplate(group, company, selectedDate, examType
       margin: [0, 15, 0, 0],
       fontSize: 10,
       table: {
-        widths: ['7.5%', '11%', '*', '*', '*', '*'],
+        widths: ['7.5%', '11%', '*', '*', '*', '*', '*'],
         body: [
           [
             { text: '№ п/п', style: 'tableHeader' },
@@ -54,6 +54,7 @@ export default function examListsTemplate(group, company, selectedDate, examType
             { text: 'Имя', style: 'tableHeader' },
             { text: 'Отчество', style: 'tableHeader' },
             { text: 'Дата рождения', style: 'tableHeader' },
+            { text: 'Номер телефона', style: 'tableHeader' },
           ],
           ...sortedStudents.map((student, index) => [
             { text: index + 1, alignment: 'center' },
@@ -65,9 +66,11 @@ export default function examListsTemplate(group, company, selectedDate, examType
               text: format(new Date(student.birthDate), 'dd/MM/yyyy', { locale: ru }),
               alignment: 'center',
             },
+            { text: student.phone },
           ]),
           ...Array.from({ length: emptyRows }).map((_, i) => [
             { text: sortedStudents.length + i + 1, alignment: 'center' },
+            { text: '' },
             { text: '' },
             { text: '' },
             { text: '' },
