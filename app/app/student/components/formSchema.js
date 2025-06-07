@@ -1,4 +1,4 @@
-const { z } = require('zod');
+import { z } from 'zod';
 
 export const formSchema = z.object({
   studentNumber: z.string().min(1, 'Введите порядковый номер ученика'),
