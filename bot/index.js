@@ -13,9 +13,7 @@ bot.command('start', async (ctx) => {
   const studentId = ctx.match;
 
   if (!studentId) {
-    await ctx.reply(
-      '❗️Ошибка: отсутствует код. Пожалуйста, используйте QR-код из Заявления-анкеты.',
-    );
+    await ctx.reply('❗️Ошибка: отсутствует код. Пожалуйста, используйте QR-код из Договора.');
     return;
   }
 
@@ -30,13 +28,11 @@ bot.command('start', async (ctx) => {
       return;
     }
 
-    // Обновляем Telegram ID студента
     await prisma.student.update({
       where: { id: student.id },
       data: { telegramId: chatId },
     });
 
-    // Уведомление администраторам
     const fullName = `${student.lastName} ${student.firstName} ${student.middleName ?? ''}`.trim();
     const groupNumber = student.group?.groupNumber ?? '—';
     const activationMessage = `📲 Студент <b>${fullName}</b> из группы № <b>${groupNumber}</b> активировал Telegram-бот.`;
@@ -104,7 +100,7 @@ bot.callbackQuery('check_debt', async (ctx) => {
     const totalPaid = student.payments.reduce((sum, p) => sum + p.amount.toNumber(), 0);
     const debt = Math.max(trainingCost - totalPaid, 0);
 
-    await ctx.answerCallbackQuery(); // Закрыть "loading..."
+    await ctx.answerCallbackQuery();
 
     if (debt === 0) {
       await ctx.reply(

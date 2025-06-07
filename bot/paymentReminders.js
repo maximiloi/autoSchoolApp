@@ -1,10 +1,16 @@
 import { PrismaClient } from '@prisma/client';
-import { InlineKeyboard } from 'grammy';
+import { Bot, InlineKeyboard } from 'grammy';
 import { sendTelegramMessage } from './sendTelegramMessage.js';
 
 const prisma = new PrismaClient();
+const bot = new Bot(process.env.TELEGRAM_BOT_TOKEN);
 const dateFirstReminder = 10;
 const dateSecondReminder = 25;
+
+const adminChatIds =
+  process.env.TELEGRAM_ADMIN_CHAT_ID?.split(',')
+    .map((id) => id.trim())
+    .filter(Boolean) || [];
 
 function getReminderNumber(startDate, today) {
   const checkpoints = [];
@@ -33,6 +39,14 @@ function getRequiredPayment(reminderNumber) {
 }
 
 async function main() {
+  for (const adminId of adminChatIds) {
+    try {
+      await bot.api.sendMessage(adminId, '⚙️ Скрипт напоминания о оплате запущен');
+    } catch (err) {
+      console.error(`Ошибка при уведомлении админа ${adminId} о запуске скрипта:`, err);
+    }
+  }
+
   const today = new Date();
   const day = today.getDate();
   if (![dateFirstReminder, dateSecondReminder].includes(day)) return;
