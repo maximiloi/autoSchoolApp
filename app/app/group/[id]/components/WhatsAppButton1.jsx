@@ -1,21 +1,10 @@
 'use client';
-import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 
 export default function WhatsAppButton1({ student }) {
   const { firstName, phone } = student;
   const phoneDigitsOnly = phone.replace(/\D/g, '');
-
-  const totalPaid = useMemo(
-    () => student?.payments?.reduce((sum, payment) => sum + Number(payment.amount), 0) || 0,
-    [student?.payments],
-  );
-
-  const debt = useMemo(
-    () => Number(student?.trainingCost) - totalPaid,
-    [student?.trainingCost, totalPaid],
-  );
 
   const telegramLink = `https://t.me/okulovkaAutoSchool_bot?start=${student.id}`;
   const message =
@@ -32,13 +21,11 @@ export default function WhatsAppButton1({ student }) {
   const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneDigitsOnly}&text=${encodedMessage}`;
 
   const handleClick = () => {
-    if (debt > 0) {
-      window.open(whatsappUrl, '_blank');
-    }
+    window.open(whatsappUrl, '_blank');
   };
 
   return (
-    <Button onClick={handleClick} disabled={debt <= 0}>
+    <Button onClick={handleClick} disabled={student.telegramId}>
       Ссылка телеграм бот
     </Button>
   );
