@@ -110,7 +110,7 @@ export default function StudentList({ company }) {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[40px]"></TableHead>
-            <TableHead className="w-[20px]"></TableHead>
+            <TableHead className="w-[40px]"></TableHead>
             <TableHead className="w-[20px]">#</TableHead>
             <TableHead className="w-[200px]">ФИО</TableHead>
             <TableHead className="w-[145px]">Дата рождения</TableHead>
@@ -142,7 +142,7 @@ export default function StudentList({ company }) {
                 <TableCell className="pt-4">
                   {student.telegramId && (
                     <Hint tooltip="Студент подписан на телеграм бот">
-                      <Send className="h-4 w-4" />
+                      <Send className="h-5 w-5 text-lime-600" />
                     </Hint>
                   )}
                 </TableCell>
