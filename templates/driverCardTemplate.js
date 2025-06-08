@@ -1,6 +1,16 @@
 import { format } from 'date-fns';
 
-export default function driverCardTemplate(student, company) {
+export default async function driverCardTemplate(student, company, toast) {
+  if (!student) {
+    toast?.({ variant: 'destructive', description: 'Отсутствует объект student' });
+    return null;
+  }
+
+  if (!company) {
+    toast?.({ variant: 'destructive', description: 'Отсутствует объект company' });
+    return null;
+  }
+
   const {
     lastName,
     firstName,
@@ -19,6 +29,38 @@ export default function driverCardTemplate(student, company) {
     certificateIssueDate,
   } = student;
   const { companyName, whoIssuedLicense, whenIssuedLicense, license } = company;
+
+  const missingFields = [];
+
+  if (!lastName) missingFields.push('фамилия');
+  if (!firstName) missingFields.push('имя');
+  if (!middleName) missingFields.push('отчество');
+  if (!birthDate) missingFields.push('дата рождения');
+  if (!birthPlace) missingFields.push('место рождения');
+  if (!registrationAddress) missingFields.push('адрес регистрации');
+  if (!documentSeries) missingFields.push('серия паспорта');
+  if (!documentNumber) missingFields.push('номер паспорта');
+  if (!documentIssuer) missingFields.push('кем выдан паспорт');
+  if (!documentIssueDate) missingFields.push('дата выдачи паспорта');
+  if (!medicalIssueDate) missingFields.push('дата мед. справки');
+  if (!medicalIssuer) missingFields.push('кем выдана мед. справка');
+  if (!medicalNumber) missingFields.push('номер мед. справки');
+  if (!certificateNumber) missingFields.push('номер сертификата');
+  if (!certificateIssueDate) missingFields.push('дата выдачи сертификата');
+
+  if (!companyName) missingFields.push('название компании');
+  if (!whoIssuedLicense) missingFields.push('кем выдана лицензия');
+  if (!whenIssuedLicense) missingFields.push('дата выдачи лицензии');
+  if (!license) missingFields.push('номер лицензии');
+
+  if (missingFields.length > 0) {
+    toast?.({
+      variant: 'destructive',
+      title: 'Недостаточно данных',
+      description: `Отсутствуют поля: ${missingFields.join(', ')}`,
+    });
+    return null;
+  }
 
   return {
     pageOrientation: 'landscape',
