@@ -15,7 +15,11 @@ export default function ApplicationFormButton({ student }) {
     }
 
     try {
-      const docDefinition = await applicationForm(student, toast);
+      const docDefinition = await applicationForm(
+        student,
+        toast,
+        process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME,
+      );
       if (!docDefinition) return;
 
       pdfMake.createPdf(docDefinition).open();

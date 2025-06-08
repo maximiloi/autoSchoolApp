@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import QRCode from 'qrcode';
 
-export default async function applicationForm(student, toast) {
+export default async function applicationForm(student, toast, botUsername) {
   if (!student) {
     toast?.({ variant: 'destructive', description: 'Отсутствует объект student' });
     return null;
@@ -31,7 +31,7 @@ export default async function applicationForm(student, toast) {
     return null;
   }
 
-  const telegramLink = `https://t.me/okulovkaAutoSchool_bot?start=${student.id}`;
+  const telegramLink = `https://t.me/${botUsername}?start=${student.id}`;
   const qrDataUrl = await QRCode.toDataURL(telegramLink);
 
   return {

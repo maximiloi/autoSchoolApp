@@ -15,7 +15,13 @@ export default function BasicContractButton({ student, group, company }) {
     }
 
     try {
-      const docDefinition = await basicContract(student, group, company, toast);
+      const docDefinition = await basicContract(
+        student,
+        group,
+        company,
+        toast,
+        process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME,
+      );
       if (!docDefinition) return;
 
       pdfMake.createPdf(docDefinition).open();

@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 export default function WhatsAppButton1({ student }) {
   const { firstName, phone } = student;
   const phoneDigitsOnly = phone.replace(/\D/g, '');
+  const botUsername = process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME;
 
-  const telegramLink = `https://t.me/okulovkaAutoSchool_bot?start=${student.id}`;
+  const telegramLink = `https://t.me/${botUsername}?start=${student.id}`;
   const message =
     `👋 Здравствуйте, ${firstName}!\n\n` +
     `📲 Это ссылка на Telegram-бот нашей автошколы:\n${telegramLink}\n\n` +
