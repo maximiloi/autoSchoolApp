@@ -8,14 +8,14 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  email     String    @unique
+  id        String   @id @default(uuid())
+  email     String   @unique
   password  String
-  role      String    @default("user") // "admin" или "user"
+  role      String   @default("user")
   companyId String?
-  company   Company?  @relation(fields: [companyId], references: [id])
+  company   Company? @relation(fields: [companyId], references: [id])
 
-  createdAt      DateTime @default(now())
+  createdAt DateTime @default(now())
 }
 
 model Company {
@@ -31,7 +31,7 @@ model Company {
   legalAddress         String
   actualAddress        String?
   region               String
-  city                 String    @default("") 
+  city                 String    @default("")
   bank                 String
   account              String    @db.Char(20) // 20 символов
   bik                  String    @db.Char(9) // 9 символов
@@ -46,19 +46,19 @@ model Company {
   email                String    @unique
   website              String?
 
-  users                User[]
-  teachers             Teacher[]
-  cars                 Car[]
-  groups               Group[]
-  students             Student[]
+  users    User[]
+  teachers Teacher[]
+  cars     Car[]
+  groups   Group[]
+  students Student[]
 }
 
 model Teacher {
-  id               String  @id @default(uuid())
+  id               String    @id @default(uuid())
   lastName         String
   firstName        String
   middleName       String?
-  activityType     String  @default("theory") // "theory" или "practice"
+  activityType     String    @default("theory") // "theory" или "practice"
   birthDate        DateTime?
   birthPlace       String?
   address          String?
@@ -69,28 +69,28 @@ model Teacher {
   phone            String?
   companyId        String
   createdBy        String
-  company          Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company          Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-  theoryGroups     Group[] @relation(name: "TheoryTeachers")
-  practiceGroups   Group[] @relation(name: "PracticeTeachers")
+  theoryGroups   Group[] @relation(name: "TheoryTeachers")
+  practiceGroups Group[] @relation(name: "PracticeTeachers")
 
-  cars             Car[]
+  cars Car[]
 
-  createdAt        DateTime @default(now())
+  createdAt DateTime @default(now())
 }
 
 model Car {
-  id             String  @id @default(uuid())
-  carModel       String
-  carTransmission   String  // 'akp' или 'mkp'
-  carNumber      String
-  literalMarking String
-  teacherId      String
-  companyId      String 
-  teacher        Teacher? @relation(fields: [teacherId], references: [id], onDelete: SetNull)
-  company        Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  id              String   @id @default(uuid())
+  carModel        String
+  carTransmission String
+  carNumber       String
+  literalMarking  String
+  teacherId       String
+  companyId       String
+  teacher         Teacher? @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  company         Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-  createdAt      DateTime @default(now())
+  createdAt DateTime @default(now())
 }
 
 model Group {
@@ -106,62 +106,62 @@ model Group {
   theoryTeachers   Teacher[] @relation(name: "TheoryTeachers")
   practiceTeachers Teacher[] @relation(name: "PracticeTeachers")
 
-  createdAt        DateTime  @default(now())
+  createdAt DateTime @default(now())
 
-  students          Student[]
+  students Student[]
 }
 
 model Student {
-  id                  String  @id @default(uuid())
-  studentNumber       String
-  lastName            String
-  firstName           String
-  middleName          String?
-  gender              String?
-  phone               String
-  birthDate           DateTime
-  birthPlace          String?
-  country             String?
-  addressRegion       String?
-  city                String?
-  street              String?
-  house               String?
-  building            String?
-  apartment           String?
-  registrationAddress String?
-  actualAddress       String?
-  documentType        String?
-  documentIssuer      String?
-  documentCode        String?
-  documentSeries      String?
-  documentNumber      String?
-  documentIssueDate   DateTime?
-  medicalSeries       String?
-  medicalNumber       String?
-  medicalIssueDate    DateTime?
-  medicalIssuer       String?
-  licenseSeries       String?
-  license             String?
-  region              String?
-  education           String?
-  placeOfWork         String?
-  medicalRestriction  String?
-  allowedCategories   String?
-  trainingCost        Decimal
-  snils               String?
-  certificateNumber   Decimal?
-  certificateIssueDate    DateTime?
-  telegramId          String? @unique
+  id                   String    @id @default(uuid())
+  studentNumber        String
+  lastName             String
+  firstName            String
+  middleName           String?
+  gender               String?
+  phone                String
+  birthDate            DateTime
+  birthPlace           String?
+  country              String?
+  addressRegion        String?
+  city                 String?
+  street               String?
+  house                String?
+  building             String?
+  apartment            String?
+  registrationAddress  String?
+  actualAddress        String?
+  documentType         String?
+  documentIssuer       String?
+  documentCode         String?
+  documentSeries       String?
+  documentNumber       String?
+  documentIssueDate    DateTime?
+  medicalSeries        String?
+  medicalNumber        String?
+  medicalIssueDate     DateTime?
+  medicalIssuer        String?
+  licenseSeries        String?
+  license              String?
+  region               String?
+  education            String?
+  placeOfWork          String?
+  medicalRestriction   String?
+  allowedCategories    String?
+  trainingCost         Decimal
+  snils                String?
+  certificateNumber    Decimal?
+  certificateIssueDate DateTime?
+  telegramId           String?   @unique
 
-  groupId             String
-  group               Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  companyId           String
-  company             Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  groupId   String
+  group     Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-  payments     Payment[]
-  drivingSessions   DrivingSession[] 
+  payments        Payment[]
+  drivingSessions DrivingSession[]
 
-  createdAt           DateTime @default(now())
+  createdAt DateTime @default(now())
 }
 
 model Payment {
@@ -173,11 +173,11 @@ model Payment {
 }
 
 model DrivingSession {
-  id         String   @id @default(uuid())
-  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  studentId  String
-  date       DateTime
-  slot       String?
+  id        String   @id @default(uuid())
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId String
+  date      DateTime
+  slot      String?
 
-  createdAt  DateTime @default(now())
+  createdAt DateTime @default(now())
 }

@@ -55,17 +55,21 @@
     "prisma": "^6.3.1",
     "tailwindcss": "^3.4.1"
   },
-  "name": "autoSchoolApp",
+  "name": "auto-school-app",
+  "prisma": {
+    "schema": "prisma/schema.prisma"
+  },
   "private": true,
   "scripts": {
+    "bot": "node bot/index.js",
     "build": "next build",
     "dev": "next dev --turbopack",
     "format": "prettier --write '**/**/*.{js,jsx,ts,tsx,css,scss}'",
     "lint": "next lint",
     "prisma": "npx prisma studio ",
-    "start": "next start",
-    "bot": "node bot/index.js"
+    "prisma:migrate": "npx prisma migrate dev",
+    "start": "next start"
   },
-  "version": "0.1.0",
-  "type": "module"
+  "type": "module",
+  "version": "0.1.0"
 }
