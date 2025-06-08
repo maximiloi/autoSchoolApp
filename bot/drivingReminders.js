@@ -71,10 +71,11 @@ async function main() {
 
     const studentMessage = `🚗 Напоминание: у вас завтра вождение ${timeText} (${formattedDate})\n\n 👨‍🏫 Инструктор: ${teacherFullName}\n📞 ${teacherPhone}`;
     const fullName = `${student.lastName} ${student.firstName} ${student.middleName ?? ''}`.trim();
+    const groupNumber = student.group?.groupNumber || '—';
 
     try {
       await bot.api.sendMessage(student.telegramId, studentMessage);
-      reportLines.push(`• ${fullName} — ${formattedDate} ${timeText || ''}`);
+      reportLines.push(`• ${fullName} — #${groupNumber} — ${formattedDate} ${timeText || ''}`);
     } catch (error) {
       console.error(`Ошибка при отправке студенту ${fullName}:`, error);
 
@@ -84,7 +85,7 @@ async function main() {
           data: { telegramId: null },
         });
 
-        const removalMsg = `⚠️ Студент *${fullName}* заблокировал бота. Telegram ID удалён из базы.`;
+        const removalMsg = `⚠️ Студент *${fullName}* из группы *${groupNumber}* заблокировал бота. Telegram ID удалён из базы.`;
 
         for (const adminId of adminChatIds) {
           try {
