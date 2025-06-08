@@ -24,6 +24,7 @@ export default async function basicContract(student, group, company, toast) {
   if (!student.phone) missingFields.push('телефон студента');
   if (!student.documentSeries) missingFields.push('серия паспорта');
   if (!student.documentNumber) missingFields.push('номер паспорта');
+  if (!student.documentCode) missingFields.push('код подразделения');
   if (!student.documentIssuer) missingFields.push('кем выдан паспорт');
   if (!student.documentIssueDate) missingFields.push('дата выдачи паспорта');
   if (!student.createdAt) missingFields.push('дата создания записи студента');
@@ -228,7 +229,7 @@ export default async function basicContract(student, group, company, toast) {
             ],
             [
               `${company.companyName}\nИНН/КПП: ${company.inn}/${company.kpp}\nЮридический адрес: ${company.legalAddress}\n\nБанковские реквизиты:\nр/с ${company.account}\nв ${company.bank} ${company.city}\nБИК: ${company.bik}\nк/c ${company.correspondentAccount}\n\nТелефон: ${company.phone}\ne-mail: ${company.email}\n\n\n\n____________________/${company.directorSurname} ${company.directorName[0]}. ${company.directorPatronymic ? company.directorPatronymic[0] + '.' : ''}/\n\n\n\n\n\n`,
-              `Фамилия: ${student.lastName}\nИмя: ${student.firstName}\nОтчество: ${student.middleName}\n\nДата рождения: ${format(new Date(student.birthDate), 'PPP', { locale: ru })}\nАдрес проживания: ${student.actualAddress}\nТелефон: ${student.phone}\n\nПаспорт: серия ${student.documentSeries} номер ${student.documentNumber} выдан ${student.documentIssuer} ${format(new Date(student.documentIssueDate), 'dd MMMM yyyy года.', { locale: ru })}\n\n\n\n____________________/${student.lastName} ${student.firstName[0]}. ${student.middleName ? student.middleName[0] + '.' : ''}/\n\n\n\n\n\n`,
+              `Фамилия: ${student.lastName}\nИмя: ${student.firstName}\nОтчество: ${student.middleName}\n\nДата рождения: ${format(new Date(student.birthDate), 'PPP', { locale: ru })}\nАдрес проживания: ${student.actualAddress}\nТелефон: ${student.phone}\n\nПаспорт: серия ${student.documentSeries} номер ${student.documentNumber} выдан ${student.documentIssuer} ${format(new Date(student.documentIssueDate), 'dd MMMM yyyy года.', { locale: ru })}, код ${student.documentCode}\n\n\n\n____________________/${student.lastName} ${student.firstName[0]}. ${student.middleName ? student.middleName[0] + '.' : ''}/\n\n\n\n\n\n`,
             ],
           ],
         },
