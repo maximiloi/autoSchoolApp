@@ -2,9 +2,11 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CarFront } from 'lucide-react';
 import Link from 'next/link';
+
 import ApplicationRegisterNewGroupButton from './ApplicationRegisterNewGroupButton';
 import ExamListsButton from './ExamListsButton';
 import InformationForTrafficPoliceButton from './InformationForTrafficPoliceButton';
+import JourneyPracticeButton from './JourneyPracticeButton';
 import JourneyTemplateButton from './JourneyTemplateButton';
 import ListGroupButton from './ListGroupButton';
 import PracticePlanningButton from './PracticePlanningButton';
@@ -23,7 +25,10 @@ export default function FooterPage({ group, company }) {
       <Separator orientation="vertical" />
       <ScheduleTemplateButton group={group} company={company} />
       <Separator orientation="vertical" />
-      <JourneyTemplateButton group={group} company={company} />
+      <div className="flex flex-col gap-4">
+        <JourneyTemplateButton group={group} company={company} />
+        <JourneyPracticeButton group={group} />
+      </div>
       <Separator orientation="vertical" />
       <div className="flex flex-col gap-4">
         <PracticePlanningButton group={group} />
