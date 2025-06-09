@@ -136,7 +136,16 @@ export default function journeyTemplate(group = {}, company = {}) {
               { text: 'Сведения о составе учебной группы', style: 'item' },
               { text: '3', alignment: 'right' },
             ],
-            [{ text: 'Учебные предметы базового курса', style: 'subHeader', colSpan: 2 }, {}],
+            [
+              {
+                text: 'Учебные предметы базового курса',
+                style: 'subHeader',
+                colSpan: 2,
+                alignment: 'left',
+                margin: [50, 0, 0, 0],
+              },
+              {},
+            ],
             [
               {
                 text: 'Учебный предмет "Основы законодательства в сфере дорожного движения"',
@@ -165,7 +174,16 @@ export default function journeyTemplate(group = {}, company = {}) {
               },
               { text: '7', alignment: 'right' },
             ],
-            [{ text: 'Учебные предметы специального цикла', style: 'subHeader', colSpan: 2 }, {}],
+            [
+              {
+                text: 'Учебные предметы специального цикла',
+                style: 'subHeader',
+                colSpan: 2,
+                alignment: 'left',
+                margin: [50, 0, 0, 0],
+              },
+              {},
+            ],
             [
               {
                 text: 'Учебный предмет "Устройство и техническое обслуживание транспортных средств категории "В" как объектов управления"',
@@ -181,7 +199,13 @@ export default function journeyTemplate(group = {}, company = {}) {
               { text: '-', alignment: 'right' },
             ],
             [
-              { text: 'Учебные предметы профессионального цикла', style: 'subHeader', colSpan: 2 },
+              {
+                text: 'Учебные предметы профессионального цикла',
+                style: 'subHeader',
+                colSpan: 2,
+                alignment: 'left',
+                margin: [50, 0, 0, 0],
+              },
               {},
             ],
             [
@@ -202,7 +226,16 @@ export default function journeyTemplate(group = {}, company = {}) {
               { text: '', style: 'item' },
               { text: '', alignment: 'right' },
             ],
-            [{ text: 'Учет вождения', style: 'subHeader', colSpan: 2 }, {}],
+            [
+              {
+                text: 'Учет вождения',
+                style: 'subHeader',
+                colSpan: 2,
+                alignment: 'left',
+                margin: [50, 0, 0, 0],
+              },
+              {},
+            ],
             [
               { text: 'Результаты квалификационного экзамена', style: 'item', bold: true },
               { text: '11', alignment: 'right' },
