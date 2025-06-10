@@ -1,22 +1,13 @@
 'use client';
 
-import { useToast } from '@/hooks/use-toast';
 import { differenceInYears, format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { FileUser, RussianRuble, Send, ShieldPlus, UserRoundMinus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Hint } from '@/components/ui/Hint';
 import {
   Table,
@@ -26,29 +17,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+
+import { useToast } from '@/hooks/use-toast';
 import { useGroupStore } from '@/store/useStore';
-import {
-  FileUser,
-  MessageSquareReply,
-  NotepadText,
-  RussianRuble,
-  Send,
-  ShieldPlus,
-  UserRoundMinus,
-} from 'lucide-react';
 
 import StudentDeleteModalDialog from './StudentDeleteModalDialog';
 import StudentPaymentModalDialog from './StudentPaymentModalDialog';
 
-import ApplicationFormButton from './ApplicationFormButton';
-import BasicContractButton from './BasicContractButton';
-import DriverCardButton from './DriverCardButton';
-import ParentalStatementButton from './ParentalStatementButton';
-import PersonalizedBookAButton from './PersonalizedBookAButton';
-import PersonalizedBookBButton from './PersonalizedBookBButton';
+import ButtonsGroupDocuments from './ButtonsGroupDocuments';
+import ButtonsGroupReminder from './ButtonsGroupReminder';
 import StudentCertificateIssueModalDialog from './StudentCertificateIssueModalDialog';
-import WhatsAppButton from './WhatsAppButton';
-import WhatsAppButton1 from './WhatsAppButton1';
 
 export default function StudentList({ company }) {
   const { data: session } = useSession();
@@ -202,71 +180,11 @@ export default function StudentList({ company }) {
                   </Button>
                 </TableCell>
                 <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="icon">
-                        <NotepadText />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56">
-                      <DropdownMenuLabel>Документы</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuGroup>
-                        <DropdownMenuItem>
-                          <ApplicationFormButton student={student} />
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <BasicContractButton student={student} group={group} company={company} />
-                        </DropdownMenuItem>
-                        {differenceInYears(
-                          new Date(group.startTrainingDate),
-                          new Date(student.birthDate),
-                        ) < 18 && (
-                          <DropdownMenuItem>
-                            <ParentalStatementButton student={student} />
-                          </DropdownMenuItem>
-                        )}
-                      </DropdownMenuGroup>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuGroup>
-                        <DropdownMenuItem>
-                          <PersonalizedBookAButton
-                            student={student}
-                            group={group}
-                            company={company}
-                          />
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <PersonalizedBookBButton group={group} />
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <DriverCardButton student={student} company={company} />
-                        </DropdownMenuItem>
-                      </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <ButtonsGroupDocuments company={company} group={group} student={student} />
                 </TableCell>
                 {userRole.toUpperCase() === 'DIRECTOR' && (
                   <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="icon">
-                          <MessageSquareReply />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-56">
-                        <DropdownMenuLabel>Отправка сообщений в WhatsApp</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem>
-                            <WhatsAppButton student={student} />
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <WhatsAppButton1 student={student} />
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <ButtonsGroupReminder student={student} />
                   </TableCell>
                 )}
                 <TableCell className="text-right">
