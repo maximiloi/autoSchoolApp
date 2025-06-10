@@ -54,7 +54,7 @@ export default function ButtonsGroupDocuments({ company, student }) {
             <PersonalizedBookAButton student={student} group={group} company={company} />
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <PersonalizedBookBButton group={group} />
+            <PersonalizedBookBButton group={group} student={student} />
           </DropdownMenuItem>
           <DropdownMenuItem>
             <DriverCardButton student={student} company={company} />
