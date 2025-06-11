@@ -37,6 +37,13 @@ export default function FooterPage({ group, company }) {
             <CarFront /> Учет практики
           </Button>
         </Link>
+
+        <Link href={`/app/group/${group.id}/driving-schedule-new`}>
+          <Button>
+            <CarFront /> Учет практики NEW
+          </Button>
+        </Link>
+
         <PrintPracticeButton group={group} />
       </div>
     </div>
