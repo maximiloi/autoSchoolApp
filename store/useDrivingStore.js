@@ -1,4 +1,3 @@
-// useDrivingStore (optimized)
 import { create } from 'zustand';
 import { useGroupStore } from './useStore';
 
@@ -31,6 +30,7 @@ export const useDrivingStore = create((set, get) => ({
 
       set({ sessions: normalizedSessions });
     } catch (error) {
+      console.log('Ошибка получения данных', error);
       throw error;
     } finally {
       set({ isLoading: false });
@@ -42,12 +42,10 @@ export const useDrivingStore = create((set, get) => ({
     const date = new Date(dateStr);
     const dateKey = date.toISOString().split('T')[0];
 
-    // Удаляем все сессии для этого студента на эту дату
     let updated = currentSessions.filter(
       (s) => !(s.studentId === studentId && s.date.toISOString().split('T')[0] === dateKey),
     );
 
-    // Удаляем конфликты (другие студенты с тем же слотом и датой)
     updated = updated.filter(
       (s) => !(s.slot === selectedSlot && s.date.toISOString().split('T')[0] === dateKey),
     );
