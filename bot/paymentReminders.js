@@ -64,6 +64,8 @@ async function main() {
     },
   });
 
+  const reportLines = [];
+
   for (const student of students) {
     const reminderNumber = getReminderNumber(student.group.startTrainingDate, today);
     if (reminderNumber < 1) continue;
@@ -87,12 +89,28 @@ async function main() {
           ? `минимальная сумма к оплате <b>${formattedRemaining} ₽</b>`
           : `оплатите минимум <b>${formattedRemaining} ₽</b>`;
 
-      const message = `💰 <b>Напоминание #${reminderNumber}</b>\n${paymentLine} по обучению.\n\nОплатить можно:\n📞 СБП по номеру: +7 921 690-19-75\n💳 на карту Сбербанка: 2202 2083 2509 3095\n👤 Получатель: Игорь Евгеньевич Т.\n\n<b>Общий долг: ${formattedDebt} ₽</b>\n\nПосле оплаты нажмите кнопку <b>Оплатил</b> ниже. Спасибо!`;
+      const message = `💰 <b>Напоминание #${reminderNumber}</b>\n${paymentLine} по обучению.\n\nОплатить можно:\n📞 СБП по номеру: +7 921 690-19-75\n💳 на карту Сбербанка: 2202 2083 2509 3095\n👤 Получатель: Игорь Евгеньевич Т.\n\n<b>Общий долг: ${formattedDebt} ₽</b>\n\n❗️ В комментарии к переводу укажите номер <b>Вашего</b> договора.\n\nПосле оплаты нажмите кнопку <b>Оплатил</b> ниже. Спасибо!`;
 
       await sendTelegramMessage(student.telegramId, message, {
         parse_mode: 'HTML',
         reply_markup: new InlineKeyboard().text('✅ Оплатил', `payment_done_${student.id}`),
       });
+
+      const fullName =
+        `${student.lastName} ${student.firstName} ${student.middleName ?? ''}`.trim();
+      const groupNumber = student.group?.groupNumber || '—';
+      reportLines.push(`• ${fullName} — #${groupNumber} — Напоминание #${reminderNumber}`);
+    }
+  }
+
+  if (reportLines.length > 0) {
+    const reportMessage = `📤 Отправлены напоминания об оплате:\n\n${reportLines.join('\n\n')}`;
+    for (const adminId of adminChatIds) {
+      try {
+        await bot.api.sendMessage(adminId, reportMessage);
+      } catch (error) {
+        console.error(`Ошибка при отправке отчета админу ${adminId}:`, error);
+      }
     }
   }
 }
