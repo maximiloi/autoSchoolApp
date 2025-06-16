@@ -21,12 +21,12 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useGroupStore } from '@/store/useStore';
 
-import StudentDeleteModalDialog from './StudentDeleteModalDialog';
-import StudentPaymentModalDialog from './StudentPaymentModalDialog';
+import StudentDeleteModalDialog from './modals/StudentDeleteModalDialog';
+import StudentPaymentModalDialog from './modals/StudentPaymentModalDialog';
 
 import ButtonsGroupDocuments from './ButtonsGroupDocuments';
 import ButtonsGroupReminder from './ButtonsGroupReminder';
-import StudentCertificateIssueModalDialog from './StudentCertificateIssueModalDialog';
+import StudentCertificateIssueModalDialog from './modals/StudentCertificateIssueModalDialog';
 
 export default function StudentList({ company }) {
   const { data: session } = useSession();

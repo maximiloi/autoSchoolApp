@@ -3,15 +3,15 @@ import { Separator } from '@/components/ui/separator';
 import { CarFront } from 'lucide-react';
 import Link from 'next/link';
 
-import ApplicationRegisterNewGroupButton from './ApplicationRegisterNewGroupButton';
-import ExamListsButton from './ExamListsButton';
-import InformationForTrafficPoliceButton from './InformationForTrafficPoliceButton';
-import JourneyPracticeButton from './JourneyPracticeButton';
-import JourneyTemplateButton from './JourneyTemplateButton';
-import ListGroupButton from './ListGroupButton';
-import PracticePlanningButton from './PracticePlanningButton';
-import PrintPracticeButton from './PrintPracticeButton';
-import ScheduleTemplateButton from './ScheduleTemplateButton';
+import ApplicationRegisterNewGroupButton from './buttons/ApplicationRegisterNewGroupButton';
+import ExamListsButton from './buttons/ExamListsButton';
+import InformationForTrafficPoliceButton from './buttons/InformationForTrafficPoliceButton';
+import JourneyPracticeButton from './buttons/JourneyPracticeButton';
+import JourneyTemplateButton from './buttons/JourneyTemplateButton';
+import ListGroupButton from './buttons/ListGroupButton';
+import PracticePlanningButton from './buttons/PracticePlanningButton';
+import PrintPracticeButton from './buttons/PrintPracticeButton';
+import ScheduleTemplateButton from './buttons/ScheduleTemplateButton';
 
 export default function FooterPage({ group, company }) {
   return (

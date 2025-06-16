@@ -14,12 +14,12 @@ import {
 
 import { useGroupStore } from '@/store/useStore';
 
-import ApplicationFormButton from './ApplicationFormButton';
-import BasicContractButton from './BasicContractButton';
-import DriverCardButton from './DriverCardButton';
-import ParentalStatementButton from './ParentalStatementButton';
-import PersonalizedBookAButton from './PersonalizedBookAButton';
-import PersonalizedBookBButton from './PersonalizedBookBButton';
+import ApplicationFormButton from './buttons/ApplicationFormButton';
+import BasicContractButton from './buttons/BasicContractButton';
+import DriverCardButton from './buttons/DriverCardButton';
+import ParentalStatementButton from './buttons/ParentalStatementButton';
+import PersonalizedBookAButton from './buttons/PersonalizedBookAButton';
+import PersonalizedBookBButton from './buttons/PersonalizedBookBButton';
 
 export default function ButtonsGroupDocuments({ company, student }) {
   const { group } = useGroupStore();
