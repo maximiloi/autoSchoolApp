@@ -15,11 +15,14 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
+import { useGroupStore } from '@/store/useStore';
+
 import EditGroupForm from '../../components/EditGroupForm';
 import ArchivingSwitch from './ArchivingSwitch';
 
-export default function HeaderPage({ group, setGroup }) {
+export default function HeaderPage() {
   const { data: session } = useSession();
+  const { group, setGroup } = useGroupStore();
   const [open, setOpen] = useState(false);
 
   const isDirector = useMemo(
