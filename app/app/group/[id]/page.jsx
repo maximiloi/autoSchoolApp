@@ -15,7 +15,7 @@ import StudentList from './components/StudentList';
 export default function GroupPage() {
   const { id } = useParams();
   const { company } = useCompanyStore();
-  const { group, setGroup } = useGroupStore();
+  const { group } = useGroupStore();
   const { loading, error } = useGroupData(id);
 
   if (loading) return <p>Данные загружаются...</p>;
@@ -23,9 +23,9 @@ export default function GroupPage() {
 
   return (
     <>
-      <HeaderPage group={group} setGroup={setGroup} />
+      <HeaderPage />
       <Separator className="my-4" />
-      <StudentList company={company} />
+      <StudentList />
       <Separator className="my-4" />
       <FooterPage group={group} company={company} />
     </>

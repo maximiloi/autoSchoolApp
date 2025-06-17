@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import { useGroupStore } from '@/store/useStore';
+import { useCompanyStore, useGroupStore } from '@/store/useStore';
 
 import ApplicationFormButton from './buttons/ApplicationFormButton';
 import BasicContractButton from './buttons/BasicContractButton';
@@ -21,8 +21,9 @@ import ParentalStatementButton from './buttons/ParentalStatementButton';
 import PersonalizedBookAButton from './buttons/PersonalizedBookAButton';
 import PersonalizedBookBButton from './buttons/PersonalizedBookBButton';
 
-export default function ButtonsGroupDocuments({ company, student }) {
+export default function ButtonsGroupDocuments({ student }) {
   const { group } = useGroupStore();
+  const { company } = useCompanyStore();
 
   return (
     <DropdownMenu>
