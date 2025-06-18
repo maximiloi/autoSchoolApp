@@ -2,7 +2,14 @@
 
 import { differenceInYears, format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { FileUser, RussianRuble, Send, ShieldPlus, UserRoundMinus } from 'lucide-react';
+import {
+  FileUser,
+  RussianRuble,
+  Send,
+  ShieldPlus,
+  Stethoscope,
+  UserRoundMinus,
+} from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -21,21 +28,24 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useGroupStore } from '@/store/useStore';
 
-import StudentDeleteModalDialog from './StudentDeleteModalDialog';
-import StudentPaymentModalDialog from './StudentPaymentModalDialog';
+import StudentCertificateIssueModalDialog from './modals/StudentCertificateIssueModalDialog';
+import StudentDeleteModalDialog from './modals/StudentDeleteModalDialog';
+import StudentMedicalCertificateModalDialog from './modals/StudentMedicalCertificateModalDialog';
+import StudentPaymentModalDialog from './modals/StudentPaymentModalDialog';
 
 import ButtonsGroupDocuments from './ButtonsGroupDocuments';
 import ButtonsGroupReminder from './ButtonsGroupReminder';
-import StudentCertificateIssueModalDialog from './StudentCertificateIssueModalDialog';
 
-export default function StudentList({ company }) {
-  const { data: session } = useSession();
+export default function StudentList() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
   const [isCertificateDialogOpen, setIsCertificateDialogOpen] = useState(false);
-  const { group, setGroup } = useGroupStore();
+  const [isMedicalDialogOpen, setIsMedicalDialogOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const { data: session } = useSession();
+  const { group, setGroup } = useGroupStore();
   const toast = useToast();
 
   const fetchGroupData = async () => {
@@ -92,6 +102,7 @@ export default function StudentList({ company }) {
             <TableHead className="w-[20px]">#</TableHead>
             <TableHead className="w-[200px]">ФИО</TableHead>
             <TableHead className="w-[145px]">Дата рождения</TableHead>
+            <TableHead className="w-[80px]">Мед. Справка</TableHead>
             <TableHead className="w-[80px]">Выдача Сви-ва</TableHead>
             <TableHead className="w-[80px]">Оплата</TableHead>
             <TableHead className="w-[80px]">Документы</TableHead>
@@ -142,45 +153,76 @@ export default function StudentList({ company }) {
                   {format(new Date(student.birthDate), 'dd/MM/yyyy', { locale: ru })}
                 </TableCell>
                 <TableCell>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className={`${
-                      student.certificateNumber === null && student.certificateIssueDate === null
-                        ? 'bg-red-200 hover:bg-red-300'
-                        : 'bg-green-200 hover:bg-green-300'
-                    }`}
-                    onClick={() => {
-                      setSelectedStudent(student);
-                      setIsCertificateDialogOpen(true);
-                    }}
-                  >
-                    <ShieldPlus />
-                  </Button>
+                  <Hint tooltip="Данные о медицинской справки">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className={`${
+                        !student.medicalSeries ||
+                        !student.medicalNumber ||
+                        !student.medicalIssuer ||
+                        !student.medicalIssueDate ||
+                        !student.license ||
+                        !student.licenseSeries ||
+                        !student.region
+                          ? 'bg-red-200 hover:bg-red-300'
+                          : 'bg-green-200 hover:bg-green-300'
+                      }`}
+                      onClick={() => {
+                        setSelectedStudent(student);
+                        setIsMedicalDialogOpen(true);
+                      }}
+                    >
+                      <Stethoscope />
+                    </Button>
+                  </Hint>
                 </TableCell>
                 <TableCell>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className={`${
-                      Number(student.trainingCost) >
-                      (student?.payments?.reduce(
-                        (sum, payment) => sum + Number(payment.amount),
-                        0,
-                      ) || 0)
-                        ? 'bg-red-200 hover:bg-red-300'
-                        : 'bg-green-200 hover:bg-green-300'
-                    }`}
-                    onClick={() => {
-                      setSelectedStudent(student);
-                      setIsPaymentDialogOpen(true);
-                    }}
-                  >
-                    <RussianRuble />
-                  </Button>
+                  <Hint tooltip="Указать данные свидетельства об окончании учебы">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className={`${
+                        !student.certificateNumber || !student.certificateIssueDate
+                          ? 'bg-red-200 hover:bg-red-300'
+                          : 'bg-green-200 hover:bg-green-300'
+                      }`}
+                      onClick={() => {
+                        setSelectedStudent(student);
+                        setIsCertificateDialogOpen(true);
+                      }}
+                    >
+                      <ShieldPlus />
+                    </Button>
+                  </Hint>
                 </TableCell>
                 <TableCell>
-                  <ButtonsGroupDocuments company={company} group={group} student={student} />
+                  <Hint tooltip="Добавить платеж за обучение">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className={`${
+                        Number(student.trainingCost) >
+                        (student?.payments?.reduce(
+                          (sum, payment) => sum + Number(payment.amount),
+                          0,
+                        ) || 0)
+                          ? 'bg-red-200 hover:bg-red-300'
+                          : 'bg-green-200 hover:bg-green-300'
+                      }`}
+                      onClick={() => {
+                        setSelectedStudent(student);
+                        setIsPaymentDialogOpen(true);
+                      }}
+                    >
+                      <RussianRuble />
+                    </Button>
+                  </Hint>
+                </TableCell>
+                <TableCell>
+                  <Hint tooltip="Печать персональных документов">
+                    <ButtonsGroupDocuments student={student} />
+                  </Hint>
                 </TableCell>
                 {userRole.toUpperCase() === 'DIRECTOR' && (
                   <TableCell>
@@ -188,16 +230,18 @@ export default function StudentList({ company }) {
                   </TableCell>
                 )}
                 <TableCell className="text-right">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => {
-                      setSelectedStudent(student);
-                      setIsDeleteDialogOpen(true);
-                    }}
-                  >
-                    <UserRoundMinus />
-                  </Button>
+                  <Hint tooltip="Удаление студента">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => {
+                        setSelectedStudent(student);
+                        setIsDeleteDialogOpen(true);
+                      }}
+                    >
+                      <UserRoundMinus />
+                    </Button>
+                  </Hint>
                 </TableCell>
               </TableRow>
             ))}
@@ -223,6 +267,14 @@ export default function StudentList({ company }) {
       <StudentCertificateIssueModalDialog
         isOpen={isCertificateDialogOpen}
         onClose={() => setIsCertificateDialogOpen(false)}
+        student={selectedStudent}
+        loading={loading}
+        onSuccess={fetchGroupData}
+      />
+
+      <StudentMedicalCertificateModalDialog
+        isOpen={isMedicalDialogOpen}
+        onClose={() => setIsMedicalDialogOpen(false)}
         student={selectedStudent}
         loading={loading}
         onSuccess={fetchGroupData}

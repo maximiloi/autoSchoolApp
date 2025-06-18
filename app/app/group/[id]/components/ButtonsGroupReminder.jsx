@@ -10,8 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import WhatsAppButton from './WhatsAppButton';
-import WhatsAppButton1 from './WhatsAppButton1';
+import WhatsAppButton from './buttons/WhatsAppButton';
+import WhatsAppButton1 from './buttons/WhatsAppButton1';
 
 export default function ButtonsGroupReminder({ student }) {
   return (

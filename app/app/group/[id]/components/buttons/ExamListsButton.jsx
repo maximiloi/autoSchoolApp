@@ -16,8 +16,8 @@ import { TableProperties } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
 import examListsTemplate from '@/templates/examLists';
-import EmptyRowsCounter from './EmptyRowsCounter';
-import ExamGroupChange from './ExamGroupChange';
+import EmptyRowsCounter from '../EmptyRowsCounter';
+import ExamGroupChange from '../ExamGroupChange';
 
 export default function ExamListsButton({ group, company }) {
   const pdfMake = usePdfMake();
