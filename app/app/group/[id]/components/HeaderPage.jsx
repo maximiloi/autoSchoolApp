@@ -31,7 +31,7 @@ export default function HeaderPage() {
   );
 
   const { totalCost, totalPaid } = useMemo(() => {
-    return group.students.reduce(
+    return group?.students.reduce(
       (acc, student) => {
         acc.totalCost += Number(student.trainingCost);
         acc.totalPaid += student.payments.reduce((sum, p) => sum + Number(p.amount), 0);
@@ -39,7 +39,7 @@ export default function HeaderPage() {
       },
       { totalCost: 0, totalPaid: 0 },
     );
-  }, [group.students]);
+  }, [group?.students]);
 
   const totalDue = totalCost - totalPaid;
   const endDate = useMemo(() => new Date(group.endTrainingDate), [group.endTrainingDate]);
