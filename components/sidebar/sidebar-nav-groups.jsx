@@ -1,3 +1,8 @@
+import { BookUser, ChevronRight, UsersRound } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useMemo } from 'react';
+
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   SidebarGroup,
@@ -9,12 +14,12 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
+
 import { useGroupStore } from '@/store/useStore';
-import { BookUser, ChevronRight, UsersRound } from 'lucide-react';
-import Link from 'next/link';
-import { useMemo } from 'react';
 
 function GroupList({ groups, title, icon: Icon }) {
+  const pathname = usePathname();
+
   if (groups.length === 0) return null;
 
   return (
@@ -29,15 +34,20 @@ function GroupList({ groups, title, icon: Icon }) {
         </CollapsibleTrigger>
         <CollapsibleContent>
           <SidebarMenuSub>
-            {groups.map((group) => (
-              <SidebarMenuSubItem key={group.id}>
-                <SidebarMenuSubButton asChild>
-                  <Link href={`/app/group/${group.id}`}>
-                    <span>Группа № {group.groupNumber}</span>
-                  </Link>
-                </SidebarMenuSubButton>
-              </SidebarMenuSubItem>
-            ))}
+            {groups.map((group) => {
+              const groupPath = `/app/group/${group.id}`;
+              const isActive = pathname === groupPath;
+
+              return (
+                <SidebarMenuSubItem key={group.id}>
+                  <SidebarMenuSubButton asChild isActive={isActive}>
+                    <Link href={`/app/group/${group.id}`}>
+                      <span>Группа № {group.groupNumber}</span>
+                    </Link>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              );
+            })}
           </SidebarMenuSub>
         </CollapsibleContent>
       </SidebarMenuItem>
