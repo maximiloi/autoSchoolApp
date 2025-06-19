@@ -1,22 +1,24 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { useForm } from 'react-hook-form';
-import { toast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+
 import { Button } from '@/components/ui/button';
+import { Card, CardTitle } from '@/components/ui/card';
+import DatePickerField from '@/components/ui/DatePickerField';
 import { Form } from '@/components/ui/form';
 import InputField from '@/components/ui/InputField';
-import DatePickerField from '@/components/ui/DatePickerField';
-import { CompanyFormSchema } from './company-formSchema';
+
+import { toast } from '@/hooks/use-toast';
+
 import { useCompanyStore } from '@/store/useStore';
-import { Card, CardTitle } from '@/components/ui/card';
+
+import { CompanyFormSchema } from './company-formSchema';
 
 export default function CompanyForm() {
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
-  const { setCompany } = useCompanyStore();
+  const { company, setCompany } = useCompanyStore();
   const { reset, ...form } = useForm({
     resolver: zodResolver(CompanyFormSchema),
     defaultValues: {
@@ -49,25 +51,10 @@ export default function CompanyForm() {
   });
 
   useEffect(() => {
-    if (!session?.user?.companyId) return;
-    async function fetchCompany() {
-      try {
-        const response = await fetch(`/api/company/${session.user.companyId}`);
-        if (response.ok) {
-          const companyData = await response.json();
-          reset(companyData);
-        }
-      } catch (error) {
-        console.error('Ошибка при загрузке данных компании', error.message);
-        toast({
-          duration: 2000,
-          variant: 'destructive',
-          description: 'Ошибка при загрузке данных компании',
-        });
-      }
+    if (company.id) {
+      reset(company);
     }
-    fetchCompany();
-  }, [session]);
+  }, [company, reset]);
 
   async function onSubmit(values) {
     setIsLoading(true);

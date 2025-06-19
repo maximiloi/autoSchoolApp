@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useToast } from '@/hooks/use-toast';
 import { useSession } from 'next-auth/react';
-import { useCompanyStore, useGroupStore } from '@/store/useStore';
+import { useEffect, useMemo } from 'react';
+
 import {
   Sidebar,
   SidebarContent,
@@ -10,16 +11,17 @@ import {
   SidebarHeader,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
-import { useToast } from '@/hooks/use-toast';
+
+import { useCompanyStore, useGroupStore } from '@/store/useStore';
 
 import SidebarCompanyInfo from './sidebar-company-info';
-import NavGroups from './sidebar-nav-groups';
 import NavAction from './sidebar-nav-action';
+import NavGroups from './sidebar-nav-groups';
 import NavUser from './sidebar-nav-user';
 
 export default function AppSidebar() {
   const session = useSession();
-  const { groups, setGroups } = useGroupStore();
+  const { setGroups } = useGroupStore();
   const { company, setCompany } = useCompanyStore();
   const { toast } = useToast();
 
@@ -54,7 +56,7 @@ export default function AppSidebar() {
       </SidebarHeader>
       <SidebarSeparator className="my-4" />
       <SidebarContent>
-        <NavGroups groups={groups} />
+        <NavGroups />
         <SidebarSeparator className="my-4 mt-auto" />
         <NavAction />
       </SidebarContent>
