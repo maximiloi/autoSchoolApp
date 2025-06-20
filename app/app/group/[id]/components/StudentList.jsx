@@ -35,6 +35,7 @@ import StudentPaymentModalDialog from './modals/StudentPaymentModalDialog';
 
 import ButtonsGroupDocuments from './ButtonsGroupDocuments';
 import ButtonsGroupReminder from './ButtonsGroupReminder';
+import QrcodePopover from './QrcodePopover';
 
 export default function StudentList() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -129,9 +130,13 @@ export default function StudentList() {
                   </Hint>
                 </TableCell>
                 <TableCell className="pt-4">
-                  {student.telegramId && (
+                  {student.telegramId ? (
                     <Hint tooltip="Студент подписан на телеграм бот">
                       <Send className="h-5 w-5 text-lime-600" />
+                    </Hint>
+                  ) : (
+                    <Hint tooltip="Показать qr-code телеграмм бота">
+                      <QrcodePopover student={student} />
                     </Hint>
                   )}
                 </TableCell>
