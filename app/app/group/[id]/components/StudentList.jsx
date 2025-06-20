@@ -3,6 +3,7 @@
 import { differenceInYears, format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import {
+  BookOpenCheck,
   FileUser,
   RussianRuble,
   Send,
@@ -31,17 +32,19 @@ import { useGroupStore } from '@/store/useStore';
 import StudentCertificateIssueModalDialog from './modals/StudentCertificateIssueModalDialog';
 import StudentDeleteModalDialog from './modals/StudentDeleteModalDialog';
 import StudentMedicalCertificateModalDialog from './modals/StudentMedicalCertificateModalDialog';
+import StudentPassportModalDialog from './modals/StudentPassportModalDialog';
 import StudentPaymentModalDialog from './modals/StudentPaymentModalDialog';
+import QrcodePopover from './QrcodePopover';
 
 import ButtonsGroupDocuments from './ButtonsGroupDocuments';
 import ButtonsGroupReminder from './ButtonsGroupReminder';
-import QrcodePopover from './QrcodePopover';
 
 export default function StudentList() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
   const [isCertificateDialogOpen, setIsCertificateDialogOpen] = useState(false);
   const [isMedicalDialogOpen, setIsMedicalDialogOpen] = useState(false);
+  const [isPassportDialogOpen, setIsPassportDialogOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -103,6 +106,7 @@ export default function StudentList() {
             <TableHead className="w-[20px]">#</TableHead>
             <TableHead className="w-[200px]">ФИО</TableHead>
             <TableHead className="w-[145px]">Дата рождения</TableHead>
+            <TableHead className="w-[80px]">Паспорт</TableHead>
             <TableHead className="w-[80px]">Мед. Справка</TableHead>
             <TableHead className="w-[80px]">Выдача Сви-ва</TableHead>
             <TableHead className="w-[80px]">Оплата</TableHead>
@@ -156,6 +160,30 @@ export default function StudentList() {
                   }
                 >
                   {format(new Date(student.birthDate), 'dd/MM/yyyy', { locale: ru })}
+                </TableCell>
+                <TableCell>
+                  <Hint tooltip="Данные о паспорте">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className={`${
+                        !student.documentType ||
+                        !student.documentSeries ||
+                        !student.documentNumber ||
+                        !student.documentIssuer ||
+                        !student.documentCode ||
+                        !student.documentIssueDate
+                          ? 'bg-red-200 hover:bg-red-300'
+                          : 'bg-green-200 hover:bg-green-300'
+                      }`}
+                      onClick={() => {
+                        setSelectedStudent(student);
+                        setIsPassportDialogOpen(true);
+                      }}
+                    >
+                      <BookOpenCheck />
+                    </Button>
+                  </Hint>
                 </TableCell>
                 <TableCell>
                   <Hint tooltip="Данные о медицинской справки">
@@ -280,6 +308,14 @@ export default function StudentList() {
       <StudentMedicalCertificateModalDialog
         isOpen={isMedicalDialogOpen}
         onClose={() => setIsMedicalDialogOpen(false)}
+        student={selectedStudent}
+        loading={loading}
+        onSuccess={fetchGroupData}
+      />
+
+      <StudentPassportModalDialog
+        isOpen={isPassportDialogOpen}
+        onClose={() => setIsPassportDialogOpen(false)}
         student={selectedStudent}
         loading={loading}
         onSuccess={fetchGroupData}
