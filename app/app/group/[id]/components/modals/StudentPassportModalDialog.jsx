@@ -75,7 +75,7 @@ export default function StudentPassportModalDialog({
 
         const data = await res.json();
         if (res.ok) {
-          toast({ variant: 'success', description: 'Данные о медицинской справки добавлены!' });
+          toast({ variant: 'success', description: 'Данные о паспорте успешно добавлены!' });
           onClose();
           onSuccess();
         } else {
