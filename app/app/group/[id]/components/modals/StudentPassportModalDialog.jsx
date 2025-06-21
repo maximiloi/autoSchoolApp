@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -51,6 +51,7 @@ export default function StudentPassportModalDialog({
     },
   });
   const documentType = watch('documentType');
+  const mask = useMemo(() => DOCUMENT_MASKS[documentType] || {}, [documentType]);
 
   useEffect(() => {
     if (student) {
@@ -58,35 +59,39 @@ export default function StudentPassportModalDialog({
     }
   }, [student, reset]);
 
-  const onSubmit = useCallback(
-    async (valuesData) => {
-      if (!student) {
-        toast({ variant: 'destructive', description: 'Данные о студенте не загружены' });
-        return;
+  const onSubmit = async (valuesData) => {
+    if (!student) {
+      toast({ variant: 'destructive', description: 'Данные о студенте не загружены' });
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const res = await fetch(`/api/student/${student.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(valuesData),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast({ variant: 'success', description: 'Данные о паспорте успешно добавлены!' });
+        onClose();
+        onSuccess();
+      } else {
+        toast({ variant: 'destructive', description: 'Ошибка: ' + data.error });
       }
-
-      setSubmitting(true);
-      try {
-        const res = await fetch(`/api/student/${student.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(valuesData),
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-          toast({ variant: 'success', description: 'Данные о паспорте успешно добавлены!' });
-          onClose();
-          onSuccess();
-        } else {
-          toast({ variant: 'destructive', description: 'Ошибка: ' + data.error });
-        }
-      } catch (error) {
-        toast({ variant: 'destructive', description: `Ошибка сервера: ${error}` });
-      }
+    } catch (error) {
+      toast({ variant: 'destructive', description: `Ошибка сервера: ${error}` });
+    } finally {
       setSubmitting(false);
-    },
-    [student, onClose, onSuccess, toast],
+    }
+  };
+
+  const documentOptions = useMemo(
+    () => ({
+      passport: 'Паспорт РФ',
+      passport_AZE: 'Паспорт Азербайджана',
+    }),
+    [],
   );
 
   return (
@@ -108,29 +113,29 @@ export default function StudentPassportModalDialog({
               name="documentType"
               label="Тип документа"
               control={form.control}
-              options={{ passport: 'Паспорт РФ', passport_AZE: 'Паспорт Азербайджана' }}
+              options={documentOptions}
             />
             <div className="grid grid-cols-2 gap-2">
               <InputField
                 name="documentSeries"
-                label={DOCUMENT_MASKS[documentType]?.labelSeries || ''}
+                label={mask.labelSeries || ''}
                 control={form.control}
-                mask={DOCUMENT_MASKS[documentType]?.series || ''}
+                mask={mask.series || ''}
               />
               <InputField
                 name="documentNumber"
-                label={DOCUMENT_MASKS[documentType]?.labelNumber || ''}
+                label={mask.labelNumber || ''}
                 control={form.control}
-                mask={DOCUMENT_MASKS[documentType]?.number || ''}
+                mask={mask.number || ''}
               />
             </div>
             <InputField name="documentIssuer" label="Кем выдан" control={form.control} />
             <div className="grid grid-cols-2 gap-2">
               <InputField
                 name="documentCode"
-                label={DOCUMENT_MASKS[documentType]?.labelCode || ''}
+                label={mask.labelCode || ''}
                 control={form.control}
-                mask={DOCUMENT_MASKS[documentType]?.code || ''}
+                mask={mask.code || ''}
               />
               <DatePickerField
                 name="documentIssueDate"
