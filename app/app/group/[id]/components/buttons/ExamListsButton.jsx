@@ -1,3 +1,10 @@
+'use client';
+
+import usePdfMake from '@/hooks/use-pdfmake';
+import { ru } from 'date-fns/locale';
+import { TableProperties } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -10,20 +17,20 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import usePdfMake from '@/hooks/use-pdfmake';
-import { ru } from 'date-fns/locale';
-import { TableProperties } from 'lucide-react';
-import { useCallback, useState } from 'react';
 
-import examListsTemplate from '@/templates/examLists';
+import { toast } from '@/hooks/use-toast';
+
 import EmptyRowsCounter from '../EmptyRowsCounter';
 import ExamGroupChange from '../ExamGroupChange';
+
+import examListsTemplate from '@/templates/examLists';
 
 export default function ExamListsButton({ group, company }) {
   const pdfMake = usePdfMake();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [modifiedGroup, setModifiedGroup] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [gibddData, setGibddData] = useState(null);
   const [emptyRows, setEmptyRows] = useState(0);
   const [examType, setExamType] = useState('');
   const [filterStudents, setFilterStudents] = useState(
@@ -38,6 +45,34 @@ export default function ExamListsButton({ group, company }) {
     })),
   );
 
+  useEffect(() => {
+    if (dialogOpen) {
+      async function fetchGibddData() {
+        try {
+          const response = await fetch('/api/gibdd');
+          const data = await response.json();
+          if (response.ok) {
+            setGibddData(data);
+          } else {
+            toast({
+              title: 'Ошибка',
+              description: 'Не удалось загрузить данные ГИБДД.',
+              variant: 'destructive',
+            });
+          }
+        } catch (error) {
+          toast({
+            title: 'Ошибка',
+            description: 'Не удалось загрузить данные ГИБДД.',
+            variant: 'destructive',
+          });
+          console.error('Ошибка при загрузке данных ГИБДД:', error);
+        }
+      }
+      fetchGibddData();
+    }
+  }, [dialogOpen]);
+
   const handleDialogOpenChange = (open) => {
     setDialogOpen(open);
     if (!open) {
@@ -45,6 +80,7 @@ export default function ExamListsButton({ group, company }) {
       setExamType('');
       setModifiedGroup(false);
       setEmptyRows(0);
+      setGibddData(null);
     }
   };
 
@@ -54,11 +90,21 @@ export default function ExamListsButton({ group, company }) {
     setExamType('');
     setModifiedGroup(false);
     setEmptyRows(0);
+    setGibddData(null);
   };
 
   const generatePDF = useCallback(() => {
     if (!pdfMake) {
       console.error('pdfMake не загружен');
+      return;
+    }
+
+    if (!gibddData) {
+      toast({
+        title: 'Ошибка',
+        description: 'Данные ГИБДД не загружены.',
+        variant: 'destructive',
+      });
       return;
     }
 
@@ -68,6 +114,7 @@ export default function ExamListsButton({ group, company }) {
       selectedDate,
       examType,
       emptyRows,
+      gibddData,
     );
     if (!docDefinition) return;
 
@@ -77,7 +124,7 @@ export default function ExamListsButton({ group, company }) {
     setExamType('');
     setModifiedGroup(false);
     setEmptyRows(0);
-  }, [pdfMake, selectedDate, filterStudents, company, emptyRows, examType]);
+  }, [pdfMake, selectedDate, filterStudents, company, emptyRows, examType, gibddData]);
 
   return (
     <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
@@ -125,7 +172,10 @@ export default function ExamListsButton({ group, company }) {
               <Button onClick={() => handleDialogCancelButtonChange()} variant="ghost">
                 Отмена
               </Button>
-              <Button onClick={generatePDF} disabled={!pdfMake || !selectedDate || !examType}>
+              <Button
+                onClick={generatePDF}
+                disabled={!pdfMake || !selectedDate || !examType || !gibddData}
+              >
                 Сформировать заявление
               </Button>
             </div>

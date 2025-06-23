@@ -1,11 +1,18 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-export default function parentalStatement(student, toast) {
+export default function parentalStatement(student, toast, gibddData) {
   if (!student) {
     toast?.({ variant: 'destructive', description: 'Отсутствует объект student' });
     return null;
   }
+
+  if (!gibddData) {
+    toast?.({ variant: 'destructive', description: 'Отсутствуют данные ГИБДД' });
+    return null;
+  }
+
+  const { departmentName, officerRank, officerName } = gibddData;
 
   const missingFields = [];
 
@@ -36,10 +43,11 @@ export default function parentalStatement(student, toast) {
     },
     content: [
       {
-        text: 'Начальнику ГИБДД ОМВД России по\nОкуловскому району майору полиции\nРыжову С.М.',
-        style: 'header',
+        text: `Начальнику ${departmentName?.replace(',', '\n')}`,
+        style: 'pageHeader',
         alignment: 'right',
       },
+      { text: `${officerRank} ${officerName}`, style: 'pageHeader', alignment: 'right' },
       {
         alignment: 'right',
         margin: [0, 20, 0, 20],
