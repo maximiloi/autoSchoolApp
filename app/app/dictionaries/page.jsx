@@ -14,7 +14,7 @@ export default function Dictionaries() {
           <Link href={'/app/company/'}>Моя компания</Link>
         </Button>
         <Button>
-          <Link href={'/app/company/'}>Местные РОВД</Link>
+          <Link href={'/app/police/'}>Реквизиты ГИБДД</Link>
         </Button>
       </div>
       <h2 className="mt-6">Шаблоны</h2>
