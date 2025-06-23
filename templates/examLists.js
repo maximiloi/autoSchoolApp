@@ -1,8 +1,16 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-export default function examListsTemplate(group, company, selectedDate, examType, emptyRows) {
+export default function examListsTemplate(
+  group,
+  company,
+  selectedDate,
+  examType,
+  emptyRows,
+  gibddData,
+) {
   const { companyName, actualAddress, directorSurname, directorName, directorPatronymic } = company;
+  const { departmentName, officerRank, officerName } = gibddData;
 
   if (!selectedDate) return null;
 
@@ -11,9 +19,12 @@ export default function examListsTemplate(group, company, selectedDate, examType
   const examDate = new Date(selectedDate);
 
   const generateExamDocument = (examType) => [
-    { text: 'Начальнику ОГИБДД ОМВД РФ', style: 'pageHeader', alignment: 'right' },
-    { text: 'по Окуловскому району', style: 'pageHeader', alignment: 'right' },
-    { text: 'майору полиции Рыжову С.М.', style: 'pageHeader', alignment: 'right' },
+    {
+      text: `Начальнику ${departmentName?.replace(',', '\n')}`,
+      style: 'pageHeader',
+      alignment: 'right',
+    },
+    { text: `${officerRank} ${officerName}`, style: 'pageHeader', alignment: 'right' },
     { text: 'ЗАЯВЛЕНИЕ', style: 'header', margin: [0, 15, 0, 0] },
     {
       text: `кандидатов в водители, включенных в состав организованной группы`,

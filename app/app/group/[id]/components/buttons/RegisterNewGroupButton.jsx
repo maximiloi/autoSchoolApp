@@ -1,13 +1,15 @@
+import { FileText } from 'lucide-react';
 import { useCallback } from 'react';
 
+import { Button } from '@/components/ui/button';
+
 import usePdfMake from '@/hooks/use-pdfmake';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/hooks/use-toast';
 
-import parentalStatement from '@/templates/parentalStatement';
+import registerNewGroup from '@/templates/registerNewGroup';
 
-export default function ParentalStatementButton({ student }) {
+export default function RegisterNewGroupButton({ group, company }) {
   const pdfMake = usePdfMake();
-  const { toast } = useToast();
 
   async function fetchGibddData() {
     try {
@@ -40,15 +42,16 @@ export default function ParentalStatementButton({ student }) {
       return;
     }
 
-    const docDefinition = parentalStatement(student, toast, gibddData);
+    const docDefinition = registerNewGroup(group, company, gibddData);
     if (!docDefinition) return;
 
     pdfMake.createPdf(docDefinition).open();
-  }, [pdfMake, student]);
+  }, [pdfMake, group]);
 
   return (
-    <button onClick={generatePDF} disabled={!pdfMake || !student}>
-      <span className="text-red-500">!</span> Согласие от родителей
-    </button>
+    <Button variant="secondary" onClick={generatePDF} disabled={!pdfMake}>
+      <FileText />
+      Заявление о новой группе
+    </Button>
   );
 }
