@@ -13,8 +13,13 @@ const adminChatIds =
     .filter(Boolean) || [];
 
 function getReminderNumber(startDate, today) {
-  const checkpoints = [];
+  const start = new Date(startDate);
+  const fiveDaysAfterStart = new Date(start);
+  fiveDaysAfterStart.setDate(start.getDate() + 5);
 
+  if (today < fiveDaysAfterStart) return 0;
+
+  const checkpoints = [];
   const first = new Date(startDate);
   if (first.getDate() > dateFirstReminder) first.setMonth(first.getMonth() + 1);
   first.setDate(dateFirstReminder);
@@ -28,7 +33,7 @@ function getReminderNumber(startDate, today) {
   }
 
   checkpoints.sort((a, b) => a.getTime() - b.getTime());
-  const passed = checkpoints.filter((date) => date <= today);
+  const passed = checkpoints.filter((date) => date <= today && date >= fiveDaysAfterStart);
   return passed.length;
 }
 
