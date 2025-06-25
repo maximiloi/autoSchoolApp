@@ -1,7 +1,5 @@
 'use client';
 
-import { useParams } from 'next/navigation';
-
 import { useGroupData } from '@/hooks/useGroupData';
 
 import { Separator } from '@/components/ui/separator';
@@ -12,8 +10,7 @@ import FooterPage from './components/FooterPage';
 import HeaderPage from './components/HeaderPage';
 import StudentList from './components/StudentList';
 
-export default function GroupPage() {
-  const { id } = useParams();
+export default function GroupPage({ id }) {
   const { company } = useCompanyStore();
   const { group } = useGroupStore();
   const { loading, error } = useGroupData(id);

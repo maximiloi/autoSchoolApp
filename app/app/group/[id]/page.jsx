@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma';
 
 async function getGroupTitle(id) {
   const group = await prisma.group.findUnique({
@@ -12,7 +10,8 @@ async function getGroupTitle(id) {
 }
 
 export async function generateMetadata({ params }) {
-  const title = await getGroupTitle(params.id);
+  const { id } = await params;
+  const title = await getGroupTitle(id);
 
   return {
     title: `Группа № ${title} | Панель управления компании | Auto School App`,
@@ -22,6 +21,7 @@ export async function generateMetadata({ params }) {
 
 import GroupPage from './GroupPage';
 
-export default function Page() {
-  return <GroupPage />;
+export default async function Page({ params }) {
+  const { id } = await params;
+  return <GroupPage id={id} />;
 }
