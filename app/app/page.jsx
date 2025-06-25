@@ -5,7 +5,7 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <div className="relative min-h-[89vh]">
+    <div className="relative min-h-[calc(100vh-2rem)] px-4 py-4">
       <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
         Программа для работы с автошколами
       </h2>

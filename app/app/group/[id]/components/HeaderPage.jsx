@@ -55,7 +55,7 @@ export default function HeaderPage() {
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                className={`w-10 rounded-full text-white ${totalDue > 0 ? 'bg-red-200 hover:bg-red-300' : 'bg-green-200 hover:bg-green-300'}`}
+                className={`h-8 w-8 rounded-full text-white ${totalDue > 0 ? 'bg-red-200 hover:bg-red-300' : 'bg-green-200 hover:bg-green-300'}`}
               >
                 <RussianRuble />
               </Button>
@@ -90,7 +90,7 @@ export default function HeaderPage() {
         {isDirector && (
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button className="w-10 rounded-full bg-blue-200 text-white hover:bg-blue-300">
+              <Button className="h-8 w-8 rounded-full bg-blue-200 text-white hover:bg-blue-300">
                 <Pencil />
               </Button>
             </DialogTrigger>
