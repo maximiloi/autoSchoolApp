@@ -4,8 +4,8 @@ import { sendTelegramMessage } from './sendTelegramMessage.js';
 
 const prisma = new PrismaClient();
 const bot = new Bot(process.env.TELEGRAM_BOT_TOKEN);
-const dateFirstReminder = 10;
-const dateSecondReminder = 25;
+const dateFirstReminder = 8;
+const dateSecondReminder = 23;
 
 const adminChatIds =
   process.env.TELEGRAM_ADMIN_CHAT_ID?.split(',')
