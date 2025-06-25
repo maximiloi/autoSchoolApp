@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
 import { toast } from '@/hooks/use-toast';
 import transformedNullAndStringDate from '@/lib/transformedNullAndStringDate';
-import StudentForm from '../components/StudentForm';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import StudentForm from '../../create/student/components/StudentForm';
 
 export default function EditStudentPage() {
   const { id } = useParams();

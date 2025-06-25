@@ -1,4 +1,6 @@
+import { BookCopy, BookPlus, LifeBuoy, UserRoundPlus } from 'lucide-react';
 import Link from 'next/link';
+
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -6,18 +8,17 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { UserRoundPlus, BookPlus, BookCopy, LifeBuoy } from 'lucide-react';
 
 const data = {
   navAction: [
     {
       title: 'Добавить ученика',
-      url: '/app/student/',
+      url: '/app/create/student/',
       icon: UserRoundPlus,
     },
     {
       title: 'Добавить группу',
-      url: '/app/group/',
+      url: '/app/create/group',
       icon: BookPlus,
     },
     {

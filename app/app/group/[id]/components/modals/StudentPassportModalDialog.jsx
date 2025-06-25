@@ -6,7 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import transformedNullAndStringDate from '@/lib/transformedNullAndStringDate';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { DOCUMENT_MASKS } from '@/app/app/student/components/documentMasks';
+import { DOCUMENT_MASKS } from '@/app/app/create/student/components/documentMasks';
 import { Button } from '@/components/ui/button';
 import DatePickerField from '@/components/ui/DatePickerField';
 import {

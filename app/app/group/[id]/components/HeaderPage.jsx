@@ -17,7 +17,7 @@ import {
 
 import { useGroupStore } from '@/store/useStore';
 
-import EditGroupForm from '../../components/EditGroupForm';
+import EditGroupForm from '../../../create/group/components/EditGroupForm';
 import ArchivingSwitch from './ArchivingSwitch';
 
 export default function HeaderPage() {

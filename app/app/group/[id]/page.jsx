@@ -1,33 +1,27 @@
-'use client';
+import { PrismaClient } from '@prisma/client';
 
-import { useParams } from 'next/navigation';
+const prisma = new PrismaClient();
 
-import { useGroupData } from '@/hooks/useGroupData';
+async function getGroupTitle(id) {
+  const group = await prisma.group.findUnique({
+    where: { id },
+    select: { groupNumber: true },
+  });
 
-import { Separator } from '@/components/ui/separator';
+  return group?.groupNumber || id;
+}
 
-import { useCompanyStore, useGroupStore } from '@/store/useStore';
+export async function generateMetadata({ params }) {
+  const title = await getGroupTitle(params.id);
 
-import FooterPage from './components/FooterPage';
-import HeaderPage from './components/HeaderPage';
-import StudentList from './components/StudentList';
+  return {
+    title: `Группа № ${title} | Панель управления компании | Auto School App`,
+    description: `Страница группы №${title}`,
+  };
+}
 
-export default function GroupPage() {
-  const { id } = useParams();
-  const { company } = useCompanyStore();
-  const { group } = useGroupStore();
-  const { loading, error } = useGroupData(id);
+import GroupPage from './GroupPage';
 
-  if (loading) return <p>Данные загружаются...</p>;
-  if (error) return <p>{error}</p>;
-
-  return (
-    <>
-      <HeaderPage />
-      <Separator className="my-4" />
-      <StudentList />
-      <Separator className="my-4" />
-      <FooterPage group={group} company={company} />
-    </>
-  );
+export default function Page() {
+  return <GroupPage />;
 }
