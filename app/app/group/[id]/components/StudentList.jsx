@@ -90,7 +90,7 @@ export default function StudentList() {
       <div className="flex flex-col items-center gap-4">
         <p className="text-lg text-gray-600">В группе пока нет учеников</p>
         <Button asChild>
-          <Link href="/app/student">Добавить ученика</Link>
+          <Link href="/app/create/student">Добавить ученика</Link>
         </Button>
       </div>
     );
