@@ -4,6 +4,7 @@ import { CarFront } from 'lucide-react';
 import Link from 'next/link';
 
 import ExamListsButton from './buttons/ExamListsButton';
+import FDROButton from './buttons/FRDOButton';
 import InformationForTrafficPoliceButton from './buttons/InformationForTrafficPoliceButton';
 import JourneyPracticeButton from './buttons/JourneyPracticeButton';
 import JourneyTemplateButton from './buttons/JourneyTemplateButton';
@@ -12,6 +13,7 @@ import PracticePlanningButton from './buttons/PracticePlanningButton';
 import PrintPracticeButton from './buttons/PrintPracticeButton';
 import RegisterNewGroupButton from './buttons/RegisterNewGroupButton';
 import ScheduleTemplateButton from './buttons/ScheduleTemplateButton';
+import StatisticsButton from './buttons/StatisticsButton';
 
 export default function FooterPage({ group, company }) {
   return (
@@ -23,9 +25,13 @@ export default function FooterPage({ group, company }) {
         <InformationForTrafficPoliceButton group={group} company={company} />
       </div>
       <Separator orientation="vertical" />
-      <ScheduleTemplateButton group={group} company={company} />
+      <div className="flex flex-col gap-4">
+        <StatisticsButton />
+        <FDROButton />
+      </div>
       <Separator orientation="vertical" />
       <div className="flex flex-col gap-4">
+        <ScheduleTemplateButton group={group} company={company} />
         <JourneyTemplateButton group={group} company={company} />
         <JourneyPracticeButton group={group} />
       </div>
