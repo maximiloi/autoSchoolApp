@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { CarFront } from 'lucide-react';
+import { BookUser, CarFront } from 'lucide-react';
 import Link from 'next/link';
 
 import ExamListsButton from './buttons/ExamListsButton';
@@ -12,6 +12,7 @@ import PracticePlanningButton from './buttons/PracticePlanningButton';
 import PrintPracticeButton from './buttons/PrintPracticeButton';
 import RegisterNewGroupButton from './buttons/RegisterNewGroupButton';
 import ScheduleTemplateButton from './buttons/ScheduleTemplateButton';
+import StatisticsButton from './buttons/StatisticsButton';
 
 export default function FooterPage({ group, company }) {
   return (
@@ -23,9 +24,15 @@ export default function FooterPage({ group, company }) {
         <InformationForTrafficPoliceButton group={group} company={company} />
       </div>
       <Separator orientation="vertical" />
-      <ScheduleTemplateButton group={group} company={company} />
+      <div className="flex flex-col gap-4">
+        <StatisticsButton />
+        <Button>
+          <BookUser /> Шаблон ФИС ФРДО
+        </Button>
+      </div>
       <Separator orientation="vertical" />
       <div className="flex flex-col gap-4">
+        <ScheduleTemplateButton group={group} company={company} />
         <JourneyTemplateButton group={group} company={company} />
         <JourneyPracticeButton group={group} />
       </div>
