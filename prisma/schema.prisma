@@ -80,6 +80,7 @@ model Teacher {
 model Car {
   id              String   @id @default(uuid())
   carModel        String
+  carTransmission String
   carNumber       String
   literalMarking  String
   teacherId       String
