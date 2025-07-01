@@ -1,9 +1,10 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-export default function informationForTrafficPoliceTemplate(group, company) {
+export default function informationForTrafficPoliceTemplate(group, company, gibddData) {
   const { companyName, actualAddress } = company;
   const { category, startTrainingDate, endTrainingDate, students } = group;
+  const { departmentName, officerRank, officerName } = gibddData;
 
   const cleanedAddress = (address) => address.replace(/^\d{6},\s*/, '');
   const sortedStudents = students.sort((a, b) => a.studentNumber - b.studentNumber);
@@ -11,9 +12,12 @@ export default function informationForTrafficPoliceTemplate(group, company) {
   return {
     pageOrientation: 'landscape',
     content: [
-      { text: 'Начальнику ОГИБДД ОМВД РФ', style: 'pageHeader', alignment: 'right' },
-      { text: 'по Окуловскому району', style: 'pageHeader', alignment: 'right' },
-      { text: 'майору полиции Рыжову С.М.', style: 'pageHeader', alignment: 'right' },
+      {
+        text: `Начальнику ${departmentName?.replace(',', '\n')}`,
+        style: 'pageHeader',
+        alignment: 'right',
+      },
+      { text: `${officerRank} ${officerName}`, style: 'pageHeader', alignment: 'right' },
       { text: 'СВЕДЕНИЯ', style: 'header' },
       {
         text: `о лицах, обучающих по программе подготовки водителей транспортных средств категории "${category}"`,

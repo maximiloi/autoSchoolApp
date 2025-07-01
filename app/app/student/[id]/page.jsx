@@ -1,59 +1,27 @@
-'use client';
+import prisma from '@/lib/prisma';
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { toast } from '@/hooks/use-toast';
-import transformedNullAndStringDate from '@/lib/transformedNullAndStringDate';
-import StudentForm from '../components/StudentForm';
+async function getStudentName(id) {
+  const student = await prisma.student.findUnique({
+    where: { id },
+    select: { firstName: true, lastName: true },
+  });
 
-export default function EditStudentPage() {
-  const { id } = useParams();
-  const [student, setStudent] = useState(null);
-  const [loading, setLoading] = useState(true);
+  return student?.lastName + ' ' + student?.firstName || id;
+}
 
-  useEffect(() => {
-    if (!id) return;
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  const title = await getStudentName(id);
 
-    let isMounted = true;
+  return {
+    title: `${title} - Редактирование | Панель управления компании | Auto School App`,
+    description: `Страница студента ${title}`,
+  };
+}
 
-    async function fetchStudent() {
-      setLoading(true);
-      try {
-        const response = await fetch(`/api/student/${id}`);
+import EditStudentPage from './StudentPage';
 
-        if (response.ok) {
-          const data = await response.json();
-          if (isMounted) setStudent(transformedNullAndStringDate(data));
-        } else {
-          throw new Error('Ошибка загрузки данных');
-        }
-      } catch (error) {
-        console.error('Ошибка при загрузке данных о студенте', error.message);
-        toast({
-          duration: 2000,
-          variant: 'destructive',
-          description: 'Ошибка при загрузке данных студента',
-        });
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    }
-
-    fetchStudent();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [id]);
-
-  if (loading) {
-    return <p>Загрузка...</p>;
-  }
-
-  return (
-    <>
-      <h2 className="text-lg font-semibold">✏️ Редактировать данные ученика.</h2>
-      <StudentForm student={student} />
-    </>
-  );
+export default async function Page({ params }) {
+  const { id } = await params;
+  return <EditStudentPage id={id} />;
 }

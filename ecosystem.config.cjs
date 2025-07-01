@@ -15,7 +15,7 @@ module.exports = {
       name: 'bot-payment-reminders',
       script: 'bot/paymentReminders.js',
       interpreter: 'node',
-      cron_restart: '25 14 10,25 * *',
+      cron_restart: '25 14 8,23 * *',
       autorestart: false,
       env: {
         TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,

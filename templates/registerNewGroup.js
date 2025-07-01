@@ -1,8 +1,8 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-export default function registerNewGroup(group, company) {
-  if (!group || !company) {
+export default function registerNewGroup(group, company, gibddData) {
+  if (!group || !company || !gibddData) {
     console.error('Ошибка: загрузки данных');
     return null;
   }
@@ -41,6 +41,7 @@ export default function registerNewGroup(group, company) {
       } = {},
     ] = [{}],
   } = group;
+  const { departmentName, officerRank, officerName } = gibddData;
 
   const fullNameTheoryTeacher =
     `${theoryLastName} ${theoryFirstName} ${theoryMiddleName || ''}`.trim();
@@ -58,7 +59,7 @@ export default function registerNewGroup(group, company) {
       {
         columns: [
           {
-            width: '46%',
+            width: '50%',
             stack: [
               { text: companyName, alignment: 'left', style: 'header' },
               { text: legalAddress, alignment: 'left', style: 'header' },
@@ -66,18 +67,14 @@ export default function registerNewGroup(group, company) {
             ],
           },
           {
-            width: '19%',
-            stack: [{ text: '' }],
-          },
-          {
-            width: '35%',
+            width: '50%',
             stack: [
               {
-                text: 'Государственному инспектору РЭГ ОГИБДД ОМВД РФ',
+                text: `Начальнику ${departmentName?.replace(',', '\n')}`,
+                style: 'pageHeader',
                 alignment: 'right',
-                style: 'header',
               },
-              { text: 'майору полиции Рыжову С.М.', alignment: 'right', style: 'header' },
+              { text: `${officerRank} ${officerName}`, style: 'pageHeader', alignment: 'right' },
             ],
           },
         ],

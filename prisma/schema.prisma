@@ -45,12 +45,14 @@ model Company {
   phone                String
   email                String    @unique
   website              String?
+  gibddDepartmentId    String?
 
-  users    User[]
-  teachers Teacher[]
-  cars     Car[]
-  groups   Group[]
-  students Student[]
+  users           User[]
+  teachers        Teacher[]
+  cars            Car[]
+  groups          Group[]
+  students        Student[]
+  gibddDepartment GibddDepartment? @relation(fields: [gibddDepartmentId], references: [id])
 }
 
 model Teacher {
@@ -180,4 +182,15 @@ model DrivingSession {
   slot      String?
 
   createdAt DateTime @default(now())
+}
+
+model GibddDepartment {
+  id             String    @id @default(uuid())
+  departmentName String
+  officerName    String?
+  officerRank    String?
+  district       String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  companies      Company[]
 }

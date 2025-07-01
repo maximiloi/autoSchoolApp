@@ -1,5 +1,10 @@
 import StudentForm from './components/StudentForm';
 
+export const metadata = {
+  title: 'Создание ученика | Панель управления компании | Auto School App',
+  description: 'Форма для создания нового ученика в автошколе.',
+};
+
 export default function CreateStudentPage() {
   return (
     <>

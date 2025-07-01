@@ -39,8 +39,7 @@ export default function travelSheet(date, group, company, daySessions) {
     return startA - startB;
   });
 
-  const { formatted: totalTimeFormatted, minutes: totalMinutes } =
-    getTotalFormattedTime(sortedSessions);
+  const { formatted: totalTimeFormatted } = getTotalFormattedTime(sortedSessions);
 
   return {
     pageOrientation: 'landscape',
@@ -141,7 +140,7 @@ export default function travelSheet(date, group, company, daySessions) {
       '\n\n',
       {
         table: {
-          widths: ['3%', '*', '*', '7%', '5%', '*', '5%'],
+          widths: ['3%', '*', '*', '7%', '6%', '*', '5%'],
           body: [
             [
               { text: '№\nп/п', rowSpan: 2, alignment: 'center', style: 'tabHeader' },
@@ -206,7 +205,7 @@ export default function travelSheet(date, group, company, daySessions) {
               { text: 'Оценка', alignment: 'center', style: 'tabHeader' },
               { text: 'Подпись учащегося', alignment: 'center', style: 'tabHeader' },
             ],
-            ...sortedSessions.map((student, index) => {
+            ...sortedSessions.map((student) => {
               const [startTime, endTime] = student.slot.split('-').map(Number);
               return [
                 groupNumber,

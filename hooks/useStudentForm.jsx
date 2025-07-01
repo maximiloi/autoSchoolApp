@@ -1,9 +1,9 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 
-import { DOCUMENT_MASKS } from '@/app/app/student/components/documentMasks';
-import { formSchema } from '@/app/app/student/components/formSchema';
+import { DOCUMENT_MASKS } from '@/app/app/create/student/components/documentMasks';
+import { formSchema } from '@/app/app/create/student/components/formSchema';
 
 export function useStudentForm(student) {
   const [sameAddress, setSameAddress] = useState(false);

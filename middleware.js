@@ -20,9 +20,17 @@ export async function middleware(req) {
     return NextResponse.redirect(new URL('/app', req.url));
   }
 
+  if (pathname === '/app/group') {
+    return NextResponse.redirect(new URL('/app', req.url));
+  }
+
+  if (pathname === '/app/student') {
+    return NextResponse.redirect(new URL('/app', req.url));
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/', '/app/:path*', '/admin/:path*'],
+  matcher: ['/', '/app/:path*', '/admin/:path*', '/app/group', '/app/student'],
 };
