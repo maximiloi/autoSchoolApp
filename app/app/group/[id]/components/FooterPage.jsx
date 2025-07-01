@@ -1,9 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { BookUser, CarFront } from 'lucide-react';
+import { CarFront } from 'lucide-react';
 import Link from 'next/link';
 
 import ExamListsButton from './buttons/ExamListsButton';
+import FDROButton from './buttons/FRDOButton';
 import InformationForTrafficPoliceButton from './buttons/InformationForTrafficPoliceButton';
 import JourneyPracticeButton from './buttons/JourneyPracticeButton';
 import JourneyTemplateButton from './buttons/JourneyTemplateButton';
@@ -26,9 +27,7 @@ export default function FooterPage({ group, company }) {
       <Separator orientation="vertical" />
       <div className="flex flex-col gap-4">
         <StatisticsButton />
-        <Button>
-          <BookUser /> Шаблон ФИС ФРДО
-        </Button>
+        <FDROButton />
       </div>
       <Separator orientation="vertical" />
       <div className="flex flex-col gap-4">
