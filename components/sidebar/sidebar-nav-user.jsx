@@ -1,6 +1,6 @@
-import { signOut } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { ChevronsUpDown, LogOut } from 'lucide-react';
+import { signOut } from 'next-auth/react';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,16 +15,15 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+
 import { resetAllStores } from '@/store/useStore';
 
 export default function NavUser({ user, companyName }) {
   const { isMobile } = useSidebar();
-  const router = useRouter();
 
   const handleLogout = async () => {
-    await signOut({ redirect: false });
     resetAllStores();
-    router.push('/');
+    signOut({ callbackUrl: '/' });
   };
 
   return (
