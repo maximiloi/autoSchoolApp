@@ -86,7 +86,6 @@ model Car {
   teacherId       String
   companyId       String
   createdAt       DateTime @default(now())
-  carTransmission String
   company         Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   teacher         Teacher  @relation(fields: [teacherId], references: [id], onDelete: SetNull)
 }
