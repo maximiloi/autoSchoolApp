@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { Save } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useToast } from '@/hooks/use-toast';
 
@@ -26,154 +26,80 @@ function getDatesInRange(start, end) {
 }
 
 export default function DrivingScheduleNEW() {
+  const [fetchError, setFetchError] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
   const scrollRef = useRef(null);
   const { id } = useParams();
   const { toast } = useToast();
-  const [sessions, setSessions] = useState({});
-  const { group } = useGroupStore();
-  const { sessions: fetchSessions, isLoading, fetchDrivingData } = useDrivingStore();
+  const { group, setGroup } = useGroupStore();
+  const { fetchDrivingData, updateSlot, getDaySessions, saveSessions } = useDrivingStore();
+  const sessions = useDrivingStore((state) => state.sessions);
+  const isLoading = useDrivingStore((state) => state.isLoading);
+
+  const dates = useMemo(() => {
+    if (!group) return [];
+    const startDate = new Date(group.startTrainingDate);
+    const endDate = new Date(group.endTrainingDate);
+    return getDatesInRange(startDate, endDate);
+  }, [group]);
 
   useEffect(() => {
-    fetchDrivingData(id).catch((error) =>
-      toast({ variant: 'destructive', description: error.message }),
-    );
+    setFetchError(null);
+    fetchDrivingData(id, setGroup).catch((error) => {
+      setFetchError(error.message);
+      toast({ variant: 'destructive', description: error.message });
+    });
   }, [id]);
-
-  useEffect(() => {
-    setSessions(normalizeDrivingSessions(fetchSessions));
-  }, [fetchSessions]);
 
   const scrollLeft = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -500, behavior: 'smooth' });
+      scrollRef.current.scrollBy({ left: -890, behavior: 'smooth' });
     }
   };
 
   const scrollRight = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 500, behavior: 'smooth' });
+      scrollRef.current.scrollBy({ left: 890, behavior: 'smooth' });
     }
   };
 
-  const updateSlot = async (studentId, date, status) => {
-    if (status === '-') {
-      try {
-        await fetch('/api/driving-sessions/delete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ studentId, date }),
-        });
-      } catch (error) {
-        toast({ variant: 'destructive', description: `Ошибка при удалении слота ${error}` });
-      }
+  const calculateTotalHours = useCallback(
+    (studentId) => {
+      const entries = sessions[studentId] || {};
+      return Object.values(entries).filter((slot) => slot !== '-').length * 2;
+    },
+    [sessions],
+  );
 
-      setSessions((prev) => {
-        const updated = { ...prev };
-        if (updated[studentId]) {
-          delete updated[studentId][date];
-          if (Object.keys(updated[studentId]).length === 0) {
-            delete updated[studentId];
-          }
-        }
-        return updated;
-      });
+  const handleSelect = useCallback(
+    (studentId, dateKey) => async (slot) => {
+      if (isSaving) return;
+      const result = await updateSlot(studentId, dateKey, slot);
+      if (result.error) {
+        toast({ variant: 'destructive', description: result.error });
+      }
+    },
+    [updateSlot, toast, isSaving],
+  );
+
+  const memoizedGetDaySessions = useCallback(
+    (date) => getDaySessions(date, group),
+    [getDaySessions, group],
+  );
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    const result = await saveSessions();
+    setIsSaving(false);
+    if (result.error) {
+      toast({ variant: 'destructive', description: result.error });
     } else {
-      setSessions((prev) => ({
-        ...prev,
-        [studentId]: {
-          ...prev[studentId],
-          [date]: status,
-        },
-      }));
+      toast({ variant: 'success', description: result.message });
     }
   };
 
-  const calculateTotalHours = (studentId) => {
-    const entries = sessions[studentId] || {};
-    return Object.values(entries).filter((slot) => slot !== '-').length * 2;
-  };
-
-  const getDaySessions = (dateKey) => {
-    return Object.entries(sessions).reduce((acc, [studentId, slots]) => {
-      if (slots[dateKey] && slots[dateKey] !== '-') {
-        const student = group.students.find((s) => s.id === studentId);
-        if (student) {
-          acc.push({
-            firstName: student.firstName,
-            lastName: student.lastName,
-            phone: student.phone,
-            slot: slots[dateKey],
-          });
-        }
-      }
-      return acc;
-    }, []);
-  };
-
-  const normalizeDrivingSessions = (drivingSessions) => {
-    const result = {};
-
-    for (const session of drivingSessions) {
-      const dateKey = format(new Date(session.date), 'yyyy-MM-dd');
-
-      if (!result[session.studentId]) {
-        result[session.studentId] = {};
-      }
-
-      result[session.studentId][dateKey] = session.slot;
-    }
-
-    return result;
-  };
-
-  const getChangedSessions = () => {
-    const original = normalizeDrivingSessions(fetchSessions);
-    const changed = [];
-
-    for (const studentId in sessions) {
-      const currentDates = sessions[studentId];
-      const originalDates = original[studentId] || {};
-
-      for (const date in currentDates) {
-        if (currentDates[date] !== originalDates[date]) {
-          changed.push({
-            studentId,
-            date,
-            slot: currentDates[date],
-          });
-        }
-      }
-    }
-
-    return changed;
-  };
-
-  const saveSessions = useCallback(async () => {
-    const changes = getChangedSessions();
-
-    if (changes.length === 0) {
-      toast({ variant: 'default', description: 'Нет изменений для сохранения' });
-      return;
-    }
-
-    try {
-      await fetch('/api/driving-sessions/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessions: changes }),
-      });
-      toast({ variant: 'success', description: 'Изменения сохранены!' });
-    } catch (error) {
-      toast({ variant: 'destructive', description: `Ошибка при сохранении: ${error.message}` });
-      throw error;
-    }
-  }, [sessions, fetchSessions]);
-
+  if (fetchError) return <div className="text-red-500">Ошибка: {fetchError}</div>;
   if (isLoading || !group) return <div>Загрузка...</div>;
-
-  const startDate = new Date(group.startTrainingDate);
-  const endDate = new Date(group.endTrainingDate);
-  const dates = getDatesInRange(startDate, endDate);
 
   return (
     <div className="p-4">
@@ -187,8 +113,8 @@ export default function DrivingScheduleNEW() {
             →
           </button>
         </div>
-        <Button className="mt-4" onClick={saveSessions}>
-          <Save /> Сохранить занятия
+        <Button className="mt-4" onClick={handleSave} disabled={isSaving}>
+          <Save /> {isSaving ? 'Сохранение...' : 'Сохранить занятия'}
         </Button>
       </div>
 
@@ -236,7 +162,7 @@ export default function DrivingScheduleNEW() {
                         >
                           <CellPicker
                             value={current}
-                            onSelect={(slot) => updateSlot(student.id, dateKey, slot)}
+                            onSelect={handleSelect(student.id, dateKey)}
                             disabledSlots={slotsTaken}
                           />
                         </td>
@@ -255,8 +181,7 @@ export default function DrivingScheduleNEW() {
                       <TravelSheetButton
                         date={dateKey}
                         group={group}
-                        getDaySessions={getDaySessions}
-                        saveSessions={saveSessions}
+                        getDaySessions={memoizedGetDaySessions}
                       />
                     </td>
                   );
