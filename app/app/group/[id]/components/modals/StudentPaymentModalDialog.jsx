@@ -114,15 +114,15 @@ export default function StudentPaymentModalDialog({
           </TableBody>
           {!!student?.payments?.length && (
             <TableFooter>
-              <TableRow>
+              <TableRow className="text-green-700">
                 <TableCell>Оплачено</TableCell>
-                <TableCell className="text-right">{totalPaid.toLocaleString('ru-RU')} ₽</TableCell>
+                <TableCell>{totalPaid.toLocaleString('ru-RU')} ₽</TableCell>
               </TableRow>
             </TableFooter>
           )}
         </Table>
 
-        <p className="text-red-600">
+        <p className="text-right text-red-600">
           <strong>Долг: </strong>
           {debt.toLocaleString('ru-RU') + ' ₽'}
         </p>
