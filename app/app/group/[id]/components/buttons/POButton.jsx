@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -15,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { generateTablePO } from '@/lib/generateTablePO';
 import { useCompanyStore } from '@/store/useStore';
 import { PersonStanding } from 'lucide-react';
@@ -24,6 +26,7 @@ import { getStudentsByYear } from '../actions/actions';
 export default function StatisticsButton() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState(null);
+  const [isFirstHalf, setIsFirstHalf] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { company } = useCompanyStore();
   const { createdAt } = company || {};
@@ -40,10 +43,10 @@ export default function StatisticsButton() {
     if (selectedYear) {
       setIsLoading(true);
       try {
-        const students = await getStudentsByYear(selectedYear);
+        const students = await getStudentsByYear(selectedYear, isFirstHalf);
         console.log('Students for year', selectedYear, ':', students);
 
-        generateTablePO(students, selectedYear);
+        generateTablePO(students, selectedYear, isFirstHalf);
       } finally {
         setIsLoading(false);
         setDialogOpen(false);
@@ -80,6 +83,11 @@ export default function StatisticsButton() {
             ))}
           </SelectContent>
         </Select>
+
+        <Label className="flex cursor-pointer items-center gap-4">
+          <Switch checked={isFirstHalf} onCheckedChange={(checked) => setIsFirstHalf(checked)} />
+          Первое полугодие
+        </Label>
 
         <DialogFooter>
           <div className="flex flex-col gap-4">

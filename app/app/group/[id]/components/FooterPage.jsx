@@ -9,11 +9,11 @@ import InformationForTrafficPoliceButton from './buttons/InformationForTrafficPo
 import JourneyPracticeButton from './buttons/JourneyPracticeButton';
 import JourneyTemplateButton from './buttons/JourneyTemplateButton';
 import ListGroupButton from './buttons/ListGroupButton';
+import POButton from './buttons/POButton';
 import PracticePlanningButton from './buttons/PracticePlanningButton';
 import PrintPracticeButton from './buttons/PrintPracticeButton';
 import RegisterNewGroupButton from './buttons/RegisterNewGroupButton';
 import ScheduleTemplateButton from './buttons/ScheduleTemplateButton';
-import StatisticsButton from './buttons/StatisticsButton';
 
 export default function FooterPage({ group, company }) {
   return (
@@ -26,7 +26,7 @@ export default function FooterPage({ group, company }) {
       </div>
       <Separator orientation="vertical" />
       <div className="flex flex-col gap-4">
-        <StatisticsButton />
+        <POButton />
         <FDROButton />
       </div>
       <Separator orientation="vertical" />

@@ -19,8 +19,9 @@ export async function GET(req) {
 
     const { searchParams } = new URL(req.url);
     const year = searchParams.get('year');
+    const isFirstHalf = searchParams.get('isFirstHalf');
 
-    const buffer = await exportDpoStudentsToBuffer(companyId, year);
+    const buffer = await exportDpoStudentsToBuffer(companyId, year, isFirstHalf);
 
     return new NextResponse(buffer, {
       headers: {

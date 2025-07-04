@@ -2,9 +2,9 @@
 
 import prisma from '@/lib/prisma';
 
-export async function getStudentsByYear(year) {
+export async function getStudentsByYear(year, isFirstHalf = false) {
   const startDate = new Date(`${year}-01-01`);
-  const endDate = new Date(`${year}-12-31`);
+  const endDate = isFirstHalf ? new Date(`${year}-06-30`) : new Date(`${year}-12-31`);
 
   const groups = await prisma.group.findMany({
     where: {
