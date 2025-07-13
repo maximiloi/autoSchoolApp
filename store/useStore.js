@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { immer } from 'zustand/middleware/immer';
 
 const useCompanyStore = create((set) => ({
   company: {},
@@ -8,22 +9,24 @@ const useCompanyStore = create((set) => ({
   reset: () => set({ company: {} }),
 }));
 
-const useGroupStore = create((set) => ({
-  groups: [],
-  group: null,
+const useGroupStore = create(
+  immer((set) => ({
+    groups: [],
+    group: null,
 
-  setGroups: (groups) => set({ groups }),
-  addGroup: (group) => set((state) => ({ groups: [...state.groups, group] })),
+    setGroups: (groups) => set({ groups }),
+    addGroup: (group) => set((state) => ({ groups: [...state.groups, group] })),
 
-  setGroup: (group) =>
-    set((state) => ({
-      groups: state.groups.map((g) => (g.id === group.id ? group : g)),
-      group,
-    })),
-  setSingleGroup: (group) => set({ group }),
+    setGroup: (group) =>
+      set((state) => ({
+        groups: state.groups.map((g) => (g.id === group.id ? group : g)),
+        group,
+      })),
+    setSingleGroup: (group) => set({ group }),
 
-  reset: () => set({ groups: [], group: null }),
-}));
+    reset: () => set({ groups: [], group: null }),
+  })),
+);
 
 const resetAllStores = () => {
   useCompanyStore.getState().reset();

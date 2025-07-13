@@ -2,7 +2,6 @@
 
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { Save } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -11,8 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useDrivingStore } from '@/store/useDrivingStore';
 import { useGroupStore } from '@/store/useStore';
 
-import { Button } from '@/components/ui/button';
 import CellPicker from './components/CellPicker';
+import SaveButton from './components/SaveButton';
 import TravelSheetButton from './components/TravelSheetButton';
 
 function getDatesInRange(start, end) {
@@ -87,17 +86,6 @@ export default function DrivingScheduleNEW() {
     [getDaySessions, group],
   );
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    const result = await saveSessions();
-    setIsSaving(false);
-    if (result.error) {
-      toast({ variant: 'destructive', description: result.error });
-    } else {
-      toast({ variant: 'success', description: result.message });
-    }
-  };
-
   if (fetchError) return <div className="text-red-500">Ошибка: {fetchError}</div>;
   if (isLoading || !group) return <div>Загрузка...</div>;
 
@@ -113,9 +101,12 @@ export default function DrivingScheduleNEW() {
             →
           </button>
         </div>
-        <Button className="mt-4" onClick={handleSave} disabled={isSaving}>
-          <Save /> {isSaving ? 'Сохранение...' : 'Сохранить занятия'}
-        </Button>
+        <SaveButton
+          saveSessions={saveSessions}
+          toast={toast}
+          isSaving={isSaving}
+          setIsSaving={setIsSaving}
+        />
       </div>
 
       <div ref={scrollRef} className="w-full overflow-x-auto">
@@ -135,7 +126,7 @@ export default function DrivingScheduleNEW() {
               </tr>
             </thead>
             <tbody>
-              {group.students
+              {[...group.students]
                 .sort((a, b) => a.studentNumber - b.studentNumber)
                 .map((student) => (
                   <tr key={student.id}>
@@ -150,11 +141,10 @@ export default function DrivingScheduleNEW() {
                     {dates.map((date) => {
                       const dateKey = format(date, 'yyyy-MM-dd');
                       const current = sessions[student.id]?.[dateKey] || '';
-                      const slotsTaken = Object.entries(sessions)
+                      const takenSlots = Object.entries(sessions)
                         .filter(([id]) => id !== student.id)
                         .map(([, byDate]) => byDate?.[dateKey])
                         .filter(Boolean);
-
                       return (
                         <td
                           key={dateKey}
@@ -163,7 +153,7 @@ export default function DrivingScheduleNEW() {
                           <CellPicker
                             value={current}
                             onSelect={handleSelect(student.id, dateKey)}
-                            disabledSlots={slotsTaken}
+                            takenSlots={takenSlots}
                           />
                         </td>
                       );
