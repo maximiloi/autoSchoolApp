@@ -1,12 +1,11 @@
-import { CalendarIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { FormField, FormItem, FormControl, FormMessage, FormLabel } from '@/components/ui/form';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
-import { CalendarCustom } from '@/components/ui/calendarCustom';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import learningStartDate from '@/lib/learningStartDate';
+import { CalendarIcon } from 'lucide-react';
 
 export default function DatePickerField({ name, label, control }) {
   const currentDate = new Date();
@@ -33,8 +32,7 @@ export default function DatePickerField({ name, label, control }) {
               </FormControl>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
-              <CalendarCustom
-                captionLayout="dropdown-buttons"
+              <Calendar
                 fromYear={1930}
                 toYear={2030}
                 locale={ru}
@@ -42,10 +40,6 @@ export default function DatePickerField({ name, label, control }) {
                 selected={field.value || null}
                 onSelect={field.onChange}
                 defaultMonth={name === 'birthDate' ? startMonth : new Date()}
-                startMonth={name === 'birthDate' ? startMonth : new Date()}
-                disabled={(date) =>
-                  name === 'birthDate' ? date > learningStartDate() : date > new Date()
-                }
                 initialFocus
               />
             </PopoverContent>
