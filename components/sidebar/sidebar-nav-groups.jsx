@@ -58,8 +58,12 @@ function GroupList({ groups, title, icon: Icon }) {
 export default function NavGroups() {
   const { groups } = useGroupStore();
 
-  const activeGroups = useMemo(() => groups.filter((g) => g.isActive), [groups]);
-  const archivedGroups = useMemo(() => groups.filter((g) => !g.isActive), [groups]);
+  const sortedGroups = useMemo(() => {
+    return [...groups].sort((a, b) => a.groupNumber - b.groupNumber);
+  }, [groups]);
+
+  const activeGroups = useMemo(() => sortedGroups.filter((g) => g.isActive), [sortedGroups]);
+  const archivedGroups = useMemo(() => sortedGroups.filter((g) => !g.isActive), [sortedGroups]);
 
   return (
     <SidebarGroup>
