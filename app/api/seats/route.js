@@ -23,6 +23,7 @@ export async function GET(request) {
       },
       select: {
         groupNumber: true,
+        startTrainingDate: true,
         students: {
           select: { id: true },
         },
@@ -38,6 +39,7 @@ export async function GET(request) {
 
     const result = groups.map((group) => ({
       groupNumber: group.groupNumber,
+      startTrainingDate: group.startTrainingDate,
       practiceTeachers: group.practiceTeachers.map((teacher) => {
         const parts = [teacher.lastName, teacher.firstName, teacher.middleName].filter(Boolean);
         return parts.join(' ');
