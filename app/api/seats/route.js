@@ -8,7 +8,12 @@ export async function GET(request) {
   const companyId = searchParams.get('companyId');
 
   if (!companyId) {
-    return NextResponse.json({ error: 'Missing companyId' }, { status: 400 });
+    return new NextResponse(JSON.stringify({ error: 'Missing companyId' }), {
+      status: 400,
+      headers: {
+        'Access-Control-Allow-Origin': 'https://okulovka-auto.ru',
+      },
+    });
   }
 
   try {
@@ -47,7 +52,13 @@ export async function GET(request) {
       studentCount: group.students.length,
     }));
 
-    return NextResponse.json(result);
+    return new NextResponse(JSON.stringify(result), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'https://okulovka-auto.ru',
+      },
+    });
   } catch (error) {
     console.error('Error fetching groups:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
