@@ -3,6 +3,17 @@ import { NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': 'https://okulovka-auto.ru',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
+}
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const companyId = searchParams.get('companyId');
@@ -46,7 +57,11 @@ export async function GET(request) {
       groupNumber: group.groupNumber,
       startTrainingDate: group.startTrainingDate,
       practiceTeachers: group.practiceTeachers.map((teacher) => {
-        const parts = [teacher.lastName, teacher.firstName, teacher.middleName].filter(Boolean);
+        const parts = [
+          teacher.lastName,
+          teacher.firstName?.charAt(0) + '.',
+          teacher.middleName?.charAt(0) + '.',
+        ].filter(Boolean);
         return parts.join(' ');
       }),
       studentCount: group.students.length,
@@ -61,6 +76,11 @@ export async function GET(request) {
     });
   } catch (error) {
     console.error('Error fetching groups:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return new NextResponse(JSON.stringify({ error: 'Internal Server Error' }), {
+      status: 500,
+      headers: {
+        'Access-Control-Allow-Origin': 'https://okulovka-auto.ru',
+      },
+    });
   }
 }
