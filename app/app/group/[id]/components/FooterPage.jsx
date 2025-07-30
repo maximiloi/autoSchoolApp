@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { CarFront } from 'lucide-react';
+import { NotebookText } from 'lucide-react';
 import Link from 'next/link';
 
 import ExamListsButton from './buttons/ExamListsButton';
@@ -38,18 +38,11 @@ export default function FooterPage({ group, company }) {
       <Separator orientation="vertical" />
       <div className="flex flex-col gap-4">
         <PracticePlanningButton group={group} />
-        <Link href={`/app/group/${group.id}/driving-schedule`}>
-          <Button>
-            <CarFront /> Учет практики
-          </Button>
-        </Link>
-
         <Link href={`/app/group/${group.id}/driving-schedule-new`}>
-          <Button>
-            <CarFront /> Учет практики NEW
+          <Button variant="secondary" className="w-full">
+            <NotebookText /> Учет практики NEW
           </Button>
         </Link>
-
         <PrintPracticeButton group={group} />
       </div>
     </div>

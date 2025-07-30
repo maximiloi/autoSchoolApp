@@ -1,8 +1,13 @@
 import { addDays, format, getDay, parseISO } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-export default function practiceSchedule(group = {}, selectedDate, sessions = []) {
-  const { groupNumber, students = [], practiceTeachers = [] } = group;
+export default function practiceSchedule(
+  group = {},
+  selectedDate,
+  sessions = [],
+  forWebsite = false,
+) {
+  const { groupNumber, category, students = [], practiceTeachers = [] } = group;
 
   if (!selectedDate) return null;
 
@@ -83,7 +88,9 @@ export default function practiceSchedule(group = {}, selectedDate, sessions = []
             ...sortedStudents.map((student) => [
               { text: student.studentNumber, alignment: 'center' },
               {
-                text: `${student.lastName} ${student.firstName} ${student.middleName ?? ''}`,
+                text: forWebsite
+                  ? `${student.lastName.slice(0, 3)}*** ${student.firstName.slice(0, 1)}. ${student.middleName?.slice(0, 1) ?? ''}. Договор № ${groupNumber}${category}-${student.studentNumber}`
+                  : `${student.lastName} ${student.firstName} ${student.middleName ?? ''}`,
                 style: 'table',
               },
               ...dateColumns.map((col) => {
