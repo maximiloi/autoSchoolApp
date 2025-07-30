@@ -56,6 +56,7 @@ export async function POST(req) {
     const newGroup = await prisma.group.create({
       data: {
         groupNumber: data.groupNumber,
+        maxStudents: data.maxStudents,
         category: data.category,
         startTrainingDate: new Date(data.startTrainingDate),
         endTrainingDate: new Date(data.endTrainingDate),

@@ -39,6 +39,7 @@ export async function GET(request) {
       },
       select: {
         groupNumber: true,
+        maxStudents: true,
         startTrainingDate: true,
         students: {
           select: { id: true },
@@ -64,7 +65,7 @@ export async function GET(request) {
         ].filter(Boolean);
         return parts.join(' ');
       }),
-      studentCount: group.students.length,
+      studentCount: group.maxStudents - group.students.length,
     }));
 
     return new NextResponse(JSON.stringify(result), {

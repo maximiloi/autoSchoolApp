@@ -1,17 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { CalendarIcon } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { useGroupStore } from '@/store/useStore';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { format } from 'date-fns';
-import { ru } from 'date-fns/locale';
-import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -21,6 +12,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
@@ -28,12 +20,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
-import { Checkbox } from '@/components/ui/checkbox';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
+import { useGroupStore } from '@/store/useStore';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { format } from 'date-fns';
+import { ru } from 'date-fns/locale';
+import { CalendarIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const formSchema = z.object({
   groupNumber: z.string().min(1, 'Введите номер группы'),
+  maxStudents: z.coerce
+    .number({ required_error: 'Укажите максимальное количество студентов' })
+    .int()
+    .min(1, 'Минимум 1 студент')
+    .max(100, 'Слишком много студентов'),
   category: z.enum(['A', 'B'], { required_error: 'Выберите категорию' }),
   startTrainingDate: z.date({ required_error: 'Укажите дату начала' }),
   endTrainingDate: z.date({ required_error: 'Укажите дату окончания' }),
@@ -63,6 +68,7 @@ export default function FormCreationTrainingGroup() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       groupNumber: '',
+      maxStudents: undefined,
       category: 'B',
       startTrainingDate: undefined,
       endTrainingDate: undefined,
@@ -145,43 +151,64 @@ export default function FormCreationTrainingGroup() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 gap-6">
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="groupNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Номер группы</FormLabel>
-                <FormControl>
-                  <Input placeholder="Введите номер" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="category"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Категория</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+        <div className="grid grid-cols-4 gap-4">
+          <div className="col-span-1">
+            <FormField
+              control={form.control}
+              name="groupNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Номер группы</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Выберите категорию" />
-                    </SelectTrigger>
+                    <Input placeholder="Введите номер" {...field} />
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value="A">A</SelectItem>
-                    <SelectItem value="B">B</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="col-span-1">
+            <FormField
+              control={form.control}
+              name="maxStudents"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Максимальное число студентов</FormLabel>
+                  <FormControl>
+                    <Input type="number" placeholder="Например, 12" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="col-span-2">
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Категория</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Выберите категорию" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="A">A</SelectItem>
+                      <SelectItem value="B">B</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
+
         <div className="grid grid-cols-2 gap-4">
           {['startTrainingDate', 'endTrainingDate'].map((name, index) => (
             <FormField
