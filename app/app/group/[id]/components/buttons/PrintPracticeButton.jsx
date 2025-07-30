@@ -17,6 +17,8 @@ import { ru } from 'date-fns/locale';
 import { Printer } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import practiceSchedule from '@/templates/practiceSchedule';
 
 export default function PrintPracticeButton({ group }) {
@@ -24,6 +26,7 @@ export default function PrintPracticeButton({ group }) {
   const pdfMake = usePdfMake();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [forWebsite, setForWebsite] = useState(false);
   const [sessions, setSessions] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -69,12 +72,12 @@ export default function PrintPracticeButton({ group }) {
   const generatePDF = useCallback(() => {
     if (!pdfMake || !sessions) return;
 
-    const docDefinition = practiceSchedule(group, selectedDate, sessions);
+    const docDefinition = practiceSchedule(group, selectedDate, sessions, forWebsite);
     if (!docDefinition) return;
 
     pdfMake.createPdf(docDefinition).open();
     setDialogOpen(false);
-  }, [pdfMake, group, selectedDate, sessions]);
+  }, [pdfMake, group, selectedDate, sessions, forWebsite]);
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -95,6 +98,10 @@ export default function PrintPracticeButton({ group }) {
           onSelect={(date) => date && setSelectedDate(date)}
           initialFocus
         />
+        <Label className="flex cursor-pointer items-center gap-4">
+          <Switch checked={forWebsite} onCheckedChange={(checked) => setForWebsite(checked)} />
+          Создать график для сайта
+        </Label>
         <DialogFooter>
           <Button onClick={() => setDialogOpen(false)} variant="ghost">
             Отмена
