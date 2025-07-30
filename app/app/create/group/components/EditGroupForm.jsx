@@ -21,12 +21,14 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
+import { Input } from '@/components/ui/input';
 import { useGroupStore } from '@/store/useStore';
 import { CalendarIcon } from 'lucide-react';
 
 const formSchema = z.object({
   startTrainingDate: z.date(),
   endTrainingDate: z.date(),
+  maxStudents: z.coerce.number().int(),
 });
 
 export default function EditGroupForm({ group, onSuccess }) {
@@ -38,6 +40,7 @@ export default function EditGroupForm({ group, onSuccess }) {
     defaultValues: {
       startTrainingDate: new Date(group.startTrainingDate),
       endTrainingDate: new Date(group.endTrainingDate),
+      maxStudents: group.maxStudents,
     },
   });
 
@@ -110,6 +113,19 @@ export default function EditGroupForm({ group, onSuccess }) {
             )}
           />
         ))}
+        <FormField
+          control={form.control}
+          name="maxStudents"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Максимальное число студентов</FormLabel>
+              <FormControl>
+                <Input type="number" placeholder="Например, 12" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Button type="submit" disabled={isLoading}>
           {isLoading ? 'Сохранение...' : 'Сохранить даты'}
         </Button>
