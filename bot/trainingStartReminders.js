@@ -41,6 +41,8 @@ async function main() {
     },
   });
 
+  const reportLines = [];
+
   for (const group of groups) {
     for (const daysBefore of notifyDays) {
       const notifyDate = addDays(today, daysBefore);
@@ -53,7 +55,24 @@ async function main() {
               parse_mode: 'HTML',
             },
           );
+
+          const fullName =
+            `${student.lastName} ${student.firstName} ${student.middleName ?? ''}`.trim();
+          reportLines.push(
+            `• ${fullName} — группа #${group.groupNumber} — старт ${format(group.startTrainingDate, 'dd.MM.yyyy')} (напоминание за ${daysBefore} дн.)`,
+          );
         }
+      }
+    }
+  }
+
+  if (reportLines.length > 0) {
+    const reportMessage = `📤 Отправлены напоминания о старте курса:\n\n${reportLines.join('\n\n')}`;
+    for (const adminId of adminChatIds) {
+      try {
+        await bot.api.sendMessage(adminId, reportMessage);
+      } catch (error) {
+        console.error(`Ошибка при отправке отчета админу ${adminId}:`, error);
       }
     }
   }
