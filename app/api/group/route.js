@@ -60,6 +60,7 @@ export async function POST(req) {
         category: data.category,
         startTrainingDate: new Date(data.startTrainingDate),
         endTrainingDate: new Date(data.endTrainingDate),
+        lessonStartTime: data.lessonStartTime,
         companyId,
         theoryTeachers: {
           connect: data.theoryTeachers.map((teacher) => ({ id: teacher.id })),

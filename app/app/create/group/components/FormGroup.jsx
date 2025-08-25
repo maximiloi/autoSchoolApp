@@ -42,6 +42,7 @@ const formSchema = z.object({
   category: z.enum(['A', 'B'], { required_error: 'Выберите категорию' }),
   startTrainingDate: z.date({ required_error: 'Укажите дату начала' }),
   endTrainingDate: z.date({ required_error: 'Укажите дату окончания' }),
+  lessonStartTime: z.string().min(5, 'Укажите время в формате как в примере'),
   theoryTeachers: z
     .array(
       z.object({
@@ -72,6 +73,7 @@ export default function FormCreationTrainingGroup() {
       category: 'B',
       startTrainingDate: undefined,
       endTrainingDate: undefined,
+      lessonStartTime: '',
       theoryTeachers: [],
       practiceTeachers: [],
     },
@@ -152,61 +154,69 @@ export default function FormCreationTrainingGroup() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 gap-6">
         <div className="grid grid-cols-4 gap-4">
-          <div className="col-span-1">
-            <FormField
-              control={form.control}
-              name="groupNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Номер группы</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Введите номер" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="groupNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Номер группы</FormLabel>
+                <FormControl>
+                  <Input placeholder="Введите номер" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <div className="col-span-1">
-            <FormField
-              control={form.control}
-              name="maxStudents"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Максимальное число студентов</FormLabel>
-                  <FormControl>
-                    <Input type="number" placeholder="Например, 12" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="maxStudents"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Максимальное число студентов</FormLabel>
+                <FormControl>
+                  <Input type="number" placeholder="Например, 12" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <div className="col-span-2">
-            <FormField
-              control={form.control}
-              name="category"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Категория</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Выберите категорию" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="A">A</SelectItem>
-                      <SelectItem value="B">B</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="lessonStartTime"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Время начало лекций</FormLabel>
+                <FormControl>
+                  <Input placeholder="Например, 10:00" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Категория</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Выберите категорию" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="A">A</SelectItem>
+                    <SelectItem value="B">B</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-4">

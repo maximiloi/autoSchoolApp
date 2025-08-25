@@ -28,6 +28,7 @@ import { CalendarIcon } from 'lucide-react';
 const formSchema = z.object({
   startTrainingDate: z.date(),
   endTrainingDate: z.date(),
+  lessonStartTime: z.string(),
   maxStudents: z.coerce.number().int(),
 });
 
@@ -40,6 +41,7 @@ export default function EditGroupForm({ group, onSuccess }) {
     defaultValues: {
       startTrainingDate: new Date(group.startTrainingDate),
       endTrainingDate: new Date(group.endTrainingDate),
+      lessonStartTime: group.lessonStartTime,
       maxStudents: group.maxStudents,
     },
   });
@@ -121,6 +123,19 @@ export default function EditGroupForm({ group, onSuccess }) {
               <FormLabel>Максимальное число студентов</FormLabel>
               <FormControl>
                 <Input type="number" placeholder="Например, 12" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="lessonStartTime"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Время начала занятий</FormLabel>
+              <FormControl>
+                <Input placeholder="Например, 10:00" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

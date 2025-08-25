@@ -96,6 +96,7 @@ model Group {
   category          String
   startTrainingDate DateTime
   endTrainingDate   DateTime
+  lessonStartTime   String?
   isActive          Boolean   @default(true)
   companyId         String
   createdAt         DateTime  @default(now())

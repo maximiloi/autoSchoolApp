@@ -59,7 +59,7 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ error: 'ID группы не указан' }, { status: 400 });
     }
 
-    const { startTrainingDate, endTrainingDate, maxStudents } = await req.json();
+    const { startTrainingDate, endTrainingDate, lessonStartTime, maxStudents } = await req.json();
     if (!startTrainingDate || !endTrainingDate) {
       return NextResponse.json({ error: 'Обе даты обязательны' }, { status: 400 });
     }
@@ -78,6 +78,7 @@ export async function PUT(req, { params }) {
       data: {
         startTrainingDate: new Date(startTrainingDate),
         endTrainingDate: new Date(endTrainingDate),
+        lessonStartTime,
         maxStudents,
       },
       include: {
