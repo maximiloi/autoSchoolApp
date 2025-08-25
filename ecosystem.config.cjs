@@ -33,5 +33,16 @@ module.exports = {
         TELEGRAM_ADMIN_CHAT_ID: process.env.TELEGRAM_ADMIN_CHAT_ID,
       },
     },
+    {
+      name: 'bot-exam-reminders',
+      script: 'bot/examReminders.js',
+      interpreter: 'node',
+      cron_restart: '47 13 * * *',
+      autorestart: false,
+      env: {
+        TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
+        TELEGRAM_ADMIN_CHAT_ID: process.env.TELEGRAM_ADMIN_CHAT_ID,
+      },
+    },
   ],
 };
