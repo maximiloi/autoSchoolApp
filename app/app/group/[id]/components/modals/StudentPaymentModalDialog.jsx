@@ -19,6 +19,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { X } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import { IMaskInput } from 'react-imask';
 
@@ -77,6 +78,33 @@ export default function StudentPaymentModalDialog({
     setSubmitting(false);
   }, [amount, student, onPaymentSuccess, onClose, toast]);
 
+  const handleDeletePayment = useCallback(
+    async (paymentId) => {
+      if (!confirm('Вы уверены, что хотите удалить этот платёж?')) return;
+
+      setSubmitting(true);
+      try {
+        const res = await fetch(`/api/payments/${paymentId}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (res.ok) {
+          toast({ variant: 'success', description: 'Платёж удалён!' });
+          onPaymentSuccess();
+          onClose();
+        } else {
+          const data = await res.json();
+          toast({ variant: 'destructive', description: 'Ошибка: ' + data.error });
+        }
+      } catch (error) {
+        toast({ variant: 'destructive', description: `Ошибка сервера ${error}` });
+      }
+      setSubmitting(false);
+    },
+    [onPaymentSuccess, onClose, toast],
+  );
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
@@ -94,6 +122,7 @@ export default function StudentPaymentModalDialog({
             <TableRow>
               <TableHead>Дата платежа</TableHead>
               <TableHead>Сумма (₽)</TableHead>
+              <TableHead>Удалить</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -104,11 +133,21 @@ export default function StudentPaymentModalDialog({
                     {format(new Date(payment.paymentDate), 'PPP', { locale: ru })}
                   </TableCell>
                   <TableCell>{Number(payment.amount).toLocaleString('ru-RU')}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDeletePayment(payment.id)}
+                      disabled={submitting || loading}
+                    >
+                      <X />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={2}>Платежей пока нет</TableCell>
+                <TableCell colSpan={3}>Платежей пока нет</TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -117,6 +156,7 @@ export default function StudentPaymentModalDialog({
               <TableRow>
                 <TableCell>Оплачено</TableCell>
                 <TableCell className="text-right">{totalPaid.toLocaleString('ru-RU')} ₽</TableCell>
+                <TableCell />
               </TableRow>
             </TableFooter>
           )}
@@ -130,7 +170,7 @@ export default function StudentPaymentModalDialog({
         <IMaskInput
           mask={Number}
           min={0}
-          max={debt} // Максимальное значение - сумма долга
+          max={debt}
           radix="."
           thousandsSeparator=" "
           inputMode="numeric"
