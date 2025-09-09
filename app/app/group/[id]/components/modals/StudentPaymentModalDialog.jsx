@@ -20,6 +20,7 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { X } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { useCallback, useMemo, useState } from 'react';
 import { IMaskInput } from 'react-imask';
 
@@ -30,6 +31,7 @@ export default function StudentPaymentModalDialog({
   loading,
   onPaymentSuccess,
 }) {
+  const { data: session } = useSession();
   const [amount, setAmount] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
@@ -42,6 +44,11 @@ export default function StudentPaymentModalDialog({
   const debt = useMemo(
     () => Number(student?.trainingCost) - totalPaid,
     [student?.trainingCost, totalPaid],
+  );
+
+  const isDirector = useMemo(
+    () => (session?.user?.role?.toUpperCase?.() ?? '') === 'DIRECTOR',
+    [session],
   );
 
   const handleAddPayment = useCallback(async () => {
@@ -122,7 +129,7 @@ export default function StudentPaymentModalDialog({
             <TableRow>
               <TableHead>Дата платежа</TableHead>
               <TableHead>Сумма (₽)</TableHead>
-              <TableHead>Удалить</TableHead>
+              {isDirector && <TableHead>Удалить</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -133,16 +140,18 @@ export default function StudentPaymentModalDialog({
                     {format(new Date(payment.paymentDate), 'PPP', { locale: ru })}
                   </TableCell>
                   <TableCell>{Number(payment.amount).toLocaleString('ru-RU')}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDeletePayment(payment.id)}
-                      disabled={submitting || loading}
-                    >
-                      <X />
-                    </Button>
-                  </TableCell>
+                  {isDirector && (
+                    <TableCell>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeletePayment(payment.id)}
+                        disabled={submitting || loading}
+                      >
+                        <X />
+                      </Button>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             ) : (
