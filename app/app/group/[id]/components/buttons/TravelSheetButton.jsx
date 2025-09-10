@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import usePdfMake from '@/hooks/use-pdfmake';
+import { toast } from '@/hooks/use-toast';
 import { useCompanyStore } from '@/store/useStore';
 import examTravelSheet from '@/templates/examTravelSheet';
 import { ru } from 'date-fns/locale';
@@ -35,14 +36,26 @@ export default function TravelSheetButton({ group }) {
 
   useEffect(() => {
     if (dialogOpen) {
-      fetch('/api/teacher')
+      fetch('/api/teachers')
         .then((res) => res.json())
         .then((data) => setTeachers(data))
-        .catch((error) => console.error('Ошибка загрузки учителей:', error));
+        .catch((error) => {
+          console.error('Ошибка загрузки учителей:', error);
+          toast({
+            variant: 'destructive',
+            description: 'Не удалось загрузить список преподавателей',
+          });
+        });
       fetch('/api/car')
         .then((res) => res.json())
         .then((data) => setCars(data))
-        .catch((error) => console.error('Ошибка загрузки автомобилей:', error));
+        .catch((error) => {
+          console.error('Ошибка загрузки автомобилей:', error);
+          toast({
+            variant: 'destructive',
+            description: 'Не удалось загрузить список автомобилей',
+          });
+        });
     }
   }, [dialogOpen]);
 
@@ -66,7 +79,10 @@ export default function TravelSheetButton({ group }) {
 
   const generatePDF = useCallback(async () => {
     if (!pdfMake || isGenerating) {
-      console.error('pdfMake не загружен или генерация уже выполняется');
+      toast({
+        variant: 'destructive',
+        description: 'pdfMake не загружен или генерация уже выполняется',
+      });
       return;
     }
 
@@ -79,12 +95,26 @@ export default function TravelSheetButton({ group }) {
         selectedTeacher,
         selectedCar,
       );
-      if (!docDefinition) return;
+      if (!docDefinition) {
+        toast({
+          variant: 'destructive',
+          description: 'Ошибка при создании документа',
+        });
+        return;
+      }
 
       await pdfMake.createPdf(docDefinition).open();
+      toast({
+        variant: 'success',
+        description: 'Путевой лист успешно сформирован',
+      });
       setDialogOpen(false);
     } catch (error) {
       console.error('Ошибка при генерации PDF:', error);
+      toast({
+        variant: 'destructive',
+        description: 'Ошибка при генерации путевого листа',
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -155,7 +185,7 @@ export default function TravelSheetButton({ group }) {
                 !pdfMake || !selectedDate || !selectedTeacher || !selectedCar || isGenerating
               }
             >
-              {isGenerating ? 'Формирование...' : 'Сформировать путевой лист'}
+              {isGenerating ? 'Генерация...' : 'Сформировать путевой лист'}
             </Button>
           </div>
         </div>
