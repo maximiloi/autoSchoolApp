@@ -36,7 +36,7 @@ export default function TravelSheetButton({ group }) {
 
   useEffect(() => {
     if (dialogOpen) {
-      fetch('/api/teachers')
+      fetch('/api/teacher')
         .then((res) => res.json())
         .then((data) => setTeachers(data))
         .catch((error) => {
