@@ -68,6 +68,7 @@ model Teacher {
   licenseIssueDate DateTime?
   snils            String?
   phone            String?
+  telegramId       String?   @unique
   companyId        String
   createdBy        String
   createdAt        DateTime  @default(now())

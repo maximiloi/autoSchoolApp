@@ -1,11 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from '@/hooks/use-toast';
-import { z } from 'zod';
 import { Button } from '@/components/ui/button';
+import DatePickerField from '@/components/ui/DatePickerField';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import InputField from '@/components/ui/InputField';
 import {
   Select,
   SelectContent,
@@ -13,23 +18,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from '@/components/ui/form';
-import InputField from '@/components/ui/InputField';
-import DatePickerField from '@/components/ui/DatePickerField';
+import { toast } from '@/hooks/use-toast';
 import transformedNullAndStringDate from '@/lib/transformedNullAndStringDate';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const formSchema = z.object({
   lastName: z.string().min(2, 'Введите фамилию'),
   firstName: z.string().min(2, 'Введите имя'),
   middleName: z.string().optional(),
   phone: z.string().optional(),
+  telegramId: z.string().optional(),
   activityType: z.enum(['theory', 'practice']),
   birthDate: z.date().optional(),
   birthPlace: z.string().optional(),
@@ -50,6 +51,7 @@ export default function TeachersForm({ setTeachers, initialData, onClose }) {
       firstName: '',
       middleName: '',
       phone: '',
+      telegramId: '',
       activityType: 'theory',
       birthDate: undefined,
       birthPlace: '',
@@ -134,6 +136,7 @@ export default function TeachersForm({ setTeachers, initialData, onClose }) {
               control={form.control}
               mask="+{7}(000)000-00-00"
             />
+            <InputField name="telegramId" label="Телеграм ИД" control={form.control} />
           </div>
 
           <FormField
