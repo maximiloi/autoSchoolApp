@@ -20,6 +20,12 @@ function formatTimeRange(slot) {
   return slot;
 }
 
+function getStartHour(timeText) {
+  if (!timeText) return 0;
+  const match = timeText.match(/с (\d{1,2})/);
+  return match ? parseInt(match[1], 10) : 0;
+}
+
 async function main() {
   for (const adminId of adminChatIds) {
     try {
@@ -39,9 +45,6 @@ async function main() {
         gte: startOfDay,
         lte: endOfDay,
       },
-      student: {
-        telegramId: { not: null },
-      },
     },
     include: {
       student: {
@@ -57,6 +60,7 @@ async function main() {
   });
 
   const reportLines = [];
+  const teacherSessions = {};
 
   for (const session of tomorrowSessions) {
     const { student, date: sessionDate, slot: sessionTime } = session;
@@ -69,32 +73,65 @@ async function main() {
       : '—';
     const teacherPhone = teacher?.phone || '—';
 
-    const studentMessage = `🚗 Напоминание: у вас завтра вождение ${timeText} (${formattedDate})\n\n 👨‍🏫 Инструктор: ${teacherFullName}\n📞 ${teacherPhone}`;
     const fullName = `${student.lastName} ${student.firstName} ${student.middleName ?? ''}`.trim();
     const groupNumber = student.group?.groupNumber || '—';
 
-    try {
-      await bot.api.sendMessage(student.telegramId, studentMessage);
-      reportLines.push(`• ${fullName} — #${groupNumber} — ${formattedDate} ${timeText || ''}`);
-    } catch (error) {
-      console.error(`Ошибка при отправке студенту ${fullName}:`, error);
+    if (student.telegramId) {
+      const studentMessage = `🚗 Напоминание: у вас завтра вождение ${timeText} (${formattedDate})\n\n 👨‍🏫 Инструктор: ${teacherFullName}\n📞 ${teacherPhone}`;
+      try {
+        await bot.api.sendMessage(student.telegramId, studentMessage);
+        reportLines.push(`• ${fullName} — #${groupNumber} — ${formattedDate} ${timeText || ''}`);
+      } catch (error) {
+        console.error(`Ошибка при отправке студенту ${fullName}:`, error);
 
-      if (error.error_code == 403 && error.description.includes('bot was blocked')) {
-        await prisma.student.update({
-          where: { id: student.id },
-          data: { telegramId: null },
-        });
+        if (error.error_code == 403 && error.description.includes('bot was blocked')) {
+          await prisma.student.update({
+            where: { id: student.id },
+            data: { telegramId: null },
+          });
 
-        const removalMsg = `⚠️ Студент *${fullName}* из группы *${groupNumber}* заблокировал бота. Telegram ID удалён из базы.`;
+          const removalMsg = `⚠️ Студент *${fullName}* из группы *${groupNumber}* заблокировал бота. Telegram ID удалён из базы.`;
 
-        for (const adminId of adminChatIds) {
-          try {
-            await bot.api.sendMessage(adminId, removalMsg, { parse_mode: 'Markdown' });
-          } catch (err) {
-            console.error(`Ошибка при отправке админу ${adminId} об удалении студента:`, err);
+          for (const adminId of adminChatIds) {
+            try {
+              await bot.api.sendMessage(adminId, removalMsg, { parse_mode: 'Markdown' });
+            } catch (err) {
+              console.error(`Ошибка при отправке админу ${adminId} об удалении студента:`, err);
+            }
           }
         }
       }
+    }
+
+    if (teacher?.telegramId) {
+      if (!teacherSessions[teacher.id]) {
+        teacherSessions[teacher.id] = {
+          telegramId: teacher.telegramId,
+          groupNumber: groupNumber,
+          sessions: [],
+        };
+      }
+      teacherSessions[teacher.id].sessions.push({
+        timeText,
+        formattedDate,
+        fullName,
+        phone: student.phone || '—',
+      });
+    }
+  }
+
+  for (const teacherId in teacherSessions) {
+    const { telegramId, groupNumber, sessions } = teacherSessions[teacherId];
+    sessions.sort((a, b) => getStartHour(a.timeText) - getStartHour(b.timeText));
+
+    const teacherMessage =
+      `🚗 Завтра (${sessions[0].formattedDate}) вождение для группы #${groupNumber}\n\n` +
+      sessions.map((s, i) => `${i + 1}. ${s.timeText} — ${s.fullName} (${s.phone})`).join('\n\n');
+
+    try {
+      await bot.api.sendMessage(telegramId, teacherMessage);
+    } catch (error) {
+      console.error(`Ошибка при отправке преподавателю ${telegramId}:`, error);
     }
   }
 
