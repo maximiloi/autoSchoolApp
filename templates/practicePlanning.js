@@ -1,7 +1,7 @@
 import { addDays, format, getDay } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-export default function practicePlanning(group = {}, selectedDate) {
+export default function practicePlanning(group = {}, selectedDate, sessions = []) {
   const { groupNumber, students = [] } = group;
 
   if (!selectedDate) return null;
@@ -15,15 +15,24 @@ export default function practicePlanning(group = {}, selectedDate) {
 
   const dateColumns = Array.from({ length: 14 }, (_, i) => {
     const date = addDays(startDate, i);
-    const dayOfWeek = getDay(date); // 0 - воскресенье, 6 - суббота
+    const dayOfWeek = getDay(date);
     const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
     return {
       text: format(date, 'dd.MM (EEE)', { locale: ru }),
       isWeekend,
+      date,
     };
   });
 
   const sortedStudents = [...students].sort((a, b) => a.studentNumber - b.studentNumber);
+
+  const sessionMap = new Map();
+  for (const student of sortedStudents) {
+    const count = sessions.filter((s) => s.studentId === student.id).length;
+    sessionMap.set(student.id, count);
+  }
+
+  const widths = ['3.5%', '19%', '5%', ...Array(14).fill('*')];
 
   return {
     pageOrientation: 'landscape',
@@ -49,11 +58,12 @@ export default function practicePlanning(group = {}, selectedDate) {
         fontSize: 8,
         table: {
           headerRows: 1,
-          widths: ['3.5%', '22%', ...Array(14).fill('*')],
+          widths,
           body: [
             [
               { text: '№ п/п', style: 'tableHeader' },
               { text: 'ФИО / Телефон', style: 'tableHeader' },
+              { text: 'Всего часов', style: 'tableHeader' },
               ...dateColumns.map((col) => ({
                 text: col.text,
                 style: 'tableHeader',
@@ -65,6 +75,11 @@ export default function practicePlanning(group = {}, selectedDate) {
               {
                 text: `${student.lastName} ${student.firstName} ${student.middleName ?? ''}\n${student.phone}`,
                 style: 'table',
+              },
+              {
+                text: `${sessionMap.get(student.id) * 2}`,
+                alignment: 'center',
+                fontSize: 10,
               },
               ...dateColumns.map((col) => ({
                 text: '',

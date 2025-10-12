@@ -12,16 +12,41 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import usePdfMake from '@/hooks/use-pdfmake';
-import practicePlanning from '@/templates/practicePlanning';
 import { addDays } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { NotebookPen } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
+import practicePlanning from '@/templates/practicePlanning';
+
 export default function PracticePlanningButton({ group }) {
-  const { groupNumber } = group;
+  const { startTrainingDate, endTrainingDate, id: groupId, groupNumber } = group;
   const pdfMake = usePdfMake();
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  const toLocalDateString = (date) => {
+    const d = new Date(date);
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().split('T')[0]; // 'yyyy-MM-dd'
+  };
+
+  const fetchSessions = useCallback(async () => {
+    const query = new URLSearchParams({
+      groupId,
+      startDate: toLocalDateString(startTrainingDate),
+      endDate: toLocalDateString(endTrainingDate),
+    });
+
+    try {
+      const res = await fetch(`/api/driving-sessions/by-range?${query}`);
+      if (!res.ok) throw new Error('Ошибка загрузки');
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      console.error('Ошибка запроса:', err);
+      return null;
+    }
+  }, [groupId, startTrainingDate, endTrainingDate]);
 
   const getNextSunday = () => {
     const today = new Date();
@@ -32,13 +57,16 @@ export default function PracticePlanningButton({ group }) {
 
   const [selectedDate, setSelectedDate] = useState(getNextSunday());
 
-  const generatePDF = useCallback(() => {
+  const generatePDF = useCallback(async () => {
     if (!pdfMake) {
       console.error('pdfMake не загружен');
       return;
     }
 
-    const docDefinition = practicePlanning(group, selectedDate);
+    const sessions = await fetchSessions();
+    if (!sessions) return;
+
+    const docDefinition = practicePlanning(group, selectedDate, sessions);
     if (!docDefinition) return;
 
     pdfMake.createPdf(docDefinition).open();

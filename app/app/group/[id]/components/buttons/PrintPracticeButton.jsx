@@ -12,7 +12,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import usePdfMake from '@/hooks/use-pdfmake';
-import { addDays } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { Printer } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
@@ -22,7 +21,7 @@ import { Switch } from '@/components/ui/switch';
 import practiceSchedule from '@/templates/practiceSchedule';
 
 export default function PrintPracticeButton({ group }) {
-  const { groupNumber, id: groupId } = group;
+  const { startTrainingDate, endTrainingDate, groupNumber, id: groupId } = group;
   const pdfMake = usePdfMake();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -36,36 +35,30 @@ export default function PrintPracticeButton({ group }) {
     return d.toISOString().split('T')[0]; // 'yyyy-MM-dd'
   };
 
-  const fetchSessions = useCallback(
-    async (startDate) => {
-      if (!startDate) return;
+  const fetchSessions = useCallback(async () => {
+    const query = new URLSearchParams({
+      groupId,
+      startDate: toLocalDateString(startTrainingDate),
+      endDate: toLocalDateString(endTrainingDate),
+    });
 
-      const endDate = addDays(startDate, 13);
-      const query = new URLSearchParams({
-        groupId,
-        startDate: toLocalDateString(startDate),
-        endDate: toLocalDateString(endDate),
-      });
-
-      setLoading(true);
-      try {
-        const res = await fetch(`/api/driving-sessions/by-range?${query}`);
-        if (!res.ok) throw new Error('Ошибка загрузки');
-        const data = await res.json();
-        setSessions(data);
-      } catch (err) {
-        console.error('Ошибка запроса:', err);
-        setSessions(null);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [groupId],
-  );
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/driving-sessions/by-range?${query}`);
+      if (!res.ok) throw new Error('Ошибка загрузки');
+      const data = await res.json();
+      setSessions(data);
+    } catch (err) {
+      console.error('Ошибка запроса:', err);
+      setSessions(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [groupId]);
 
   useEffect(() => {
     if (selectedDate) {
-      fetchSessions(selectedDate);
+      fetchSessions();
     }
   }, [selectedDate, fetchSessions]);
 

@@ -36,6 +36,12 @@ export default function practiceSchedule(
 
   const sortedStudents = [...students].sort((a, b) => a.studentNumber - b.studentNumber);
 
+  const sessionMap = new Map();
+  for (const student of sortedStudents) {
+    const count = sessions.filter((s) => s.studentId === student.id).length;
+    sessionMap.set(student.id, count);
+  }
+
   const practiceTeachersBlock =
     practiceTeachers.length > 0
       ? [
@@ -52,6 +58,8 @@ export default function practiceSchedule(
           })),
         ]
       : [];
+
+  const widths = ['3.5%', '19%', '4.5%', ...Array(14).fill('*')];
 
   return {
     pageOrientation: 'landscape',
@@ -74,11 +82,12 @@ export default function practiceSchedule(
         fontSize: 8,
         table: {
           headerRows: 1,
-          widths: ['3.5%', '22%', ...Array(14).fill('*')],
+          widths,
           body: [
             [
               { text: '№ п/п', style: 'tableHeader' },
               { text: 'ФИО', style: 'tableHeader' },
+              { text: 'Всего часов', style: 'tableHeader' },
               ...dateColumns.map((col) => ({
                 text: col.text,
                 style: 'tableHeader',
@@ -92,6 +101,11 @@ export default function practiceSchedule(
                   ? `${student.lastName.slice(0, 3)}*** ${student.firstName.slice(0, 1)}. ${student.middleName?.slice(0, 1) ?? ''}. Договор № ${groupNumber}${category}-${student.studentNumber}`
                   : `${student.lastName} ${student.firstName} ${student.middleName ?? ''}`,
                 style: 'table',
+              },
+              {
+                text: `${sessionMap.get(student.id) * 2}`,
+                alignment: 'center',
+                fontSize: 10,
               },
               ...dateColumns.map((col) => {
                 const matchingSession = sessions.find(
