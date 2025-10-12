@@ -104,7 +104,7 @@ export default async function basicContract(student, group, company, toast, botU
         ],
       },
       {
-        text: `${company?.companyName} на основании лицензии ${company?.license}, выданной ${company?.whoIssuedLicense} от ${format(new Date(company.whenIssuedLicense), 'PPP', { locale: ru })} в лице генерального директора ${inclineLastname(company.directorSurname, 'genitive')} ${inclineFirstname(company.directorName, 'genitive')} ${inclineMiddlename(company.directorPatronymic, 'genitive')}, действующе-го на основании Устава, (далее — «Исполнитель»), с одной стороны и ${inclineLastname(student.lastName, 'genitive')} ${inclineFirstname(student.firstName, 'genitive')} ${inclineMiddlename(student.middleName, 'genitive')} (далее — «Заказчик»), с другой стороны, заключили настоящий договор о нижеследующем:`,
+        text: `${company?.companyName} на основании лицензии ${company?.license}, выданной ${company?.whoIssuedLicense} от ${format(new Date(company.whenIssuedLicense), 'PPP', { locale: ru })} в лице генерального директора ${inclineLastname(company.directorSurname, 'genitive')} ${inclineFirstname(company.directorName, 'genitive')} ${inclineMiddlename(company.directorPatronymic, 'genitive')}, действующего на основании Устава, (далее — «Исполнитель»), с одной стороны и ${inclineLastname(student.lastName, 'genitive')} ${inclineFirstname(student.firstName, 'genitive')} ${inclineMiddlename(student.middleName, 'genitive')} (далее — «Заказчик»), с другой стороны, заключили настоящий договор о нижеследующем:`,
       },
       {
         text: '1. Предмет договора',

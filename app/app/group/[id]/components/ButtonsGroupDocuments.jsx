@@ -17,6 +17,7 @@ import { useCompanyStore, useGroupStore } from '@/store/useStore';
 import ApplicationFormButton from './buttons/ApplicationFormButton';
 import BasicContractButton from './buttons/BasicContractButton';
 import DriverCardButton from './buttons/DriverCardButton';
+import MinorContractButton from './buttons/MinorContractButton';
 import ParentalStatementButton from './buttons/ParentalStatementButton';
 import PersonalizedBookAButton from './buttons/PersonalizedBookAButton';
 import PersonalizedBookBButton from './buttons/PersonalizedBookBButton';
@@ -44,9 +45,14 @@ export default function ButtonsGroupDocuments({ student }) {
           </DropdownMenuItem>
           {differenceInYears(new Date(group.startTrainingDate), new Date(student.birthDate)) <
             18 && (
-            <DropdownMenuItem>
-              <ParentalStatementButton student={student} />
-            </DropdownMenuItem>
+            <>
+              <DropdownMenuItem>
+                <MinorContractButton student={student} group={group} company={company} />
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <ParentalStatementButton student={student} />
+              </DropdownMenuItem>
+            </>
           )}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
