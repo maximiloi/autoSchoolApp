@@ -1,3 +1,5 @@
+import next from "eslint-config-next";
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import globals from 'globals';
@@ -13,12 +15,12 @@ const compat = new FlatCompat({
 });
 
 export default [
-  ...compat.extends(
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
-    'plugin:@next/next/core-web-vitals',
-  ),
+  ...next,
+  ...nextCoreWebVitals,
+  ...compat.extends("eslint:recommended"),
+  ...compat.extends("plugin:react/recommended"),
+  ...compat.extends("plugin:react-hooks/recommended"),
+  ...compat.extends("plugin:@next/next/core-web-vitals"),
   {
     files: ['**/*.js', '**/*.jsx'],
     languageOptions: {
@@ -43,4 +45,7 @@ export default [
       'react-hooks/exhaustive-deps': 'off',
     },
   },
+  {
+    ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts"]
+  }
 ];
